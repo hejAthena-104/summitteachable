@@ -18,7 +18,17 @@
   .cat-stats{display:flex;gap:30px;flex-wrap:wrap;margin-top:24px}
   .cat-stats b{display:block;font-size:1.55rem;font-weight:800;color:#FACC15;line-height:1}
   .cat-stats span{font-size:.78rem;color:rgba(255,255,255,.72)}
-  @media(max-width:560px){.cat-hero::after{background:linear-gradient(180deg,rgba(10,12,14,.72),rgba(10,12,14,.94))}}
+  /* Mobile: keep the hero compact so the course list is visible without long scroll */
+  @media(max-width:560px){
+    .cat-hero{min-height:0;margin:10px 0 4px}
+    .cat-hero::after{background:linear-gradient(180deg,rgba(10,12,14,.62),rgba(10,12,14,.9))}
+    .cat-hero-c{padding:26px 20px}
+    .cat-hero-c h1{font-size:1.65rem;margin:8px 0 0}
+    .cat-hero-c p{display:none}                 /* drop the subtitle paragraph on mobile */
+    .cat-stats{gap:14px 20px;margin-top:16px}
+    .cat-stats b{font-size:1.2rem}
+    .feat-head{margin-top:26px}
+  }
 
   /* ===== Featured courses (teal reference cards) ===== */
   .feat-head{text-align:center;font-size:clamp(1.7rem,3vw,2.2rem);margin:38px 0 2px;color:var(--heading)}
