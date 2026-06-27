@@ -9,8 +9,8 @@
   .reveal-js .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.2,.7,.2,1)}
   .reveal-js .reveal.in{opacity:1;transform:none}
 
-  /* hero — full-width banner (the banner already carries the title/subtitle) */
-  .co-banner{width:100%;display:block;border-radius:18px;aspect-ratio:661/198;object-fit:cover;box-shadow:0 16px 36px rgba(124,58,237,.18)}
+  /* hero — 16:9 course image (carries its own title), contained so it isn't huge */
+  .co-banner{width:100%;max-width:720px;display:block;border-radius:14px;aspect-ratio:16/9;object-fit:cover;box-shadow:0 12px 30px rgba(9,165,154,.16)}
   .hero-meta{margin-top:14px}
   .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   /* animated red/green candle accent */
@@ -35,10 +35,10 @@
   .cur-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin-bottom:14px}
   .cur-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem}.cur-meta b{color:var(--lilac)}
   .cur-module{border:1px solid var(--border);border-radius:14px;margin-bottom:12px;background:var(--panel);overflow:hidden;transition:border-color .2s,box-shadow .2s}
-  .cur-module[open]{border-color:var(--pri);box-shadow:0 8px 24px rgba(124,58,237,.10)}
+  .cur-module[open]{border-color:var(--pri);box-shadow:0 8px 24px rgba(9,165,154,.10)}
   .cur-module summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;padding:15px 18px;font-weight:700}
   .cur-module summary::-webkit-details-marker{display:none}
-  .cur-ix{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:Sora;font-size:.9rem;background:var(--chip-sel-bg);color:var(--pri2)}
+  .cur-ix{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:Metropolis;font-size:.9rem;background:var(--chip-sel-bg);color:var(--pri2)}
   .cur-mtitle{flex:1}.cur-mcount{font-size:.8rem;color:var(--muted);font-weight:600}
   .cur-chev{transition:transform .25s;color:var(--muted)}.cur-module[open] .cur-chev{transform:rotate(180deg)}
   .cur-lessons{list-style:none;margin:0;padding:0 18px 10px}
@@ -51,7 +51,7 @@
 
   /* purchase card */
   .pc-price{display:flex;align-items:baseline;gap:8px}
-  .pc-price .amt{font-family:Sora;font-size:2.1rem;font-weight:800;color:var(--heading)}
+  .pc-price .amt{font-family:Metropolis;font-size:2.1rem;font-weight:800;color:var(--heading)}
   .pc-divider{height:1px;background:var(--border);margin:16px 0}
   .pc-section-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin-bottom:8px}
 
@@ -65,7 +65,7 @@
 <!-- FULL-WIDTH BANNER HERO -->
 <section class="reveal" style="margin-bottom:6px;">
   <h1 class="sr-only">{{ course.title }}</h1>
-  <img class="co-banner" src="{% static 'images/courses/' %}{{ course.thumbnail_slug }}.png?v=4" alt="{{ course.title }}">
+  <img class="co-banner" src="{% static 'images/courses/' %}{{ course.thumbnail_slug }}.png?v=6" alt="{{ course.title }}">
   <div class="hero-meta">
     <span class="lvl">{{ course.get_level_display }} · Lifetime access</span>
     <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.88rem;margin-top:8px;align-items:center;" class="muted">
@@ -87,12 +87,6 @@
 
   <!-- LEFT: curriculum + about -->
   <div>
-    <div class="mini-feats reveal">
-      <span class="mini-feat"><i class="bi bi-infinity"></i> Lifetime access</span>
-      <span class="mini-feat"><i class="bi bi-graph-up-arrow"></i> Practice on a demo account</span>
-      <span class="mini-feat"><i class="bi bi-lightning-charge-fill"></i> Instant access on approval</span>
-      <span class="mini-feat"><i class="bi bi-shield-check"></i> Secure crypto checkout</span>
-    </div>
 
     <section class="panel reveal" style="margin-top:14px;">
       <div class="cur-head">

@@ -6,116 +6,98 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Buy a Course | Summit Teachable{% endblock %}</title>
   <link rel="icon" href="{% static 'images/favicon.png' %}" type="image/png">
-  <!-- Apply saved theme before paint to avoid flash (default = LIGHT) -->
-  <script>
-    (function(){try{if(localStorage.getItem('theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();
-  </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <style>
-    /* ===== LIGHT (default) ===== */
+    /* ===== Metropolis (Teachable-style) ===== */
+    @font-face{font-family:'Metropolis';font-weight:400;font-display:swap;src:url("{% static 'fonts/Metropolis-Regular.woff2' %}") format("woff2")}
+    @font-face{font-family:'Metropolis';font-weight:600;font-display:swap;src:url("{% static 'fonts/Metropolis-SemiBold.woff2' %}") format("woff2")}
+    @font-face{font-family:'Metropolis';font-weight:700;font-display:swap;src:url("{% static 'fonts/Metropolis-Bold.woff2' %}") format("woff2")}
+
+    /* ===== Teal token set (light only) — names kept so checkout inherits ===== */
     :root{
-      --bg:#F5F3FB; --bg2:#F3EFFC; --panel:#FFFFFF; --panel2:#FFFFFF; --raised:#F3EFFC;
-      --border:#E8E3F6; --pri:#8B5CF6; --pri2:#7C3AED; --pri-active:#6D28D9; --lilac:#7C3AED;
-      --text:#211A38; --muted:#6E6685; --heading:#14102B; --link-hover:#6D28D9;
-      --shadow:0 2px 14px rgba(17,12,46,.06);
-      --mono-bg:#F3EFFC; --mono-text:#2A2140;
-      --chip-sel-bg:#EDE9FE;
-      --glow:rgba(139,92,246,.08);
+      --teal:#09A59A; --teal-dark:#088d83; --teal-darker:#067a71;
+      --bg:#ffffff; --bg2:#f7f7f7; --panel:#ffffff; --panel2:#ffffff; --raised:#f7f9f9;
+      --border:#e6eaea; --border-teal:#aaeae5;
+      --pri:#09A59A; --pri2:#088d83; --pri-active:#067a71; --lilac:#09A59A;
+      --text:#3a4747; --muted:#6b7280; --heading:#2b3636; --link-hover:#044440;
+      --shadow:0 1px 3px rgba(43,54,54,.07), 0 6px 20px rgba(43,54,54,.05);
+      --mono-bg:#f0fafa; --mono-text:#2b3636;
+      --chip-sel-bg:#e3f6f4;
+      --glow:rgba(9,165,154,.06);
       --warn-bg:#FEF6E7; --warn-bd:#F6D38A; --warn-tx:#92400E;
       --err-bg:#FDECEC; --err-bd:#F3B4B4; --err-tx:#991B1B;
-      --badge-img-bg:rgba(255,255,255,.86); --badge-img-tx:#6D28D9; --badge-img-bd:var(--border);
-    }
-    /* ===== DARK (toggle) ===== */
-    html[data-theme="dark"]{
-      --bg:#0F0A1E; --bg2:#150F28; --panel:#18122B; --panel2:#1C1533; --raised:#221A38;
-      --border:rgba(139,92,246,.18); --pri:#8B5CF6; --pri2:#7C3AED; --pri-active:#6D28D9; --lilac:#A78BFA;
-      --text:#ECEAF5; --muted:#9D94B8; --heading:#FFFFFF; --link-hover:#FFFFFF;
-      --shadow:0 8px 28px rgba(0,0,0,.35);
-      --mono-bg:#221A38; --mono-text:#ECEAF5;
-      --chip-sel-bg:rgba(139,92,246,.16);
-      --glow:rgba(139,92,246,.18);
-      --warn-bg:rgba(245,158,11,.1); --warn-bd:rgba(245,158,11,.3); --warn-tx:#FCD9A0;
-      --err-bg:rgba(239,68,68,.1); --err-bd:rgba(239,68,68,.3); --err-tx:#FCA5A5;
-      --badge-img-bg:rgba(15,10,30,.78); --badge-img-tx:#A78BFA; --badge-img-bd:var(--border);
+      --badge-img-bg:rgba(255,255,255,.88); --badge-img-tx:#09A59A; --badge-img-bd:var(--border-teal);
     }
     *{box-sizing:border-box}
-    body{margin:0;background:radial-gradient(1200px 600px at 80% -10%, var(--glow), transparent 60%),var(--bg);
-      color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;
-      transition:background .25s ease,color .25s ease}
-    a{color:var(--lilac);text-decoration:none} a:hover{color:var(--link-hover)}
-    .wrap{max-width:1380px;margin:0 auto;padding:0 26px}
-    h1,h2,h3{font-family:Sora,Inter,sans-serif;letter-spacing:-.02em;line-height:1.15;color:var(--heading)}
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
-    .nav .brand{display:inline-flex;align-items:center}
-    .nav .brand img{height:38px;width:auto}
-    /* Logo swap: dark-ink logo on light, near-white logo on dark */
-    .logo-dark-theme{display:none}
-    html[data-theme="dark"] .logo-light-theme{display:none}
-    html[data-theme="dark"] .logo-dark-theme{display:inline-block}
-    .nav .links{display:flex;gap:14px;align-items:center}
-    .theme-toggle{padding:9px 12px}
-    .theme-toggle .ico{font-size:1.05rem;line-height:1}
-    .theme-toggle .to-light{display:none}
-    html[data-theme="dark"] .theme-toggle .to-dark{display:none}
-    html[data-theme="dark"] .theme-toggle .to-light{display:inline}
-    .btn{display:inline-flex;align-items:center;gap:8px;border-radius:12px;padding:11px 18px;font-weight:600;
-      border:1px solid transparent;cursor:pointer;transition:.15s;font-size:.95rem}
-    .btn-primary{background:linear-gradient(180deg,var(--pri),var(--pri2));color:#fff;box-shadow:0 6px 18px rgba(124,58,237,.28)}
-    .btn-primary:hover{filter:brightness(1.06);color:#fff}
-    .btn-primary:active{background:var(--pri-active)}
-    .btn-ghost{background:transparent;border-color:var(--border);color:var(--text)}
-    .btn-ghost:hover{border-color:var(--pri);color:var(--pri)}
-    .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);
-      border-radius:18px;padding:22px;box-shadow:var(--shadow)}
-    .muted{color:var(--muted)} .pri{color:var(--lilac)}
+    body{margin:0;background:var(--bg);color:var(--text);
+      font-family:'Metropolis',system-ui,-apple-system,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+    a{color:var(--teal);text-decoration:none} a:hover{color:var(--link-hover)}
+    .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+    h1,h2,h3{font-family:'Metropolis',sans-serif;color:var(--heading);line-height:1.2;font-weight:700}
+    /* header */
+    .site-head{border-bottom:1px solid var(--border);background:#fff;position:sticky;top:0;z-index:20}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .nav .brand img{height:36px;width:auto;display:block}
+    .nav .links{display:flex;gap:16px;align-items:center}
+    .nav .links a.txt{color:var(--heading);font-weight:600;font-size:.95rem}
+    .nav .links a.txt:hover{color:var(--teal)}
+    /* buttons (teal pill) */
+    .btn{display:inline-flex;align-items:center;gap:8px;border-radius:30px;padding:11px 24px;font-weight:600;
+      border:1px solid transparent;cursor:pointer;transition:.15s;font-size:.92rem;font-family:inherit}
+    .btn-primary{background:var(--teal);border-color:var(--teal);color:#fff}
+    .btn-primary:hover{background:var(--teal-dark);border-color:var(--teal-dark);color:#fff}
+    .btn-primary:active{background:var(--teal-darker)}
+    .btn-ghost{background:transparent;border-color:var(--border-teal);color:var(--teal)}
+    .btn-ghost:hover{background:#f0fafa;color:var(--teal-dark)}
+    /* surfaces */
+    .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+    .muted{color:var(--muted)} .pri{color:var(--teal)}
     .badge-demo{display:inline-flex;gap:8px;align-items:center;background:var(--chip-sel-bg);
-      border:1px solid var(--border);color:var(--lilac);border-radius:999px;padding:6px 13px;font-size:.8rem;font-weight:600}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px}
-    .ccard{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);
-      border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.18s;box-shadow:var(--shadow)}
-    .ccard:hover{transform:translateY(-4px);border-color:var(--pri);box-shadow:0 12px 28px rgba(124,58,237,.16)}
-    .ccard img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
-    .ccard .body{padding:18px;display:flex;flex-direction:column;gap:10px;flex:1}
-    .lvl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--lilac);font-weight:700}
-    .price{font-family:Sora;font-size:1.4rem;font-weight:700}
+      border:1px solid var(--border-teal);color:var(--teal-dark);border-radius:999px;padding:6px 14px;font-size:.8rem;font-weight:600}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:24px}
+    /* course card (reference style) */
+    .ccard{background:#f7f7f7;border:1px solid var(--border-teal);border-radius:9px;overflow:hidden;
+      display:flex;flex-direction:column;transition:.18s;box-shadow:0 1px 0 var(--border-teal)}
+    .ccard:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(9,165,154,.15);border-color:var(--teal)}
+    .ccard img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;border-bottom:1px solid #ededed}
+    .lvl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);font-weight:700}
+    .price{font-family:'Metropolis',sans-serif;font-size:1.3rem;font-weight:700;color:var(--teal)}
+    /* form fields */
     .field{margin-bottom:16px}
-    .field label{display:block;font-weight:600;margin-bottom:6px;font-size:.92rem;color:var(--text)}
-    .field input,.field select,.field textarea{width:100%;background:var(--raised);border:1px solid var(--border);
-      color:var(--text);border-radius:12px;padding:12px 14px;font-size:.95rem;font-family:inherit}
+    .field label{display:block;font-weight:600;margin-bottom:6px;font-size:.92rem;color:var(--heading)}
+    .field input,.field select,.field textarea{width:100%;background:#fff;border:1px solid var(--border);
+      color:var(--text);border-radius:10px;padding:12px 14px;font-size:.95rem;font-family:inherit}
     .field input::placeholder,.field textarea::placeholder{color:var(--muted)}
-    .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--pri);
-      box-shadow:0 0 0 3px rgba(139,92,246,.15)}
-    .wallet{background:var(--mono-bg);border:1px dashed var(--border);border-radius:12px;padding:12px 14px;
+    .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--teal);
+      box-shadow:0 0 0 3px rgba(9,165,154,.14)}
+    .wallet{background:var(--mono-bg);border:1px dashed var(--border-teal);border-radius:10px;padding:12px 14px;
       color:var(--mono-text);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.85rem;word-break:break-all}
-    .alert{border-radius:12px;padding:12px 16px;margin-bottom:14px;border:1px solid var(--border)}
+    .alert{border-radius:10px;padding:12px 16px;margin-bottom:14px;border:1px solid var(--border)}
     .alert-warn{background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn-tx)}
     .alert-err{background:var(--err-bg);border-color:var(--err-bd);color:var(--err-tx)}
-    footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0;color:var(--muted);font-size:.85rem}
+    footer{border-top:1px solid var(--border);margin-top:64px;padding:30px 0;color:var(--muted);font-size:.85rem;background:#fafbfb}
     @media(max-width:560px){.nav .links a.hide-sm{display:none}}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <nav class="nav">
-      <a class="brand" href="{% url 'store:catalog' %}">
-        <img class="logo-light-theme" src="{% static 'images/logo-dark.png' %}" alt="Summit Teachable">
-        <img class="logo-dark-theme" src="{% static 'images/logo.png' %}" alt="Summit Teachable">
-      </a>
-      <div class="links">
-        <a class="hide-sm" href="{% url 'store:catalog' %}">Courses</a>
-        <button id="themeToggle" class="btn btn-ghost theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Toggle theme">
-          <i class="bi bi-moon-stars-fill ico to-dark"></i><i class="bi bi-sun-fill ico to-light"></i>
-        </button>
-        <a class="btn btn-ghost" href="/auth/login-code/">Log in</a>
-      </div>
-    </nav>
-  </div>
+  <header class="site-head">
+    <div class="wrap">
+      <nav class="nav">
+        <a class="brand" href="{% url 'store:catalog' %}">
+          <img src="{% static 'images/logo-dark.png' %}" alt="Summit Teachable">
+        </a>
+        <div class="links">
+          <a class="txt hide-sm" href="{% url 'store:catalog' %}">Courses</a>
+          <a class="btn btn-primary" href="/auth/login-code/">Log in</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
   <main class="wrap">
     {% block content %}{% endblock %}
   </main>
+
   <footer>
     <div class="wrap">
       Summit Teachable is an educational platform. Courses are real products; the in-app trading dashboard uses
@@ -123,18 +105,7 @@
       &copy; Summit Teachable.
     </div>
   </footer>
-  <script>
-    (function(){
-      var tb=document.getElementById('themeToggle');
-      if(!tb)return;
-      tb.addEventListener('click',function(){
-        var d=document.documentElement;
-        var dark=d.getAttribute('data-theme')==='dark';
-        if(dark){d.removeAttribute('data-theme');try{localStorage.setItem('theme','light');}catch(e){}}
-        else{d.setAttribute('data-theme','dark');try{localStorage.setItem('theme','dark');}catch(e){}}
-      });
-    })();
-  </script>
+
   <!-- Smartsupp Live Chat -->
   <script type="text/javascript">
     var _smartsupp = _smartsupp || {};

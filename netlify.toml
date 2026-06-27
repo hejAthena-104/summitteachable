@@ -1,6 +1,34 @@
 [build]
   publish = "frontend"
 
+# ---- Homepage = the LIVE Django course catalog (proxy, URL stays summitteachable.com) ----
+[[redirects]]
+  from = "/"
+  to = "https://dashboard.summitteachable.com/buy/"
+  status = 200
+  force = true
+
+# Proxy the storefront's static assets so the proxied catalog's images/logo/fonts load.
+# (The marketing pages use /css /js /images, so this only affects the Django storefront.)
+[[redirects]]
+  from = "/static/*"
+  to = "https://dashboard.summitteachable.com/static/:splat"
+  status = 200
+  force = true
+
+# Old marketing landing now lives at /home
+[[redirects]]
+  from = "/home"
+  to = "/home.html"
+  status = 200
+
+# ---- Auth + storefront + dashboard go to the dashboard host ----
+[[redirects]]
+  from = "/auth/*"
+  to = "https://dashboard.summitteachable.com/auth/:splat"
+  status = 302
+  force = true
+
 [[redirects]]
   from = "/login"
   to = "https://dashboard.summitteachable.com/auth/login/"
@@ -14,13 +42,13 @@
   force = true
 
 [[redirects]]
-  from = "/dashboard/*"
-  to = "https://dashboard.summitteachable.com/dashboard/:splat"
+  from = "/buy/*"
+  to = "https://dashboard.summitteachable.com/buy/:splat"
   status = 302
   force = true
 
 [[redirects]]
-  from = "/buy/*"
-  to = "https://dashboard.summitteachable.com/buy/:splat"
+  from = "/dashboard/*"
+  to = "https://dashboard.summitteachable.com/dashboard/:splat"
   status = 302
   force = true
