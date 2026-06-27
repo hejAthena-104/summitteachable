@@ -6,11 +6,16 @@
 
 {% block content %}
 <style>
+  /* the full-bleed hero uses 100vw — clip any sub-pixel horizontal overflow
+     (scoped to this page; overflow:clip doesn't break sticky elsewhere) */
+  html{overflow-x:clip}
   /* ===== Hero — bold yellow + white over a dark markets image (Dominate-Life feel) ===== */
-  .cat-hero{position:relative;border-radius:16px;overflow:hidden;min-height:320px;display:flex;align-items:center;margin:16px 0 6px;background:#0c0e10}
+  /* full-bleed: span the whole viewport width, no side gaps, no rounded corners */
+  .cat-hero{position:relative;overflow:hidden;min-height:320px;display:flex;align-items:center;background:#0c0e10;
+    width:100vw;margin:0 calc(50% - 50vw) 6px}
   .cat-hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
   .cat-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,12,14,.95) 0%,rgba(10,12,14,.8) 46%,rgba(10,12,14,.42) 100%)}
-  .cat-hero-c{position:relative;z-index:1;padding:46px clamp(24px,5vw,58px);max-width:780px;color:#fff}
+  .cat-hero-c{position:relative;z-index:1;width:100%;max-width:1180px;margin:0 auto;padding:46px 24px;color:#fff}
   .cat-eyebrow{display:inline-flex;align-items:center;gap:7px;color:#FACC15;font-weight:700;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase}
   .cat-hero-c h1{color:#fff;font-size:clamp(2.1rem,4.8vw,3.4rem);line-height:1.04;margin:14px 0 12px;font-weight:700;letter-spacing:-.01em}
   .cat-hero-c h1 .hl{color:#FACC15}
