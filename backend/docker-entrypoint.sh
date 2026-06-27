@@ -7,8 +7,11 @@ set -e
 echo "[entrypoint] applying database migrations…"
 python manage.py migrate --no-input
 
-echo "[entrypoint] seeding baseline data (payment methods + swap rate)…"
+echo "[entrypoint] seeding baseline + content data…"
 python manage.py seed_basics || true
+python manage.py seed_courses || true
+python manage.py seed_analysis || true
+python manage.py seed_traders || true
 
 echo "[entrypoint] starting gunicorn on 0.0.0.0:${PORT:-8000}"
 exec gunicorn config.wsgi:application \
