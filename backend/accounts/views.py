@@ -6,8 +6,10 @@ from django.contrib.auth.forms import SetPasswordForm
 from django.utils import timezone
 from django.conf import settings
 import random
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.db import models
 from .forms import UserRegistrationForm, UserLoginForm
-from .models import User, EmailVerificationToken, PasswordResetToken, LoginHistory, LoginCode
+from .models import User, EmailVerificationToken, PasswordResetToken, LoginHistory, LoginCode, AccessCode
 from .email_utils import EmailService
 
 
@@ -127,6 +129,33 @@ def login_code_verify(request):
         messages.error(request, 'That code is invalid or has expired. Request a new one.')
 
     return render(request, 'auth/login-code-verify.html', {'email': email})
+
+
+@login_required
+def access_gate(request):
+    """Platform access gate — users enter a shared access code (e.g. SUMMIT26)
+    once to unlock courses and the store. The unlock is saved on their account."""
+    next_url = request.GET.get('next') or request.POST.get('next') or ''
+    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+        next_url = ''
+
+    # Already unlocked (or staff) — no need to gate.
+    if request.user.has_course_access:
+        return redirect(next_url or 'education:catalog')
+
+    if request.method == 'POST':
+        entered = (request.POST.get('access_code') or '').strip()
+        access_code = AccessCode.match(entered)
+        if access_code:
+            request.user.grant_course_access()
+            AccessCode.objects.filter(pk=access_code.pk).update(
+                times_used=models.F('times_used') + 1
+            )
+            messages.success(request, 'Access granted — welcome in!')
+            return redirect(next_url or 'education:catalog')
+        messages.error(request, 'That access code is not valid. Please check it and try again.')
+
+    return render(request, 'auth/access-gate.html', {'next': next_url})
 
 
 def register_view(request):

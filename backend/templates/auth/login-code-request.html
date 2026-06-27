@@ -21,6 +21,8 @@
       </form>
 
       <div class="text-center mt-4">
+        <a href="{% url 'accounts:login_code_verify' %}" class="link-secondary">Already have a code?</a>
+        <span class="text-muted mx-2">·</span>
         <a href="{% url 'accounts:login' %}" class="link-secondary">Use a password instead</a>
       </div>
     </div>

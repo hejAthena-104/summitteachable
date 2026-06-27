@@ -1,7 +1,7 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
-from .models import User, LoginHistory, Notification, LoginCode
+from .models import User, LoginHistory, Notification, LoginCode, AccessCode
 
 # Remove the default Django "Groups" model from the admin — this platform does not
 # use group-based permissions, so it is just clutter.
@@ -170,9 +170,105 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(LoginCode)
 class LoginCodeAdmin(admin.ModelAdmin):
-    """Read-only view of passwordless login codes (handy for testing)."""
-    list_display = ('user', 'code', 'is_used', 'created_at', 'expires_at')
-    list_filter = ('is_used', 'created_at')
+    """Generate, view and deactivate passwordless login codes.
+
+    Use the "Add login code" button to mint a code for a user as an email
+    fallback — the 6-digit code is generated automatically and shown to you so
+    you can pass it to the user. Use the row checkbox + "Deactivate" action (or
+    untick "Is active" on the detail page) to revoke a code immediately.
+    """
+    list_display = ('user', 'code', 'status', 'created_by_admin', 'created_at', 'expires_at')
+    list_filter = ('is_active', 'is_used', 'created_by_admin', 'created_at')
     search_fields = ('user__username', 'user__email', 'code')
-    readonly_fields = ('user', 'code', 'is_used', 'created_at', 'expires_at')
+    autocomplete_fields = ('user',)
     ordering = ('-created_at',)
+    actions = ('deactivate_codes', 'reactivate_codes')
+
+    @admin.display(description='Status')
+    def status(self, obj):
+        return obj.status
+
+    def get_fields(self, request, obj=None):
+        # On the add form the admin only picks the user; everything else
+        # (code, expiry, audit fields) is filled in automatically.
+        if obj is None:
+            return ('user',)
+        return (
+            'user', 'code', 'is_active', 'is_used', 'created_by_admin',
+            'generated_by', 'created_at', 'expires_at',
+        )
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj is None:
+            return ()
+        # After creation only `is_active` stays editable (so codes can be revoked
+        # or restored); the code itself and the audit trail are immutable.
+        return (
+            'user', 'code', 'is_used', 'created_by_admin',
+            'generated_by', 'created_at', 'expires_at',
+        )
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.created_by_admin = True
+            obj.generated_by = request.user
+            # code + (longer) expiry are filled in by LoginCode.save()
+        super().save_model(request, obj, form, change)
+        if not change:
+            self.message_user(
+                request,
+                f'Login code for {obj.user.email or obj.user.username}: '
+                f'{obj.code}  —  expires {obj.expires_at:%Y-%m-%d %H:%M}. '
+                f'Share it with the user; they enter it at /auth/login-code/verify/.',
+                level=messages.SUCCESS,
+            )
+
+    @admin.action(description='Deactivate selected login codes')
+    def deactivate_codes(self, request, queryset):
+        n = queryset.update(is_active=False)
+        self.message_user(request, f'{n} login code(s) deactivated.')
+
+    @admin.action(description='Reactivate selected login codes')
+    def reactivate_codes(self, request, queryset):
+        n = queryset.update(is_active=True)
+        self.message_user(request, f'{n} login code(s) reactivated.')
+
+
+@admin.register(AccessCode)
+class AccessCodeAdmin(admin.ModelAdmin):
+    """Manage the shared platform access codes (e.g. SUMMIT26).
+
+    Users enter one of these once to unlock courses + the store. Create new
+    codes here and deactivate old ones; codes are stored upper-cased and matched
+    case-insensitively.
+    """
+    list_display = ('code', 'is_active', 'times_used', 'label', 'created_at', 'created_by')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('code', 'label')
+    ordering = ('-created_at',)
+    actions = ('activate_codes', 'deactivate_codes')
+
+    def get_fields(self, request, obj=None):
+        if obj is None:
+            return ('code', 'label', 'is_active')
+        return ('code', 'label', 'is_active', 'times_used', 'created_at', 'created_by')
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj is None:
+            return ()
+        return ('times_used', 'created_at', 'created_by')
+
+    def save_model(self, request, obj, form, change):
+        if not change and not obj.created_by_id:
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
+
+    @admin.action(description='Activate selected access codes')
+    def activate_codes(self, request, queryset):
+        n = queryset.update(is_active=True)
+        self.message_user(request, f'{n} access code(s) activated.')
+
+    @admin.action(description='Deactivate selected access codes')
+    def deactivate_codes(self, request, queryset):
+        n = queryset.update(is_active=False)
+        self.message_user(request, f'{n} access code(s) deactivated.')

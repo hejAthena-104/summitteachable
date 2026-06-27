@@ -7,18 +7,23 @@
   <div class="card border-0 shadow-sm">
     <div class="card-body p-4 p-md-5">
       <h1 class="h3 mb-1">Enter your login code</h1>
-      <p class="text-muted mb-4">We emailed a 6-digit code{% if email %} to <strong>{{ email }}</strong>{% endif %}. It expires in 15 minutes.</p>
+      <p class="text-muted mb-4">Enter your email address and the 6-digit login code to sign in. If support gave you a code directly, just enter your email below.</p>
 
       {% include 'includes/messages.html' %}
 
       <form method="post" action="{% url 'accounts:login_code_verify' %}">
         {% csrf_token %}
-        <input type="hidden" name="email" value="{{ email }}">
+        <div class="mb-3">
+          <label class="form-label">Email address</label>
+          <input type="email" name="email" value="{{ email }}"
+                 class="form-control" placeholder="you@example.com" required
+                 {% if not email %}autofocus{% endif %}>
+        </div>
         <div class="mb-3">
           <label class="form-label">6-digit code</label>
           <input type="text" name="code" inputmode="numeric" maxlength="6"
                  class="form-control form-control-lg text-center" style="letter-spacing:.5rem;font-weight:600;"
-                 placeholder="••••••" required autofocus>
+                 placeholder="••••••" required {% if email %}autofocus{% endif %}>
         </div>
         <button type="submit" class="btn btn-primary w-100">Log in</button>
       </form>
