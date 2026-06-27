@@ -6,9 +6,9 @@
 
 {% block content %}
 <style>
-  /* the full-bleed hero uses 100vw — clip any sub-pixel horizontal overflow
-     (scoped to this page; overflow:clip doesn't break sticky elsewhere) */
-  html{overflow-x:clip}
+  /* the full-bleed hero stretches to the viewport edges — prevent any
+     horizontal scroll (scoped to this page only; catalog has no sticky els) */
+  html,body{overflow-x:hidden;max-width:100%}
   /* ===== Hero — bold yellow + white over a dark markets image (Dominate-Life feel) ===== */
   /* full-bleed: span the whole viewport width, no side gaps, no rounded corners */
   .cat-hero{position:relative;overflow:hidden;min-height:320px;display:flex;align-items:center;background:#0c0e10;
