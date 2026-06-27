@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-sidebar-behaviour="fixed" data-navigation-color="default" data-is-fluid="true">
+
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'themes/dashly/assets/css/theme.bundle.css' %}" id="stylesheetLTR">
+    <link rel="stylesheet" href="{% static 'themes/dashly/assets/css/theme.rtl.bundle.css' %}" id="stylesheetRTL">
+    <link rel="stylesheet" href="{% static 'css/summit-theme.css' %}?v=3">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="icon" href="{% static 'images/favicon.png' %}?v=3" type="image/png">
+    <title>My Copies | Summit Teachable</title>
+    <style>
+        .ct-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .ct-accent-emerald { background: #8B5CF6; }
+        .ct-accent-teal    { background: #14B8A6; }
+        .ct-accent-blue    { background: #3B82F6; }
+        .ct-accent-violet  { background: #8B5CF6; }
+        .ct-accent-amber   { background: #F59E0B; }
+        .ct-sim-banner { border-left: 4px solid #8B5CF6; }
+    </style>
+</head>
+
+<body>
+    {% include 'includes/messages.html' %}
+    {% include 'includes/sidebar.html' %}
+
+    <main>
+        <header class="container-fluid d-flex py-6 mb-2">
+            <div class="ms-auto">{% include 'includes/demo_badge.html' with inline=True %}</div>
+        </header>
+
+        <div class="container-fluid mb-5">
+            <!-- Persistent DEMO badge -->
+            <div class="mb-4">{% include 'includes/demo_badge.html' %}</div>
+
+            <!-- Title -->
+            <div class="d-flex flex-wrap align-items-center justify-content-between mb-1">
+                <div>
+                    <h1 class="h2 mb-1">My Copies</h1>
+                    <p class="text-muted mb-0">Master traders you're currently copying on your practice account.</p>
+                </div>
+                <a href="{% url 'copytrading:traders' %}" class="btn btn-primary mt-2 mt-md-0">
+                    <i class="bi bi-plus-lg me-1"></i> Find traders
+                </a>
+            </div>
+
+            <!-- SIMULATED — practice only banner -->
+            <div class="alert alert-success ct-sim-banner d-flex align-items-center mt-3" role="alert">
+                <i class="bi bi-shield-lock-fill fs-4 me-3"></i>
+                <div>
+                    <strong>Simulated copy trading — practice only, not real money.</strong>
+                    <div class="small mb-0">
+                        Allocations shown are virtual demo amounts. Stopping a copy never touches real funds.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active copies -->
+            <div class="row g-4 mt-1">
+                {% for rel in relationships %}
+                <div class="col-md-6 col-xl-4">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="ct-avatar ct-accent-{{ rel.master.accent }}">{{ rel.master.initials }}</div>
+                                <div class="ms-3">
+                                    <h4 class="mb-0">{{ rel.master.name }}</h4>
+                                    <span class="text-muted small">{{ rel.master.headline }}</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="text-muted">Simulated allocation</span>
+                                <span class="fw-bold">${{ rel.allocated_demo_amount }}</span>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <span class="text-muted">Copying since</span>
+                                <span>{{ rel.created_at|date:"M d, Y" }}</span>
+                            </div>
+
+                            <span class="badge rounded-pill bg-success-subtle text-success align-self-start mb-3">
+                                <i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i> Active (Demo)
+                            </span>
+
+                            <form method="post" action="{% url 'copytrading:stop' rel.pk %}" class="mt-auto">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger w-100">
+                                    <i class="bi bi-stop-circle me-1"></i> Stop copying
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center text-muted py-5">
+                            <i class="bi bi-files d-block fs-1 mb-2"></i>
+                            You're not copying anyone yet.
+                            <div class="mt-3">
+                                <a href="{% url 'copytrading:traders' %}" class="btn btn-primary">
+                                    <i class="bi bi-search me-1"></i> Browse master traders
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <footer class="mt-auto">
+            <div class="container-fluid mt-4 mb-6 text-muted">
+                Simulated copy trading — practice only, not real money. &copy; Summit Teachable 2025
+            </div>
+        </footer>
+    </main>
+
+    <script src="{% static 'themes/dashly/assets/js/theme.bundle.js' %}"></script>
+</body>
+
+</html>

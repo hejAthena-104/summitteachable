@@ -1,0 +1,250 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Buy {{ course.title }} | Summit Teachable{% endblock %}
+
+{% block content %}
+<script>document.documentElement.classList.add('reveal-js');</script>
+<style>
+  .reveal-js .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.2,.7,.2,1)}
+  .reveal-js .reveal.in{opacity:1;transform:none}
+
+  /* hero — full-width banner (the banner already carries the title/subtitle) */
+  .co-banner{width:100%;display:block;border-radius:18px;aspect-ratio:661/198;object-fit:cover;box-shadow:0 16px 36px rgba(124,58,237,.18)}
+  .hero-meta{margin-top:14px}
+  .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  /* animated red/green candle accent */
+  .candles{display:flex;gap:6px;align-items:center;height:40px;margin-top:12px}
+  .candle{position:relative;width:8px;border-radius:3px}
+  .candle::before{content:"";position:absolute;left:50%;top:-6px;bottom:-6px;width:2px;transform:translateX(-50%);background:inherit;opacity:.55;border-radius:2px}
+  .candle.up{background:#16A34A;animation:flick 2.6s ease-in-out infinite}
+  .candle.down{background:#DC2626;animation:flick 2.6s ease-in-out infinite}
+  .candle:nth-child(2){animation-delay:.2s}.candle:nth-child(3){animation-delay:.4s}.candle:nth-child(4){animation-delay:.6s}
+  .candle:nth-child(5){animation-delay:.8s}.candle:nth-child(6){animation-delay:1s}.candle:nth-child(7){animation-delay:1.2s}.candle:nth-child(8){animation-delay:1.4s}
+  @keyframes flick{0%,100%{transform:scaleY(.7)}50%{transform:scaleY(1.18)}}
+  @media (prefers-reduced-motion: reduce){.candle{animation:none}}
+
+  /* two-column: content + sticky purchase */
+  .buy-layout{display:grid;grid-template-columns:1fr 392px;gap:26px;align-items:start;margin-top:22px}
+  .buy-aside{position:sticky;top:18px}
+  .mini-feats{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+  .mini-feat{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:var(--lilac);
+    background:var(--chip-sel-bg);border:1px solid var(--border);border-radius:999px;padding:5px 12px}
+
+  /* curriculum */
+  .cur-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+  .cur-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem}.cur-meta b{color:var(--lilac)}
+  .cur-module{border:1px solid var(--border);border-radius:14px;margin-bottom:12px;background:var(--panel);overflow:hidden;transition:border-color .2s,box-shadow .2s}
+  .cur-module[open]{border-color:var(--pri);box-shadow:0 8px 24px rgba(124,58,237,.10)}
+  .cur-module summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;padding:15px 18px;font-weight:700}
+  .cur-module summary::-webkit-details-marker{display:none}
+  .cur-ix{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:Sora;font-size:.9rem;background:var(--chip-sel-bg);color:var(--pri2)}
+  .cur-mtitle{flex:1}.cur-mcount{font-size:.8rem;color:var(--muted);font-weight:600}
+  .cur-chev{transition:transform .25s;color:var(--muted)}.cur-module[open] .cur-chev{transform:rotate(180deg)}
+  .cur-lessons{list-style:none;margin:0;padding:0 18px 10px}
+  .cur-lesson{display:flex;align-items:center;gap:12px;padding:10px 8px;border-top:1px dashed var(--border);font-size:.9rem}
+  .cur-lesson i{font-size:1rem;color:var(--muted)}.cur-lesson.is-preview i{color:#16A34A}
+  .cur-ltitle{flex:1}.cur-lesson:not(.is-preview) .cur-ltitle{color:var(--muted)}
+  .cur-badge{font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#16A34A;background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.3);border-radius:999px;padding:2px 8px}
+  .cur-dur{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .cur-unlock{margin-top:6px;padding:11px 15px;border-radius:12px;background:var(--chip-sel-bg);border:1px solid var(--border);color:var(--lilac);font-size:.86rem;font-weight:600;display:flex;align-items:center;gap:8px}
+
+  /* purchase card */
+  .pc-price{display:flex;align-items:baseline;gap:8px}
+  .pc-price .amt{font-family:Sora;font-size:2.1rem;font-weight:800;color:var(--heading)}
+  .pc-divider{height:1px;background:var(--border);margin:16px 0}
+  .pc-section-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin-bottom:8px}
+
+  @media(max-width:900px){.buy-layout{grid-template-columns:1fr}.buy-aside{position:static}}
+</style>
+
+<div style="padding:18px 0 8px;"><a href="{% url 'store:catalog' %}" class="muted"><i class="bi bi-arrow-left"></i> All courses</a></div>
+
+{% if messages %}{% for m in messages %}<div class="alert {% if m.tags == 'error' %}alert-err{% else %}alert-warn{% endif %}">{{ m }}</div>{% endfor %}{% endif %}
+
+<!-- FULL-WIDTH BANNER HERO -->
+<section class="reveal" style="margin-bottom:6px;">
+  <h1 class="sr-only">{{ course.title }}</h1>
+  <img class="co-banner" src="{% static 'images/courses/' %}{{ course.thumbnail_slug }}.png?v=4" alt="{{ course.title }}">
+  <div class="hero-meta">
+    <span class="lvl">{{ course.get_level_display }} · Lifetime access</span>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.88rem;margin-top:8px;align-items:center;" class="muted">
+      <span><i class="bi bi-collection-play pri"></i> {{ course.lesson_count }} lessons</span>
+      <span><i class="bi bi-diagram-3 pri"></i> {{ course.module_count }} modules</span>
+      <span><i class="bi bi-clock pri"></i> {{ course.duration_label|default:"Self-paced" }}</span>
+      <span><i class="bi bi-person-badge pri"></i> {{ course.instructor }}</span>
+      <span class="candles" aria-hidden="true" style="margin:0 0 0 auto;">
+        <span class="candle up" style="height:20px"></span><span class="candle down" style="height:14px"></span>
+        <span class="candle up" style="height:26px"></span><span class="candle up" style="height:18px"></span>
+        <span class="candle down" style="height:22px"></span><span class="candle up" style="height:28px"></span>
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- TWO COLUMN: content (left) + sticky purchase (right) -->
+<div class="buy-layout">
+
+  <!-- LEFT: curriculum + about -->
+  <div>
+    <div class="mini-feats reveal">
+      <span class="mini-feat"><i class="bi bi-infinity"></i> Lifetime access</span>
+      <span class="mini-feat"><i class="bi bi-graph-up-arrow"></i> Practice on a demo account</span>
+      <span class="mini-feat"><i class="bi bi-lightning-charge-fill"></i> Instant access on approval</span>
+      <span class="mini-feat"><i class="bi bi-shield-check"></i> Secure crypto checkout</span>
+    </div>
+
+    <section class="panel reveal" style="margin-top:14px;">
+      <div class="cur-head">
+        <div>
+          <h2 style="font-size:1.25rem;margin:0;">What's inside this course</h2>
+          <p class="muted" style="margin:4px 0 0;font-size:.9rem;">Preview the full curriculum — lessons unlock the moment you enroll.</p>
+        </div>
+        <div class="cur-meta muted">
+          <span><b>{{ course.module_count }}</b> modules</span>
+          <span><b>{{ course.lesson_count }}</b> lessons</span>
+        </div>
+      </div>
+
+      {% for module in modules %}
+      <details class="cur-module" {% if forloop.first %}open{% endif %}>
+        <summary>
+          <span class="cur-ix">{{ forloop.counter }}</span>
+          <span class="cur-mtitle">{{ module.title }}</span>
+          <span class="cur-mcount">{{ module.lessons.count }} lesson{{ module.lessons.count|pluralize }}</span>
+          <i class="bi bi-chevron-down cur-chev"></i>
+        </summary>
+        <ul class="cur-lessons">
+          {% for lesson in module.lessons.all %}
+          <li class="cur-lesson {% if lesson.is_preview %}is-preview{% endif %}">
+            <i class="bi {% if lesson.is_preview %}bi-play-circle-fill{% else %}bi-lock-fill{% endif %}"></i>
+            <span class="cur-ltitle">{{ lesson.title }}</span>
+            {% if lesson.is_preview %}<span class="cur-badge">Free preview</span>{% endif %}
+            <span class="cur-dur">{{ lesson.duration_label|default:"—" }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% empty %}
+      <p class="muted">Curriculum is being finalised — full lesson list coming soon.</p>
+      {% endfor %}
+
+      <div class="cur-unlock"><i class="bi bi-unlock-fill"></i> All {{ course.lesson_count }} lessons + lifetime updates unlock instantly when your enrollment is confirmed.</div>
+    </section>
+
+    {% if course.description %}
+    <section class="panel reveal" style="margin-top:16px;">
+      <h3 style="font-size:1.05rem;margin:0 0 6px;">About this course</h3>
+      <p class="muted" style="margin:0;">{{ course.description }}</p>
+    </section>
+    {% endif %}
+  </div>
+
+  <!-- RIGHT: sticky purchase card (price + crypto pay + form) -->
+  <aside class="buy-aside">
+    <div class="panel">
+      <div class="pc-price"><span class="amt">${{ course.price|floatformat:0 }}</span><span class="muted" style="font-size:.85rem;">one-time · lifetime</span></div>
+      <p class="muted" style="font-size:.82rem;margin:8px 0 0;">A one-time <strong>course purchase</strong> — not a trading deposit or investment.</p>
+
+      <div class="pc-divider"></div>
+
+      <!-- crypto pay -->
+      <div class="pc-section-label">1 · Pay with crypto</div>
+      <div id="coinChips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;"></div>
+      <div id="payDetail" style="display:none;">
+        <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;">
+          <div id="qrBox" style="background:#fff;border-radius:12px;padding:8px;width:118px;height:118px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(17,12,46,.1);"></div>
+          <div style="flex:1;min-width:150px;">
+            <div class="muted" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;">Send to (<span id="netLabel"></span>)</div>
+            <div class="wallet" id="addrText" style="margin:5px 0;font-size:.78rem;"></div>
+            <button type="button" class="btn btn-ghost" id="copyBtn" style="padding:6px 12px;font-size:.8rem;"><i class="bi bi-clipboard"></i> Copy</button>
+          </div>
+        </div>
+        <p class="muted" style="font-size:.76rem;margin-top:8px;">Send only <span id="coinWarn" class="pri"></span> to this address.</p>
+      </div>
+      <p id="noPay" class="muted" style="display:none;font-size:.85rem;">Payment options will appear once configured in the admin.</p>
+
+      <div class="pc-divider"></div>
+
+      <!-- form -->
+      <div class="pc-section-label">2 · Confirm &amp; unlock</div>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="field"><label>Email address *</label>
+          <input type="email" name="email" value="{{ form.email|default:'' }}" required placeholder="you@example.com"></div>
+        <div class="field"><label>Full name</label>
+          <input type="text" name="name" value="{{ form.name|default:'' }}" placeholder="Your name"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="field"><label>Phone</label><input type="text" name="phone" value="{{ form.phone|default:'' }}"></div>
+          <div class="field"><label>Country</label><input type="text" name="country" value="{{ form.country|default:'' }}"></div>
+        </div>
+        <input type="hidden" name="payment_method" id="payMethodInput" value="">
+        <input type="hidden" name="amount" value="{{ course.price|floatformat:0 }}">
+        <div class="field"><label>Transaction reference / hash</label>
+          <input type="text" name="tx_reference" value="{{ form.tx_reference|default:'' }}" placeholder="Optional — speeds up review"></div>
+        <div class="field"><label>Proof of payment (screenshot) *</label>
+          <input type="file" name="proof_image" accept="image/*" required></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem;padding:13px;">
+          <i class="bi bi-lock-fill"></i> Submit &amp; unlock course</button>
+        <p class="muted" style="font-size:.74rem;text-align:center;margin-top:9px;"><i class="bi bi-shield-lock"></i> We verify every payment manually before granting access.</p>
+      </form>
+    </div>
+  </aside>
+</div>
+
+{{ methods|json_script:"methods-data" }}
+<script>
+(function(){
+  var methods = JSON.parse(document.getElementById('methods-data').textContent || '[]');
+  var chips = document.getElementById('coinChips');
+  var detail = document.getElementById('payDetail');
+  var noPay = document.getElementById('noPay');
+  var qrBox = document.getElementById('qrBox');
+  var addrText = document.getElementById('addrText');
+  var netLabel = document.getElementById('netLabel');
+  var coinWarn = document.getElementById('coinWarn');
+  var methodInput = document.getElementById('payMethodInput');
+  var copyBtn = document.getElementById('copyBtn');
+
+  if(methods.length){
+    function logo(m){
+      if(m.logo) return '<img src="'+m.logo+'" alt="" style="width:20px;height:20px;" onerror="this.style.display=\'none\'">';
+      if(m.icon_url) return '<img src="'+m.icon_url+'" alt="" style="width:20px;height:20px;">';
+      return '<i class="bi bi-coin" style="font-size:18px;color:var(--lilac)"></i>';
+    }
+    function select(m, el){
+      Array.prototype.forEach.call(chips.children, function(c){ c.style.borderColor='var(--border)'; c.style.background='var(--raised)'; });
+      if(el){ el.style.borderColor='var(--pri)'; el.style.background='var(--chip-sel-bg)'; }
+      methodInput.value = m.name;
+      netLabel.textContent = m.network || m.name;
+      coinWarn.textContent = (m.symbol ? m.symbol.toUpperCase() : m.name);
+      addrText.textContent = m.address || 'No address configured — please contact support.';
+      detail.style.display = 'block';
+      qrBox.innerHTML = '';
+      if(m.qr){ var img=document.createElement('img'); img.src=m.qr; img.alt='Payment QR'; img.style.maxWidth='102px'; img.style.maxHeight='102px'; qrBox.appendChild(img); }
+      else { qrBox.innerHTML = '<span style="color:#555;font-size:.72rem;text-align:center;">QR unavailable</span>'; }
+    }
+    methods.forEach(function(m, i){
+      var el = document.createElement('button');
+      el.type='button';
+      el.style.cssText='display:flex;align-items:center;gap:7px;border:1px solid var(--border);background:var(--raised);color:var(--text);border-radius:10px;padding:8px 11px;cursor:pointer;font-weight:600;font-size:.86rem;transition:.15s;';
+      el.innerHTML = logo(m) + '<span>'+ m.name +'</span>';
+      el.addEventListener('click', function(){ select(m, el); });
+      chips.appendChild(el);
+      if(i===0) select(m, el);
+    });
+    copyBtn && copyBtn.addEventListener('click', function(){
+      var t = addrText.textContent || '';
+      navigator.clipboard && navigator.clipboard.writeText(t);
+      copyBtn.innerHTML = '<i class="bi bi-check2"></i> Copied';
+      setTimeout(function(){ copyBtn.innerHTML = '<i class="bi bi-clipboard"></i> Copy'; }, 1500);
+    });
+  } else { noPay.style.display='block'; }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:.1});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+})();
+</script>
+{% endblock %}

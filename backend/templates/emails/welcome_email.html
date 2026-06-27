@@ -1,0 +1,51 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>Welcome to {{ site_name }}, {{ first_name }}! 🎉</h2>
+
+<p>Congratulations! Your account has been successfully created and verified.</p>
+
+<p>You're now part of a growing community of learners who use {{ site_name }} to study the markets and practice trading with simulated funds.</p>
+
+<div style="text-align: center;">
+    <a href="{{ dashboard_url }}" class="btn" style="display:inline-block;padding:14px 34px;background-color:#8B5CF6;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px;margin:18px 0;">Go to Dashboard</a>
+</div>
+
+<div class="info-box">
+    <p><strong>Getting Started</strong></p>
+    <p style="margin-top: 10px;">Your account is ready to use. Log in to browse our trading courses and open your practice dashboard.</p>
+</div>
+
+<div class="divider"></div>
+
+<p style="font-size: 16px;"><strong>What's Next?</strong></p>
+
+<ol style="color: #4a5568; margin-left: 20px; margin-bottom: 20px; line-height: 1.8;">
+    <li><strong>Start a Course:</strong> Pick a lesson and learn the fundamentals at your own pace</li>
+    <li><strong>Open the Demo Dashboard:</strong> Practice trading with simulated funds &mdash; no real money involved</li>
+    <li><strong>Track Your Progress:</strong> Follow your practice portfolio in real time from your dashboard</li>
+    <li><strong>Invite Friends:</strong> Share your unique referral code so others can learn too</li>
+</ol>
+
+<div class="info-box" style="background-color: #fff5f5; border-left-color: #fc8181;">
+    <p><strong>🔐 Security Tips</strong></p>
+    <ul style="margin-top: 10px; margin-left: 20px; color: #4a5568;">
+        <li>Never share your password with anyone</li>
+        <li>Enable two-factor authentication (coming soon)</li>
+        <li>Be cautious of anyone asking for real money &mdash; Summit Teachable never does</li>
+    </ul>
+</div>
+
+<div class="divider"></div>
+
+<p>Your unique referral code: <strong style="color: #8B5CF6; font-size: 18px;">{{ user.referral_code }}</strong></p>
+<p style="font-size: 14px; color: #718096;">Share this code with friends and family so they can start learning too!</p>
+
+<div class="divider"></div>
+
+<p>Thank you for choosing {{ site_name }}. We're here to support your learning journey every step of the way.</p>
+
+<p>Happy learning!</p>
+
+<p>Best regards,<br>The {{ site_name }} Team</p>
+{% endblock %}

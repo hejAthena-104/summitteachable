@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-sidebar-behaviour="fixed" data-navigation-color="default" data-is-fluid="true">
+
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+
+<head>
+    {% load static %}
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="Webinning" name="author">
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="{% static 'themes/dashly/assets/css/theme.bundle.css' %}" id="stylesheetLTR">
+    <link rel="stylesheet" href="{% static 'themes/dashly/assets/css/theme.rtl.bundle.css' %}" id="stylesheetRTL">
+    <link rel="stylesheet" href="{% static 'css/summit-theme.css' %}?v=3">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&amp;display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <script>
+        // Theme switcher (mirrors the dashboard shell)
+        const getPreferredTheme = () => {
+            if (localStorage.getItem('theme') != null) {
+                return localStorage.getItem('theme');
+            }
+            return document.documentElement.dataset.theme;
+        };
+        const setTheme = function (theme) {
+            if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.dataset.theme = 'dark';
+            } else {
+                document.documentElement.dataset.theme = theme;
+            }
+            localStorage.setItem('theme', theme);
+        };
+        setTheme(getPreferredTheme());
+    </script>
+
+    <link rel="icon" href="{% static 'images/favicon.png' %}?v=3" type="image/png">
+
+    <title>{% block title %}Market Analysis{% endblock %} | Summit Teachable</title>
+
+    <style>
+        .analysis-bias-card {
+            border-left: 4px solid var(--bias-color, #F59E0B);
+        }
+        .analysis-bias-pill {
+            background: var(--bias-color, #F59E0B);
+            color: #fff;
+        }
+        .analysis-edu-note {
+            font-size: .8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Django Messages -->
+    {% include 'includes/messages.html' %}
+
+    <!-- THEME CONFIGURATION -->
+    <script>
+        let themeAttrs = document.documentElement.dataset;
+        for (let attr in themeAttrs) {
+            if (localStorage.getItem(attr) != null) {
+                document.documentElement.dataset[attr] = localStorage.getItem(attr);
+            }
+        }
+    </script>
+
+    <!-- NAVIGATION -->
+    {% include "includes/sidebar.html" %}
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <!-- HEADER -->
+        <header class="container-fluid d-flex py-6 mb-4">
+            <div class="d-flex align-items-center ms-auto me-n1 me-lg-n2">
+                <!-- Account -->
+                <div class="dropdown">
+                    <a href="javascript: void(0);"
+                        class="dropdown-toggle no-arrow d-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm mx-1 mx-lg-2 w-40px h-40px link-secondary"
+                        role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" title="Account">
+                        <i class="bi bi-person-fill" style="font-size: 20px;"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <div class="dropdown-item-text">
+                            <h4 class="mb-0">{{ user.get_full_name }}</h4>
+                            <p class="card-text">{{ user.email }}</p>
+                        </div>
+                        <hr class="dropdown-divider">
+                        <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Sign out</a>
+                        <form id="logout-form" action="{% url 'accounts:logout' %}" method="POST" style="display: none;">
+                            {% csrf_token %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container-fluid mb-5">
+            <!-- Persistent DEMO badge -->
+            <div class="mb-4">{% include 'includes/demo_badge.html' %}</div>
+
+            {% block content %}{% endblock %}
+
+            <!-- Educational disclaimer -->
+            <div class="alert alert-light border mt-4 analysis-edu-note text-muted" role="note">
+                <i class="bi bi-mortarboard me-1"></i>
+                Market analysis on Summit Teachable is <strong>educational content</strong> for
+                simulated/paper trading practice. It is <strong>not financial advice</strong> and
+                no real funds are involved.
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-auto">
+            <div class="container-fluid mt-4 mb-6 text-muted">
+                <div class="row justify-content-between">
+                    <div class="col">All Rights Reserved &copy; Summit Teachable 2025</div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JAVASCRIPT -->
+    <script src="{% static 'themes/dashly/assets/js/theme.bundle.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

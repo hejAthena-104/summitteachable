@@ -1,0 +1,114 @@
+{% extends 'education/base_education.html' %}
+{% load static %}
+
+{% block title %}{{ lesson.title }}{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{% url 'education:catalog' %}">Academy</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'education:course_detail' course.slug %}">{{ course.title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ lesson.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Player + content -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="ratio ratio-16x9">
+                    {% if lesson.video_url %}
+                    <iframe src="{{ lesson.video_url }}" title="{{ lesson.title }}"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen style="border:0; border-top-left-radius: var(--bs-card-border-radius); border-top-right-radius: var(--bs-card-border-radius);"></iframe>
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center bg-dark text-white-50">
+                        <span><i class="bi bi-camera-video-off me-2"></i>No video for this lesson.</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <h1 class="h3 mb-0 me-2">{{ lesson.title }}</h1>
+                        {% if lesson.is_preview and not is_enrolled %}<span class="badge text-bg-success">Preview</span>{% endif %}
+                    </div>
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-clock me-1"></i>{{ lesson.duration_label }}
+                        <span class="mx-2">·</span>
+                        {% include 'includes/demo_badge.html' with inline=True %}
+                    </p>
+                    <hr>
+                    <div class="lesson-content">
+                        {{ lesson.content|linebreaks }}
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between mt-4">
+                        <a href="{% url 'education:course_detail' course.slug %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Back to course
+                        </a>
+                        {% if is_enrolled %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check2-circle me-1"></i> Mark complete
+                            </button>
+                        </form>
+                        {% else %}
+                        <form method="post" action="{% url 'education:enroll' course.slug %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-bookmark-plus me-1"></i> Enroll to track progress
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson list sidebar -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">Course content</h4>
+                    {% if is_enrolled %}
+                    <div class="progress mt-2" style="height: 8px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ enrollment.progress }}%;"
+                            aria-valuenow="{{ enrollment.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <small class="text-muted">{{ enrollment.progress }}% complete</small>
+                    {% endif %}
+                </div>
+                <div class="card-body p-0" style="max-height: 70vh; overflow-y: auto;">
+                    {% for module in modules %}
+                    <div class="px-3 pt-3 pb-1">
+                        <span class="text-uppercase small fw-bold text-muted">{{ forloop.counter }}. {{ module.title }}</span>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for l in module.lessons.all %}
+                        <li class="list-group-item d-flex align-items-center justify-content-between {% if l.id == lesson.id %}bg-light{% endif %}">
+                            <span class="text-truncate me-2">
+                                {% if l.id == lesson.id %}
+                                <i class="bi bi-play-fill text-primary me-1"></i>
+                                {% else %}
+                                <i class="bi bi-circle me-1 text-muted"></i>
+                                {% endif %}
+                                {{ l.title }}
+                                {% if l.is_preview %}<span class="badge text-bg-success ms-1">Preview</span>{% endif %}
+                            </span>
+                            {% if is_enrolled or l.is_preview %}
+                            <a href="{% url 'education:lesson' course.slug l.id %}" class="btn btn-sm btn-link p-0">
+                                <i class="bi bi-play-circle"></i>
+                            </a>
+                            {% else %}
+                            <i class="bi bi-lock text-muted"></i>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

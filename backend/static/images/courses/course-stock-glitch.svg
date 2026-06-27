@@ -1,0 +1,75 @@
+<svg width="800" height="450" viewBox="0 0 800 450" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stock Market Money Glitch">
+  <defs>
+    <linearGradient id="bg-course-stock-glitch" x1="0" y1="0" x2="760" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.55" stop-color="#FAF7FF"/>
+      <stop offset="1" stop-color="#F1EAFD"/>
+    </linearGradient>
+    <radialGradient id="glow-course-stock-glitch" cx="596" cy="150" r="360" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#C9B4FB" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#C9B4FB" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="panelglow-course-stock-glitch" cx="578.0" cy="104" r="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F4EEFE" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="purple-course-stock-glitch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="gold-course-stock-glitch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FCD877"/>
+      <stop offset="0.5" stop-color="#F5B942"/>
+      <stop offset="1" stop-color="#E09A1F"/>
+    </linearGradient>
+    <linearGradient id="green-course-stock-glitch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22C55E"/>
+      <stop offset="1" stop-color="#118A3D"/>
+    </linearGradient>
+    <linearGradient id="red-course-stock-glitch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F05252"/>
+      <stop offset="1" stop-color="#B91C1C"/>
+    </linearGradient>
+    <filter id="soft-course-stock-glitch" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="22" flood-color="#7C3AED" flood-opacity="0.16"/>
+    </filter>
+    <filter id="ds-course-stock-glitch" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="6" stdDeviation="9" flood-color="#3B1E78" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <!-- bright background -->
+  <rect width="800" height="450" fill="url(#bg-course-stock-glitch)"/>
+  <rect width="800" height="450" fill="url(#glow-course-stock-glitch)"/>
+
+  <!-- airy dotted grid -->
+  <g fill="#8B5CF6" fill-opacity="0.10">
+    <circle cx="70" cy="70" r="2.2"/><circle cx="120" cy="70" r="2.2"/><circle cx="170" cy="70" r="2.2"/><circle cx="220" cy="70" r="2.2"/><circle cx="270" cy="70" r="2.2"/><circle cx="320" cy="70" r="2.2"/><circle cx="370" cy="70" r="2.2"/><circle cx="420" cy="70" r="2.2"/><circle cx="470" cy="70" r="2.2"/><circle cx="520" cy="70" r="2.2"/><circle cx="570" cy="70" r="2.2"/><circle cx="620" cy="70" r="2.2"/><circle cx="670" cy="70" r="2.2"/><circle cx="720" cy="70" r="2.2"/><circle cx="70" cy="120" r="2.2"/><circle cx="120" cy="120" r="2.2"/><circle cx="170" cy="120" r="2.2"/><circle cx="220" cy="120" r="2.2"/><circle cx="270" cy="120" r="2.2"/><circle cx="320" cy="120" r="2.2"/><circle cx="370" cy="120" r="2.2"/><circle cx="420" cy="120" r="2.2"/><circle cx="470" cy="120" r="2.2"/><circle cx="520" cy="120" r="2.2"/><circle cx="570" cy="120" r="2.2"/><circle cx="620" cy="120" r="2.2"/><circle cx="670" cy="120" r="2.2"/><circle cx="720" cy="120" r="2.2"/><circle cx="70" cy="170" r="2.2"/><circle cx="120" cy="170" r="2.2"/><circle cx="170" cy="170" r="2.2"/><circle cx="220" cy="170" r="2.2"/><circle cx="270" cy="170" r="2.2"/><circle cx="320" cy="170" r="2.2"/><circle cx="370" cy="170" r="2.2"/><circle cx="420" cy="170" r="2.2"/><circle cx="470" cy="170" r="2.2"/><circle cx="520" cy="170" r="2.2"/><circle cx="570" cy="170" r="2.2"/><circle cx="620" cy="170" r="2.2"/><circle cx="670" cy="170" r="2.2"/><circle cx="720" cy="170" r="2.2"/><circle cx="70" cy="220" r="2.2"/><circle cx="120" cy="220" r="2.2"/><circle cx="170" cy="220" r="2.2"/><circle cx="220" cy="220" r="2.2"/><circle cx="270" cy="220" r="2.2"/><circle cx="320" cy="220" r="2.2"/><circle cx="370" cy="220" r="2.2"/><circle cx="420" cy="220" r="2.2"/><circle cx="470" cy="220" r="2.2"/><circle cx="520" cy="220" r="2.2"/><circle cx="570" cy="220" r="2.2"/><circle cx="620" cy="220" r="2.2"/><circle cx="670" cy="220" r="2.2"/><circle cx="720" cy="220" r="2.2"/><circle cx="70" cy="270" r="2.2"/><circle cx="120" cy="270" r="2.2"/><circle cx="170" cy="270" r="2.2"/><circle cx="220" cy="270" r="2.2"/><circle cx="270" cy="270" r="2.2"/><circle cx="320" cy="270" r="2.2"/><circle cx="370" cy="270" r="2.2"/><circle cx="420" cy="270" r="2.2"/><circle cx="470" cy="270" r="2.2"/><circle cx="520" cy="270" r="2.2"/><circle cx="570" cy="270" r="2.2"/><circle cx="620" cy="270" r="2.2"/><circle cx="670" cy="270" r="2.2"/><circle cx="720" cy="270" r="2.2"/><circle cx="70" cy="320" r="2.2"/><circle cx="120" cy="320" r="2.2"/><circle cx="170" cy="320" r="2.2"/><circle cx="220" cy="320" r="2.2"/><circle cx="270" cy="320" r="2.2"/><circle cx="320" cy="320" r="2.2"/><circle cx="370" cy="320" r="2.2"/><circle cx="420" cy="320" r="2.2"/><circle cx="470" cy="320" r="2.2"/><circle cx="520" cy="320" r="2.2"/><circle cx="570" cy="320" r="2.2"/><circle cx="620" cy="320" r="2.2"/><circle cx="670" cy="320" r="2.2"/><circle cx="720" cy="320" r="2.2"/><circle cx="70" cy="370" r="2.2"/><circle cx="120" cy="370" r="2.2"/><circle cx="170" cy="370" r="2.2"/><circle cx="220" cy="370" r="2.2"/><circle cx="270" cy="370" r="2.2"/><circle cx="320" cy="370" r="2.2"/><circle cx="370" cy="370" r="2.2"/><circle cx="420" cy="370" r="2.2"/><circle cx="470" cy="370" r="2.2"/><circle cx="520" cy="370" r="2.2"/><circle cx="570" cy="370" r="2.2"/><circle cx="620" cy="370" r="2.2"/><circle cx="670" cy="370" r="2.2"/><circle cx="720" cy="370" r="2.2"/>
+  </g>
+
+  <!-- hero panel -->
+  <rect x="404" y="64" width="348" height="272" rx="30" fill="#FFFFFF" filter="url(#soft-course-stock-glitch)"/><rect x="404" y="64" width="348" height="272" rx="30" fill="none" stroke="#8B5CF6" stroke-opacity="0.22" stroke-width="1.5"/><rect x="404" y="64" width="348" height="272" rx="30" fill="url(#panelglow-course-stock-glitch)"/>
+
+  <!-- hero motif -->
+  <circle cx="660" cy="128" r="42" fill="#16A34A" opacity="0.12"/><line x1="440" y1="232" x2="440" y2="296" stroke="url(#green-course-stock-glitch)" stroke-width="4" stroke-linecap="round"/><rect x="429.0" y="250" width="22" height="32.0" rx="4" fill="url(#green-course-stock-glitch)"/><line x1="478" y1="222" x2="478" y2="272" stroke="url(#red-course-stock-glitch)" stroke-width="4" stroke-linecap="round"/><rect x="467.0" y="236" width="22" height="22.0" rx="4" fill="url(#red-course-stock-glitch)"/><line x1="516" y1="200" x2="516" y2="264" stroke="url(#green-course-stock-glitch)" stroke-width="4" stroke-linecap="round"/><rect x="505.0" y="214" width="22" height="36.0" rx="4" fill="url(#green-course-stock-glitch)"/><line x1="554" y1="210" x2="554" y2="256" stroke="url(#red-course-stock-glitch)" stroke-width="4" stroke-linecap="round"/><rect x="543.0" y="224" width="22" height="16.0" rx="4" fill="url(#red-course-stock-glitch)"/><line x1="592" y1="162" x2="592" y2="232" stroke="url(#green-course-stock-glitch)" stroke-width="4" stroke-linecap="round"/><rect x="581.0" y="178" width="22" height="40.0" rx="4" fill="url(#green-course-stock-glitch)"/><line x1="630" y1="132" x2="630" y2="198" stroke="url(#green-course-stock-glitch)" stroke-width="4" stroke-linecap="round"/><rect x="619.0" y="150" width="22" height="34.0" rx="4" fill="url(#green-course-stock-glitch)"/><polyline points="430,272 478,256 516,236 592,200 660,128" fill="none" stroke="#7C3AED" stroke-width="3.5" stroke-dasharray="9 8" stroke-linecap="round" opacity="0.85"/><g transform="translate(660,120)"><path d="M0 -16 L4 -4 L16 0 L4 4 L0 16 L-4 4 L-16 0 L-4 -4 Z" fill="#F5B942"/></g><g transform="translate(690,150)"><path d="M0 -16 L4 -4 L16 0 L4 4 L0 16 L-4 4 L-16 0 L-4 -4 Z" fill="#8B5CF6"/></g><g transform="translate(700,110) scale(0.8)">
+      <circle cx="0" cy="0" r="26" fill="url(#green-course-stock-glitch)"/>
+      <path d="M0 -13 L11 2 L4 2 L4 13 L-4 13 L-4 2 L-11 2 Z" fill="#FFFFFF"/>
+    </g>
+
+  <!-- brand mark -->
+  <g>
+    <path d="M56 78 L70 50 L84 78 Z" fill="url(#purple-course-stock-glitch)"/>
+    <path d="M62 78 L70 62 L78 78 Z" fill="#FFFFFF" fill-opacity="0.85"/>
+    <circle cx="70" cy="48" r="3.4" fill="#F5B942"/>
+    <text x="96" y="64" font-family="'Inter','Sora','Segoe UI',system-ui,-apple-system,sans-serif" font-size="15" font-weight="800" fill="#1A1430" letter-spacing="0.5">Summit Teachable</text>
+    <text x="96" y="80" font-family="'Inter','Sora','Segoe UI',system-ui,-apple-system,sans-serif" font-size="9.5" font-weight="600" fill="#6E6685" letter-spacing="2.4">TRADING ACADEMY</text>
+  </g>
+
+  <!-- eyebrow + title -->
+  <g>
+    <rect x="56" y="278" width="22" height="22" rx="7" fill="url(#purple-course-stock-glitch)"/>
+    <text x="86" y="293" font-family="'Inter','Sora','Segoe UI',system-ui,-apple-system,sans-serif" font-size="12.5" font-weight="800" fill="#7C3AED" letter-spacing="2.6">EQUITIES</text>
+  </g>
+  <text x="56" y="322" font-family="'Inter','Sora','Segoe UI',system-ui,-apple-system,sans-serif" font-size="33" font-weight="800" fill="#1A1430" letter-spacing="-0.6">Stock Market</text><text x="56" y="360" font-family="'Inter','Sora','Segoe UI',system-ui,-apple-system,sans-serif" font-size="33" font-weight="800" fill="#1A1430" letter-spacing="-0.6">Money Glitch</text>
+  <rect x="57" y="372" width="62" height="5" rx="2.5" fill="url(#purple-course-stock-glitch)"/>
+</svg>

@@ -1,0 +1,34 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>Demo Activity Update</h2>
+
+<p>Hi {{ first_name }},</p>
+
+<p>Here's an update on your activity in your {{ site_name }} practice account. This is an educational notice &mdash; it does not reflect real money or any guaranteed outcome.</p>
+
+<div class="info-box">
+    <p><strong>Activity Details:</strong></p>
+    <ul style="margin-top: 10px; margin-left: 20px; color: #4a5568;">
+        <li><strong>Item:</strong> {{ plan_name }}</li>
+        <li><strong>Simulated amount:</strong> ${{ amount }}</li>
+        <li><strong>Status:</strong> {{ status }}</li>
+    </ul>
+</div>
+
+{{ message_content|safe }}
+
+<div style="text-align: center;">
+    <a href="{{ dashboard_url }}" class="btn" style="display:inline-block;padding:14px 34px;background-color:#8B5CF6;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px;margin:18px 0;">View Dashboard</a>
+</div>
+
+<div class="divider"></div>
+
+<p style="font-size: 14px; color: #718096;">
+    All figures shown are simulated and for educational use only. Summit Teachable does not offer investments or promise any returns.
+</p>
+
+<p>If you have any questions, please don't hesitate to reach out to our support team.</p>
+
+<p>Best regards,<br>The {{ site_name }} Team</p>
+{% endblock %}

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-sidebar-behaviour="fixed" data-navigation-color="default" data-is-fluid="true">
+
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+
+<head>
+    {% load static %}
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="Webinning" name="author">
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="{% static 'themes/dashly/assets/css/theme.bundle.css' %}" id="stylesheetLTR">
+    <link rel="stylesheet" href="{% static 'themes/dashly/assets/css/theme.rtl.bundle.css' %}" id="stylesheetRTL">
+    <link rel="stylesheet" href="{% static 'css/summit-theme.css' %}?v=3">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&amp;display=swap">
+    <link rel="stylesheet" media="print" onload="this.onload=null;this.removeAttribute('media');"
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&amp;display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- no-JS fallback -->
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&amp;display=swap">
+    </noscript>
+
+    <script>
+        // Theme switcher
+        let themeSwitcher = document.getElementById('themeSwitcher');
+
+        const getPreferredTheme = () => {
+            if (localStorage.getItem('theme') != null) {
+                return localStorage.getItem('theme');
+            }
+
+            return document.documentElement.dataset.theme;
+        };
+
+        const setTheme = function(theme) {
+            if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.dataset.theme = window.matchMedia('(prefers-color-scheme: dark)').matches ?
+                    'dark' : 'light';
+            } else {
+                document.documentElement.dataset.theme = theme;
+            }
+
+            localStorage.setItem('theme', theme);
+        };
+
+        const showActiveTheme = theme => {
+            const activeBtn = document.querySelector(`[data-theme-value="${theme}"]`);
+
+            document.querySelectorAll('[data-theme-value]').forEach(element => {
+                element.classList.remove('active');
+            });
+
+            activeBtn && activeBtn.classList.add('active');
+
+            document.querySelectorAll('[data-theme-control="theme"]').forEach(element => {
+                if (element.value == theme) {
+                    element.checked = true;
+                }
+            });
+        };
+
+        function reloadPage() {
+            window.location = window.location.pathname;
+        }
+
+        setTheme(getPreferredTheme());
+
+        if (typeof themeSwitcher != 'undefined') {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (localStorage.getItem('theme') != null) {
+                    if (localStorage.getItem('theme') == 'auto') {
+                        reloadPage();
+                    }
+                }
+            });
+
+            window.addEventListener('load', () => {
+                showActiveTheme(getPreferredTheme());
+
+                document.querySelectorAll('[data-theme-value]').forEach(element => {
+                    element.addEventListener('click', () => {
+                        const theme = element.getAttribute('data-theme-value');
+
+                        localStorage.setItem('theme', theme);
+                        reloadPage();
+                    })
+                })
+            });
+        }
+    </script>
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'images/favicon.png' %}?v=3" type="image/png">
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}?v=3" type="image/png">
+
+    <!-- Demo script -->
+    <script>
+        var themeConfig = {
+            theme: JSON.parse('"light"'),
+            isRTL: JSON.parse('false'),
+            isFluid: JSON.parse('true'),
+            sidebarBehaviour: JSON.parse('"fixed"'),
+            navigationColor: JSON.parse('"default"')
+        };
+
+        var isRTL = localStorage.getItem('isRTL') === 'true',
+            isFluid = localStorage.getItem('isFluid') === 'true',
+            theme = localStorage.getItem('theme'),
+            sidebarSizing = localStorage.getItem('sidebarSizing'),
+            linkLTR = document.getElementById('stylesheetLTR'),
+            linkRTL = document.getElementById('stylesheetRTL'),
+            html = document.documentElement;
+
+        if (isRTL) {
+            linkLTR.setAttribute('disabled', '');
+            linkRTL.removeAttribute('disabled');
+            html.setAttribute('dir', 'rtl');
+        } else {
+            linkRTL.setAttribute('disabled', '');
+            linkLTR.removeAttribute('disabled');
+            html.removeAttribute('dir');
+        }
+    </script>
+
+    <!-- Page Title -->
+    <title>Live Markets | Summit Teachable</title>
+
+    <style>
+        /* Keep TradingView embeds responsive and on-brand (dark-navy + emerald) */
+        .news-widget-card {
+            background: #130E22;
+            border: 1px solid rgba(139, 92, 246, .15);
+            border-radius: .75rem;
+            overflow: hidden;
+        }
+
+        .news-widget-card .news-widget-head {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            color: #e5e7eb;
+            font-weight: 600;
+        }
+
+        .news-widget-card .news-widget-head i {
+            color: #8B5CF6;
+        }
+
+        .news-widget-body {
+            padding: 0;
+        }
+
+        .tradingview-widget-container {
+            width: 100%;
+        }
+
+        .tv-tall {
+            height: 600px;
+        }
+
+        .tv-mid {
+            height: 600px;
+        }
+
+        @media (max-width: 991.98px) {
+            .tv-tall,
+            .tv-mid {
+                height: 480px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Django Messages -->
+    {% include 'includes/messages.html' %}
+
+    <!-- THEME CONFIGURATION -->
+    <script>
+        let themeAttrs = document.documentElement.dataset;
+
+        for (let attr in themeAttrs) {
+            if (localStorage.getItem(attr) != null) {
+                document.documentElement.dataset[attr] = localStorage.getItem(attr);
+
+                if (theme === 'auto') {
+                    document.documentElement.dataset.theme = window.matchMedia('(prefers-color-scheme: dark)').matches ?
+                        'dark' : 'light';
+
+                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                        e.matches ? document.documentElement.dataset.theme = 'dark' : document.documentElement
+                            .dataset.theme = 'light';
+                    });
+                }
+            }
+        }
+    </script>
+    <!-- NAVIGATION -->
+    {% include "includes/sidebar.html" %}
+    <!-- MAIN CONTENT -->
+    <main>
+        <!-- HEADER -->
+        <header class="container-fluid d-flex py-6 mb-4">
+            <!-- Top buttons -->
+            <div class="d-flex align-items-center ms-auto me-n1 me-lg-n2">
+
+                <!-- Dropdown -->
+                <div class="dropdown" id="themeSwitcher">
+                    <a href="javascript: void(0);"
+                        class="dropdown-toggle no-arrow d-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm mx-1 mx-lg-2 w-40px h-40px link-secondary"
+                        role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        data-bs-offset="0,0">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="18" width="18">
+                            <g>
+                                <path
+                                    d="M12,4.64A7.36,7.36,0,1,0,19.36,12,7.37,7.37,0,0,0,12,4.64Zm0,12.72A5.36,5.36,0,1,1,17.36,12,5.37,5.37,0,0,1,12,17.36Z"
+                                    style="fill: currentColor" />
+                                <path d="M12,3.47a1,1,0,0,0,1-1V1a1,1,0,0,0-2,0V2.47A1,1,0,0,0,12,3.47Z"
+                                    style="fill: currentColor" />
+                                <path
+                                    d="M4.55,6a1,1,0,0,0,.71.29A1,1,0,0,0,6,6,1,1,0,0,0,6,4.55l-1-1A1,1,0,0,0,3.51,4.93Z"
+                                    style="fill: currentColor" />
+                                <path d="M2.47,11H1a1,1,0,0,0,0,2H2.47a1,1,0,1,0,0-2Z" style="fill: currentColor" />
+                                <path
+                                    d="M4.55,18l-1,1a1,1,0,0,0,0,1.42,1,1,0,0,0,.71.29,1,1,0,0,0,.71-.29l1-1A1,1,0,0,0,4.55,18Z"
+                                    style="fill: currentColor" />
+                                <path d="M12,20.53a1,1,0,0,0-1,1V23a1,1,0,0,0,2,0V21.53A1,1,0,0,0,12,20.53Z"
+                                    style="fill: currentColor" />
+                                <path
+                                    d="M19.45,18A1,1,0,0,0,18,19.45l1,1a1,1,0,0,0,.71.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.42Z"
+                                    style="fill: currentColor" />
+                                <path d="M23,11H21.53a1,1,0,0,0,0,2H23a1,1,0,0,0,0-2Z" style="fill: currentColor" />
+                                <path
+                                    d="M18.74,6.26A1,1,0,0,0,19.45,6l1-1a1,1,0,1,0-1.42-1.42l-1,1A1,1,0,0,0,18,6,1,1,0,0,0,18.74,6.26Z"
+                                    style="fill: currentColor" />
+                            </g>
+                        </svg>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <button type="button" class="dropdown-item active" data-theme-value="light">
+                                Light mode
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="dropdown-item" data-theme-value="dark">
+                                Dark mode
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="dropdown-item" data-theme-value="auto">
+                                Auto
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Separator -->
+                <div class="vr bg-gray-700 mx-2 mx-lg-3"></div>
+
+                <!-- Dropdown -->
+                <div class="dropdown">
+                    <a href="javascript: void(0);" class="dropdown-toggle no-arrow d-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm mx-1 mx-lg-2 w-40px h-40px link-secondary"
+                        role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" title="Account">
+                        <i class="bi bi-person-fill" style="font-size: 20px;"></i>
+                    </a>
+
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item-text">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1 ms-3">
+                                    <h4 class="mb-0">{{ user.get_full_name }}</h4>
+                                    <p class="card-text">{{ user.email }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="dropdown-divider">
+                        <a class="dropdown-item" href="{% url 'dashboard:account_settings' %}">Profile &amp; account</a>
+                        <hr class="dropdown-divider">
+
+                        <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"
+                            onclick="event.preventDefault();
+                    document.getElementById('logout-form').submit();">Sign
+                            out</a>
+                        <form id="logout-form" action="{% url 'accounts:logout' %}" method="POST"
+                            style="display: none;">
+                            {% csrf_token %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- TICKER TAPE (across the top) -->
+        <div class="container-fluid mb-3">
+            <div class="news-widget-card">
+                <!-- TradingView Widget BEGIN -->
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript"
+                        src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                    {
+                        "symbols": [
+                            { "proName": "FOREXCOM:SPXUSD", "title": "S&P 500 Index" },
+                            { "proName": "FOREXCOM:NSXUSD", "title": "US 100 Cash CFD" },
+                            { "proName": "FX_IDC:EURUSD", "title": "EUR to USD" },
+                            { "proName": "BITSTAMP:BTCUSD", "title": "Bitcoin" },
+                            { "proName": "BITSTAMP:ETHUSD", "title": "Ethereum" }
+                        ],
+                        "showSymbolLogo": true,
+                        "isTransparent": false,
+                        "displayMode": "adaptive",
+                        "colorTheme": "dark",
+                        "locale": "en"
+                    }
+                    </script>
+                </div>
+                <!-- TradingView Widget END -->
+            </div>
+        </div>
+
+        <div class="container-fluid mb-5">
+            <!-- Persistent DEMO badge -->
+            <div class="mb-4">{% include 'includes/demo_badge.html' %}</div>
+            <!-- Title -->
+            <h1 class="h2 mb-1">
+                Live Markets
+            </h1>
+            <p class="text-muted">Real-time market overview, forex strength, and instrument charts — powered by TradingView. Practice reading the markets on your demo account.</p>
+
+            <div class="row g-4 mt-1">
+                <!-- Market Overview -->
+                <div class="col-lg-7">
+                    <div class="news-widget-card h-100">
+                        <div class="news-widget-head">
+                            <i class="bi bi-graph-up-arrow"></i>
+                            <span>Market Overview</span>
+                        </div>
+                        <div class="news-widget-body">
+                            <!-- TradingView Widget BEGIN -->
+                            <div class="tradingview-widget-container tv-tall">
+                                <div class="tradingview-widget-container__widget"></div>
+                                <script type="text/javascript"
+                                    src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+                                {
+                                    "colorTheme": "dark",
+                                    "dateRange": "12M",
+                                    "showChart": true,
+                                    "width": "100%",
+                                    "height": "600",
+                                    "isTransparent": false,
+                                    "showSymbolLogo": true,
+                                    "locale": "en"
+                                }
+                                </script>
+                            </div>
+                            <!-- TradingView Widget END -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Forex Heat Map -->
+                <div class="col-lg-5">
+                    <div class="news-widget-card h-100">
+                        <div class="news-widget-head">
+                            <i class="bi bi-grid-3x3-gap-fill"></i>
+                            <span>Forex Strength Heat Map</span>
+                        </div>
+                        <div class="news-widget-body">
+                            <!-- TradingView Widget BEGIN -->
+                            <div class="tradingview-widget-container tv-mid">
+                                <div class="tradingview-widget-container__widget"></div>
+                                <script type="text/javascript"
+                                    src="https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js" async>
+                                {
+                                    "colorTheme": "dark",
+                                    "isTransparent": false,
+                                    "width": "100%",
+                                    "height": "600",
+                                    "currencies": ["EUR","USD","JPY","GBP","CHF","AUD","CAD","NZD"],
+                                    "locale": "en"
+                                }
+                                </script>
+                            </div>
+                            <!-- TradingView Widget END -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Chart (full width) -->
+                <div class="col-12">
+                    <div class="news-widget-card">
+                        <div class="news-widget-head">
+                            <i class="bi bi-bar-chart-line-fill"></i>
+                            <span>Advanced Chart</span>
+                        </div>
+                        <div class="news-widget-body">
+                            <!-- TradingView Widget BEGIN -->
+                            <div class="tradingview-widget-container tv-tall">
+                                <div class="tradingview-widget-container__widget"></div>
+                                <script type="text/javascript"
+                                    src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+                                {
+                                    "autosize": true,
+                                    "symbol": "FX:EURUSD",
+                                    "interval": "60",
+                                    "timezone": "Etc/UTC",
+                                    "theme": "dark",
+                                    "style": "1",
+                                    "locale": "en",
+                                    "allow_symbol_change": true,
+                                    "support_host": "https://www.tradingview.com"
+                                }
+                                </script>
+                            </div>
+                            <!-- TradingView Widget END -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-auto">
+            <div class="container-fluid mt-4 mb-6 text-muted">
+                <div class="row justify-content-between">
+                    <div class="col">
+                        All Rights Reserved &copy; Summit Teachable 2025
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main> <!-- / main -->
+
+    <!-- JAVASCRIPT-->
+    <script src="{% static 'themes/dashly/assets/js/theme.bundle.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+</body>
+
+</html>

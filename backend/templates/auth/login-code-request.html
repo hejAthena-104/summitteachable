@@ -1,0 +1,29 @@
+{% extends 'base_auth.html' %}
+
+{% block title %}Log in with email code | Summit Teachable{% endblock %}
+
+{% block content %}
+<div class="container py-6" style="max-width: 480px;">
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-4 p-md-5">
+      <h1 class="h3 mb-1">Log in with an email code</h1>
+      <p class="text-muted mb-4">Enter your email and we'll send you a 6-digit one-time code — no password needed.</p>
+
+      {% include 'includes/messages.html' %}
+
+      <form method="post" action="{% url 'accounts:login_code_request' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Email address</label>
+          <input type="email" name="email" class="form-control" placeholder="you@example.com" required autofocus>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Send me a code</button>
+      </form>
+
+      <div class="text-center mt-4">
+        <a href="{% url 'accounts:login' %}" class="link-secondary">Use a password instead</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

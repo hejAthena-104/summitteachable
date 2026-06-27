@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Courses — Summit Teachable</title>
+  <meta name="description" content="Seven structured trading-education tracks — from foundations and chart reading to risk management, psychology and strategy. Practice everything on a risk-free demo." />
+  <meta name="theme-color" content="#F5F3FB" />
+  <script>(function(){try{if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="bg-atmosphere"></div>
+  <div class="bg-contours"></div>
+  <div class="bg-grain"></div>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="Summit Teachable home">
+        <img class="brand-logo logo-for-light" src="images/logo-dark.png" alt="Summit Teachable" width="220" height="60"
+             onerror="this.style.display='none';this.parentElement.querySelector('.brand-fallback').style.display='flex'" />
+        <img class="brand-logo logo-for-dark" src="images/logo.png" alt="Summit Teachable" width="220" height="60"
+             onerror="this.style.display='none'" />
+        <span class="brand-fallback" aria-hidden="true">
+          <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#04221a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 L9 8 L13 14 L17 5 L21 20 Z"/></svg></span>
+          <span style="font-family:var(--font-display);font-weight:700;font-size:19px;color:#fff;">Summit<b style="color:var(--mint);">Teachable</b></span>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="courses.html" class="active">Courses</a>
+        <a href="markets.html">Markets</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="/login" class="btn btn-ghost">Log In</a>
+        <a href="/register" class="btn btn-primary">Get Started</a>
+      </div>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="mobile-nav">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="markets.html">Markets</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="/login" class="btn btn-ghost btn-block">Log In</a>
+      <a href="/register" class="btn btn-primary btn-block">Get Started</a>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow reveal">Course catalogue</span>
+      <h1 class="reveal d1">Your complete <span class="gradient-text">trading curriculum</span></h1>
+      <p class="lead reveal d2">Seven progressive tracks designed to be taken in order — or dipped into as you need. Every concept is reinforced with hands-on practice in the risk-free demo dashboard.</p>
+      <div class="hero-cta reveal d3" style="justify-content:center;">
+        <a href="/register" class="btn btn-primary btn-lg">Enroll free</a>
+        <a href="/login" class="btn btn-ghost btn-lg">Open demo dashboard</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="container">
+      <div class="course-grid" id="courseGrid"><!-- injected by courses-data.js --></div>
+      <p class="lead reveal" style="text-align:center;margin-top:40px;font-size:14px;color:var(--muted);">
+        The full, enrollable catalogue — with lessons, quizzes and your demo dashboard — lives inside your account.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <span class="eyebrow">Ready to learn</span>
+        <h2>Pick a track and start today</h2>
+        <p class="lead">Create a free account to unlock every course and your risk-free demo trading dashboard.</p>
+        <div class="hero-cta">
+          <a href="/register" class="btn btn-primary btn-lg">Start Learning</a>
+          <a href="markets.html" class="btn btn-ghost btn-lg">Explore markets</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="footer-mount"></footer>
+
+  <script src="js/courses-data.js"></script>
+  <script src="js/footer.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/integrations.js"></script>
+</body>
+</html>

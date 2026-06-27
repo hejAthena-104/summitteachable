@@ -1,0 +1,99 @@
+{% extends 'base_auth.html' %}
+{% load static %}
+
+{% block title %}Email Verified | Summit Teachable{% endblock %}
+
+{% block content %}
+<div class="row align-items-center justify-content-center vh-100 py-5">
+    <div class="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4 col-xxl-3 py-6 shadow-sm">
+
+        <div class="text-center mb-5">
+            <a href="{% url 'accounts:login' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" class="w-50">
+            </a>
+        </div>
+
+        <!-- Success Animation -->
+        <div class="text-center mb-4">
+            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="mb-2 text-center text-success">
+            Email Verified!
+        </h1>
+
+        <!-- Message -->
+        <p class="text-secondary text-center mb-4">
+            Your email has been successfully verified. You can now access all features of Summit Teachable.
+        </p>
+
+        <!-- Account Info -->
+        <div class="alert alert-success mb-4">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-person-check-fill me-3" style="font-size: 1.5rem;"></i>
+                <div>
+                    <strong>Account Activated</strong>
+                    <p class="mb-0 small">Welcome to Summit Teachable, {{ user.get_full_name }}!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Info -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="card-title mb-3">
+                    <i class="bi bi-star text-warning me-2"></i>What's Next?
+                </h6>
+                <ul class="mb-0 ps-3">
+                    <li class="mb-2"><i class="bi bi-graph-up text-primary me-2"></i>Practice trading with simulated funds</li>
+                    <li class="mb-2"><i class="bi bi-mortarboard text-success me-2"></i>Start an expert-led course</li>
+                    <li class="mb-2"><i class="bi bi-people text-info me-2"></i>Refer friends and learn together</li>
+                    <li><i class="bi bi-headset text-secondary me-2"></i>24/7 customer support</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Login Button -->
+        <div class="text-center">
+            <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg w-100 mb-3">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Dashboard
+            </a>
+        </div>
+
+        <!-- Auto-redirect countdown -->
+        <div class="text-center">
+            <small class="text-muted">
+                Redirecting to login in <span id="countdown">5</span> seconds...
+            </small>
+        </div>
+
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Countdown and auto-redirect
+    let seconds = 5;
+    const countdownEl = document.getElementById('countdown');
+
+    const countdown = setInterval(function() {
+        seconds--;
+        countdownEl.textContent = seconds;
+
+        if (seconds <= 0) {
+            clearInterval(countdown);
+            window.location.href = "{% url 'accounts:login' %}";
+        }
+    }, 1000);
+
+    // Success animation on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkIcon = document.querySelector('.bi-check-circle-fill');
+        checkIcon.classList.add('animate__animated', 'animate__bounceIn');
+    });
+</script>
+{% endblock %}
+{% endblock %}

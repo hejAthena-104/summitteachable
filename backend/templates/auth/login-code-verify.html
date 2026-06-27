@@ -1,0 +1,32 @@
+{% extends 'base_auth.html' %}
+
+{% block title %}Enter your login code | Summit Teachable{% endblock %}
+
+{% block content %}
+<div class="container py-6" style="max-width: 480px;">
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-4 p-md-5">
+      <h1 class="h3 mb-1">Enter your login code</h1>
+      <p class="text-muted mb-4">We emailed a 6-digit code{% if email %} to <strong>{{ email }}</strong>{% endif %}. It expires in 15 minutes.</p>
+
+      {% include 'includes/messages.html' %}
+
+      <form method="post" action="{% url 'accounts:login_code_verify' %}">
+        {% csrf_token %}
+        <input type="hidden" name="email" value="{{ email }}">
+        <div class="mb-3">
+          <label class="form-label">6-digit code</label>
+          <input type="text" name="code" inputmode="numeric" maxlength="6"
+                 class="form-control form-control-lg text-center" style="letter-spacing:.5rem;font-weight:600;"
+                 placeholder="••••••" required autofocus>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Log in</button>
+      </form>
+
+      <div class="text-center mt-4">
+        <a href="{% url 'accounts:login_code_request' %}" class="link-secondary">Request a new code</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

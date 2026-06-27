@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Summit Teachable</title>
+  <meta name="description" content="Summit Teachable is a demo-first trading education platform. Our mission: help anyone learn to trade safely, on simulated funds, before risking a cent." />
+  <meta name="theme-color" content="#F5F3FB" />
+  <script>(function(){try{if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="bg-atmosphere"></div>
+  <div class="bg-contours"></div>
+  <div class="bg-grain"></div>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="Summit Teachable home">
+        <img class="brand-logo logo-for-light" src="images/logo-dark.png" alt="Summit Teachable" width="220" height="60"
+             onerror="this.style.display='none';this.parentElement.querySelector('.brand-fallback').style.display='flex'" />
+        <img class="brand-logo logo-for-dark" src="images/logo.png" alt="Summit Teachable" width="220" height="60"
+             onerror="this.style.display='none'" />
+        <span class="brand-fallback" aria-hidden="true">
+          <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#04221a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 L9 8 L13 14 L17 5 L21 20 Z"/></svg></span>
+          <span style="font-family:var(--font-display);font-weight:700;font-size:19px;color:#fff;">Summit<b style="color:var(--mint);">Teachable</b></span>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="courses.html">Courses</a>
+        <a href="markets.html">Markets</a>
+        <a href="about.html" class="active">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="/login" class="btn btn-ghost">Log In</a>
+        <a href="/register" class="btn btn-primary">Get Started</a>
+      </div>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="mobile-nav">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="markets.html">Markets</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="/login" class="btn btn-ghost btn-block">Log In</a>
+      <a href="/register" class="btn btn-primary btn-block">Get Started</a>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow reveal">Our story</span>
+      <h1 class="reveal d1">We believe you should <span class="gradient-text">learn before you risk</span></h1>
+      <p class="lead reveal d2">Summit Teachable was built on a simple, demo-first idea: the safest way to learn to trade is to practice in an environment where mistakes cost nothing but lessons.</p>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="container split">
+      <div class="reveal">
+        <span class="eyebrow">Our mission</span>
+        <h2>Make trading education accessible — and safe</h2>
+        <p class="lead">Too many people are pushed into real-money trading before they understand the basics. We flip that order. Our learners start with structured courses, then practise everything in a risk-free demo dashboard funded with simulated money.</p>
+        <p class="lead">There's no pressure, no deposit required to trade, and no chance of losing real capital while you're still learning. Just a clear path from curious beginner to disciplined, confident trader.</p>
+      </div>
+      <div class="glass reveal d2" style="padding:32px;border-radius:18px;">
+        <div class="terminal-row" style="background:rgba(255,255,255,0.02);">
+          <span class="pair"><span class="ic">✓</span> Demo-first philosophy</span>
+        </div>
+        <div class="terminal-row" style="background:rgba(255,255,255,0.02);">
+          <span class="pair"><span class="ic">✓</span> Simulated funds, real data</span>
+        </div>
+        <div class="terminal-row" style="background:rgba(255,255,255,0.02);">
+          <span class="pair"><span class="ic">✓</span> No real-money trading</span>
+        </div>
+        <div class="terminal-row" style="background:rgba(255,255,255,0.02);margin-bottom:0;">
+          <span class="pair"><span class="ic">✓</span> Education over hype</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="container">
+      <div class="about-stats">
+        <div class="about-stat glass reveal d1"><div class="num"><span data-count="38">0</span><span class="suffix">K+</span></div><div class="lbl">Learners enrolled</div></div>
+        <div class="about-stat glass reveal d2"><div class="num"><span data-count="7">0</span></div><div class="lbl">Course tracks</div></div>
+        <div class="about-stat glass reveal d3"><div class="num"><span data-count="120">0</span><span class="suffix">+</span></div><div class="lbl">Video lessons</div></div>
+        <div class="about-stat glass reveal d4"><div class="num"><span data-count="100">0</span><span class="suffix">%</span></div><div class="lbl">Risk-free practice</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">What we value</span>
+        <h2>Principles that guide everything we build</h2>
+      </div>
+      <div class="cards-3">
+        <div class="feature-card glass reveal d1">
+          <div class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>Safety first</h3>
+          <p>Our dashboard never touches real money. Every trade you place is simulated, so learning is always consequence-free.</p>
+        </div>
+        <div class="feature-card glass reveal d2">
+          <div class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <h3>Honest education</h3>
+          <p>No promises of guaranteed profit, no get-rich-quick claims. Just clear, practical teaching and realistic expectations.</p>
+        </div>
+        <div class="feature-card glass reveal d3">
+          <div class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></div>
+          <h3>Community-driven</h3>
+          <p>Learning is better together. We build spaces for discussion, shared analysis and accountability among learners.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <span class="eyebrow">Join us</span>
+        <h2>Start your risk-free trading education</h2>
+        <p class="lead">Create an account, open the demo dashboard with simulated funds, and learn at your own pace.</p>
+        <div class="hero-cta">
+          <a href="/register" class="btn btn-primary btn-lg">Create free account</a>
+          <a href="courses.html" class="btn btn-ghost btn-lg">Browse courses</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="footer-mount"></footer>
+
+  <script src="js/footer.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/integrations.js"></script>
+</body>
+</html>

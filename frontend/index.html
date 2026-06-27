@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Summit Teachable — Learn to Trade. Practice Without Risk.</title>
+  <meta name="description" content="Summit Teachable is an educational trading platform: structured courses plus a risk-free demo trading dashboard using simulated funds. Learn, practice, and track your progress — no real money required." />
+  <meta name="theme-color" content="#F5F3FB" />
+  <script>(function(){try{if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Summit Teachable — Learn to Trade, Risk-Free" />
+  <meta property="og:description" content="Trading courses + a risk-free demo trading arena with simulated funds. Educational only." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts: Sora (display) + Inter (body) + IBM Plex Mono (numbers) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="bg-atmosphere"></div>
+  <div class="bg-contours"></div>
+  <div class="bg-grain"></div>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="Summit Teachable home">
+        <img class="brand-logo logo-for-light" src="images/logo-dark.png" alt="Summit Teachable" width="220" height="60"
+             onerror="this.style.display='none';this.parentElement.querySelector('.brand-fallback').style.display='flex'" />
+        <img class="brand-logo logo-for-dark" src="images/logo.png" alt="Summit Teachable" width="220" height="60"
+             onerror="this.style.display='none'" />
+        <span class="brand-fallback" aria-hidden="true">
+          <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#04221a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 L9 8 L13 14 L17 5 L21 20 Z"/></svg></span>
+          <span style="font-family:var(--font-display);font-weight:700;font-size:19px;color:#fff;">Summit<b style="color:var(--mint);">Teachable</b></span>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html" class="active">Home</a>
+        <a href="courses.html">Courses</a>
+        <a href="markets.html">Markets</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="/login" class="btn btn-ghost">Log In</a>
+        <a href="/register" class="btn btn-primary">Get Started</a>
+      </div>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="mobile-nav">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="markets.html">Markets</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="/login" class="btn btn-ghost btn-block">Log In</a>
+      <a href="/register" class="btn btn-primary btn-block">Get Started</a>
+    </div>
+  </header>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow reveal">Educational · Demo trading · No real money</span>
+        <h1 class="reveal d1">Learn to trade.<br /><span class="gradient-text">Practice without risk.</span></h1>
+        <p class="lead reveal d2">Summit Teachable pairs structured trading courses with a risk-free demo arena. Sharpen your strategy on simulated funds, track every trade, and build real skill — before a single dollar is ever on the line.</p>
+        <div class="hero-cta reveal d3">
+          <a href="/register" class="btn btn-primary btn-lg">
+            Start Learning
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="/login" class="btn btn-ghost btn-lg">Explore Demo</a>
+        </div>
+        <div class="hero-trust reveal d4">
+          <div class="stat"><div class="num"><span data-count="38" >0</span><span class="suffix">K+</span></div><div class="lbl">Learners enrolled</div></div>
+          <div class="stat"><div class="num"><span data-count="7">0</span></div><div class="lbl">Course tracks</div></div>
+          <div class="stat"><div class="num">$<span data-count="100" >0</span><span class="suffix">K</span></div><div class="lbl">Demo balance to practice</div></div>
+        </div>
+      </div>
+
+      <!-- Faux trading terminal visual -->
+      <div class="hero-visual reveal d2">
+        <div class="terminal glass">
+          <span class="demo-badge">Demo · Simulated</span>
+          <div class="terminal-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot g"></span>
+            <span class="tag">paper-trading.summit</span>
+          </div>
+          <div class="terminal-body">
+            <div class="terminal-row">
+              <span class="pair"><span class="ic">₿</span> BTC/USD</span>
+              <span class="price">$<span data-live="64210.40" data-dec="2">64,210.40</span></span>
+              <span class="chg up">+2.41%</span>
+            </div>
+            <div class="terminal-row">
+              <span class="pair"><span class="ic">€</span> EUR/USD</span>
+              <span class="price"><span data-live="1.0842" data-dec="4">1.0842</span></span>
+              <span class="chg down">-0.18%</span>
+            </div>
+            <div class="terminal-row">
+              <span class="pair"><span class="ic">Au</span> XAU/USD</span>
+              <span class="price">$<span data-live="2338.10" data-dec="2">2,338.10</span></span>
+              <span class="chg up">+0.62%</span>
+            </div>
+            <div class="terminal-chart">
+              <svg class="spark" viewBox="0 0 320 90" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.28"/>
+                    <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path class="line" d="M0 70 L30 62 L60 66 L90 48 L120 54 L150 36 L180 44 L210 26 L240 32 L270 16 L300 22 L320 10"/>
+                <path fill="url(#sparkFill)" d="M0 70 L30 62 L60 66 L90 48 L120 54 L150 36 L180 44 L210 26 L240 32 L270 16 L300 22 L320 10 L320 90 L0 90 Z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="float-stat">
+          <div class="lbl">Demo win rate</div>
+          <div class="v"><span data-count="68" data-decimals="0">0</span>%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TRADINGVIEW TICKER TAPE ===================== -->
+  <div class="ticker-wrap">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {
+        "symbols": [
+          { "proName": "BINANCE:BTCUSDT", "title": "Bitcoin" },
+          { "proName": "BINANCE:ETHUSDT", "title": "Ethereum" },
+          { "proName": "FX:EURUSD", "title": "EUR/USD" },
+          { "proName": "FX:GBPUSD", "title": "GBP/USD" },
+          { "proName": "OANDA:XAUUSD", "title": "Gold" },
+          { "proName": "NASDAQ:AAPL", "title": "Apple" },
+          { "proName": "NASDAQ:TSLA", "title": "Tesla" },
+          { "proName": "SP:SPX", "title": "S&P 500" }
+        ],
+        "showSymbolLogo": true,
+        "isTransparent": true,
+        "displayMode": "adaptive",
+        "colorTheme": "dark",
+        "locale": "en"
+      }
+      </script>
+    </div>
+  </div>
+
+  <!-- ===================== HOW IT WORKS ===================== -->
+  <section class="section" id="how">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">How it works</span>
+        <h2>Three steps from beginner to confident</h2>
+        <p class="lead">A guided path that turns theory into muscle memory — without ever risking real capital.</p>
+      </div>
+      <div class="steps">
+        <div class="step glass reveal d1">
+          <span class="step-no">01</span>
+          <div class="ic-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+          <h3>Learn the fundamentals</h3>
+          <p>Work through seven structured course tracks — from candlestick basics to risk management and trading psychology — at your own pace.</p>
+        </div>
+        <div class="step glass reveal d2">
+          <span class="step-no">02</span>
+          <div class="ic-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></div>
+          <h3>Practice on the demo</h3>
+          <p>Open the paper-trading dashboard with a simulated balance. Place trades on live market data — with zero financial risk.</p>
+        </div>
+        <div class="step glass reveal d3">
+          <span class="step-no">03</span>
+          <div class="ic-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <h3>Track your progress</h3>
+          <p>Review your simulated P&amp;L, win rate and trade history. Spot patterns, refine your edge, and watch your skill compound.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FEATURES ===================== -->
+  <section class="section-tight" id="features">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">Why Summit Teachable</span>
+        <h2>Everything you need to learn — nothing you can lose</h2>
+      </div>
+      <div class="cards-3">
+        <div class="feature-card glass reveal d1">
+          <div class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+          <h3>Structured curriculum</h3>
+          <p>Seven progressive tracks built by experienced educators — sequenced so each lesson builds on the last.</p>
+        </div>
+        <div class="feature-card glass reveal d2">
+          <div class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>Risk-free by design</h3>
+          <p>The trading dashboard runs entirely on simulated demo funds. Make every mistake here — none of them costs you a cent.</p>
+        </div>
+        <div class="feature-card glass reveal d3">
+          <div class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="7"/><rect x="12" y="7" width="3" height="11"/><rect x="17" y="13" width="3" height="5"/></svg></div>
+          <h3>Real market data</h3>
+          <p>Practice against live charts and quotes powered by industry-standard market feeds, so your skills transfer to the real thing.</p>
+        </div>
+        <div class="feature-card glass reveal d1">
+          <div class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13A4 4 0 0 1 16 11"/></svg></div>
+          <h3>Learn with a community</h3>
+          <p>Compare notes, follow demo strategies and discuss market analysis with thousands of fellow learners.</p>
+        </div>
+        <div class="feature-card glass reveal d2">
+          <div class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <h3>Learn at your pace</h3>
+          <p>Lifetime access to lessons and your demo dashboard. Pause, rewind, and revisit any module whenever you like.</p>
+        </div>
+        <div class="feature-card glass reveal d3">
+          <div class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-6 0v4"/><rect x="5" y="9" width="14" height="11" rx="2"/></svg></div>
+          <h3>Safe &amp; transparent</h3>
+          <p>No real deposits to trade, no surprise charges. Just an honest, educational environment to build confidence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COURSES TEASER ===================== -->
+  <section class="section" id="courses">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Featured courses</span>
+        <h2>A complete trading curriculum</h2>
+        <p class="lead">Seven tracks that take you from your first candlestick to a disciplined, repeatable trading process.</p>
+      </div>
+      <div class="course-grid" id="courseGrid" data-limit="3"><!-- injected by courses-data.js --></div>
+      <div style="text-align:center; margin-top:40px;" class="reveal">
+        <a href="courses.html" class="btn btn-ghost btn-lg">View all courses
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MARKETS / ANALYSIS TEASER ===================== -->
+  <section class="section-tight" id="markets">
+    <div class="container split">
+      <div class="reveal">
+        <span class="eyebrow">Markets &amp; analysis</span>
+        <h2>Practice across the markets you care about</h2>
+        <p class="lead">Forex, crypto, indices, metals and equities — all available in the demo dashboard with real-time data. Read the market alongside our analysis community and test your thesis before it matters.</p>
+        <div class="hero-cta">
+          <a href="markets.html" class="btn btn-primary">Explore markets</a>
+          <a href="/login" class="btn btn-ghost">Open demo dashboard</a>
+        </div>
+      </div>
+      <div class="market-list reveal d2">
+        <div class="market-row glass">
+          <span class="name">EUR/USD <small>Forex · Major</small></span>
+          <span class="price">1.0842</span>
+          <span class="chg up">+0.34%</span>
+        </div>
+        <div class="market-row glass">
+          <span class="name">BTC/USD <small>Crypto · Spot</small></span>
+          <span class="price">64,210</span>
+          <span class="chg up">+2.41%</span>
+        </div>
+        <div class="market-row glass">
+          <span class="name">S&amp;P 500 <small>Index · US</small></span>
+          <span class="price">5,471</span>
+          <span class="chg down">-0.27%</span>
+        </div>
+        <div class="market-row glass">
+          <span class="name">XAU/USD <small>Metals · Gold</small></span>
+          <span class="price">2,338.1</span>
+          <span class="chg up">+0.62%</span>
+        </div>
+        <div class="market-row glass">
+          <span class="name">TSLA <small>Equity · NASDAQ</small></span>
+          <span class="price">182.40</span>
+          <span class="chg down">-1.12%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COPY-TRADING (DEMO) TEASER ===================== -->
+  <section class="section" id="copy">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">Copy strategies · Demo</span>
+        <h2>Follow top demo strategies</h2>
+        <p class="lead">Study how high-performing learners structure their simulated trades, then mirror their approach in your own demo account. All figures are simulated and for educational purposes only.</p>
+      </div>
+      <div class="trader-grid">
+        <div class="trader-card glass reveal d1">
+          <div class="avatar">AM</div>
+          <div class="tname">Alex Mercer</div>
+          <div class="thandle">@swingsmith · Demo</div>
+          <div class="tstats">
+            <div><div class="v win"><span data-count="71">0</span>%</div><small>Win rate</small></div>
+            <div><div class="v"><span data-count="240">0</span></div><small>Demo trades</small></div>
+          </div>
+        </div>
+        <div class="trader-card glass reveal d2">
+          <div class="avatar">RK</div>
+          <div class="tname">Rina Kapoor</div>
+          <div class="thandle">@fxdiscipline · Demo</div>
+          <div class="tstats">
+            <div><div class="v win"><span data-count="66">0</span>%</div><small>Win rate</small></div>
+            <div><div class="v"><span data-count="318">0</span></div><small>Demo trades</small></div>
+          </div>
+        </div>
+        <div class="trader-card glass reveal d3">
+          <div class="avatar">TO</div>
+          <div class="tname">Tobi Okafor</div>
+          <div class="thandle">@trendrider · Demo</div>
+          <div class="tstats">
+            <div><div class="v win"><span data-count="69">0</span>%</div><small>Win rate</small></div>
+            <div><div class="v"><span data-count="195">0</span></div><small>Demo trades</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TESTIMONIALS ===================== -->
+  <section class="section-tight" id="testimonials">
+    <div class="container">
+      <div class="section-head center reveal">
+        <span class="eyebrow">From our learners</span>
+        <h2>Confidence, built one demo trade at a time</h2>
+      </div>
+      <div class="quote-grid">
+        <div class="quote glass reveal d1">
+          <div class="stars">★★★★★</div>
+          <p>"I'd read about trading for years but never had a safe place to actually try it. The demo dashboard let me make mistakes and learn from them without any stress about money."</p>
+          <div class="who"><span class="av">JD</span><div class="meta"><b>Jordan D.</b><span>Beginner track</span></div></div>
+        </div>
+        <div class="quote glass reveal d2">
+          <div class="stars">★★★★★</div>
+          <p>"The courses are genuinely well structured. By the time I touched the paper-trading arena, I actually understood what I was looking at on the chart."</p>
+          <div class="who"><span class="av">MA</span><div class="meta"><b>Maya A.</b><span>Technical analysis track</span></div></div>
+        </div>
+        <div class="quote glass reveal d3">
+          <div class="stars">★★★★★</div>
+          <p>"Tracking my simulated win rate over time was the thing that finally made it click. I could see my discipline improving week over week."</p>
+          <div class="who"><span class="av">SP</span><div class="meta"><b>Samuel P.</b><span>Risk management track</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA BAND ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <span class="eyebrow">Ready when you are</span>
+        <h2>Start learning to trade today — risk-free</h2>
+        <p class="lead">Create a free account, open your demo dashboard with simulated funds, and take your first practice trade in minutes.</p>
+        <div class="hero-cta">
+          <a href="/register" class="btn btn-primary btn-lg">Create free account</a>
+          <a href="/login" class="btn btn-ghost btn-lg">Explore the demo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="site-footer" id="footer-mount"></footer>
+
+  <script src="js/courses-data.js"></script>
+  <script src="js/footer.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/integrations.js"></script>
+</body>
+</html>

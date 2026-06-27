@@ -1,0 +1,133 @@
+{% extends 'education/base_education.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{% url 'education:catalog' %}">Academy</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ course.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Main -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <img src="{% static 'images/courses/'|add:course.thumbnail_slug|add:'.png' %}"
+                    class="card-img-top" alt="{{ course.title }}" style="height: 240px; object-fit: cover;">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge text-bg-primary text-capitalize me-2">{{ course.level }}</span>
+                        {% include 'includes/demo_badge.html' with inline=True %}
+                    </div>
+                    <h1 class="h2 mb-2">{{ course.title }}</h1>
+                    <p class="text-muted">{{ course.description }}</p>
+
+                    <div class="d-flex flex-wrap text-muted small gap-3 mb-0">
+                        <span><i class="bi bi-person-badge me-1"></i>{{ course.instructor }}</span>
+                        <span><i class="bi bi-clock me-1"></i>{{ course.duration_label|default:"Self-paced" }}</span>
+                        <span><i class="bi bi-collection-play me-1"></i>{{ course.lesson_count }} lessons</span>
+                        <span><i class="bi bi-folder me-1"></i>{{ course.module_count }} modules</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Curriculum -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-3">Course content</h3>
+                    <div class="accordion" id="curriculum">
+                        {% for module in modules %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#module{{ module.id }}">
+                                    <span class="fw-semibold">{{ forloop.counter }}. {{ module.title }}</span>
+                                    <span class="badge text-bg-light ms-2">{{ module.lessons.count }} lessons</span>
+                                </button>
+                            </h2>
+                            <div id="module{{ module.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+                                data-bs-parent="#curriculum">
+                                <div class="accordion-body p-0">
+                                    <ul class="list-group list-group-flush">
+                                        {% for lesson in module.lessons.all %}
+                                        <li class="list-group-item d-flex align-items-center justify-content-between">
+                                            <span>
+                                                <i class="bi bi-play-circle text-primary me-2"></i>{{ lesson.title }}
+                                                {% if lesson.is_preview %}<span class="badge text-bg-success ms-2">Preview</span>{% endif %}
+                                            </span>
+                                            <span class="d-flex align-items-center">
+                                                <small class="text-muted me-3">{{ lesson.duration_label }}</small>
+                                                {% if is_enrolled or lesson.is_preview %}
+                                                <a href="{% url 'education:lesson' course.slug lesson.id %}" class="btn btn-sm btn-outline-primary">
+                                                    {% if lesson.is_preview and not is_enrolled %}Preview{% else %}Watch{% endif %}
+                                                </a>
+                                                {% else %}
+                                                <i class="bi bi-lock text-muted"></i>
+                                                {% endif %}
+                                            </span>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted mb-0">Curriculum coming soon.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar enroll card -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm sticky-lg-top" style="top: 1rem;">
+                <div class="card-body">
+                    {% if not unlocked %}
+                        <div class="text-center py-2">
+                            <i class="bi bi-lock-fill fs-1 text-primary mb-2 d-block"></i>
+                            <h4>Academy locked</h4>
+                            <p class="text-muted small">Make a demo deposit to unlock this course and the full academy. It's play money — no real funds.</p>
+                            <a href="{% url 'dashboard:deposits' %}" class="btn btn-primary w-100">
+                                <i class="bi bi-unlock-fill me-1"></i> Make a demo deposit
+                            </a>
+                        </div>
+                    {% elif is_enrolled %}
+                        <div class="text-center mb-3">
+                            <span class="badge text-bg-success mb-2"><i class="bi bi-check-circle me-1"></i>Enrolled</span>
+                            <h4 class="mb-1">Your progress</h4>
+                            <div class="progress my-2" style="height: 10px;">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                    style="width: {{ enrollment.progress }}%;"
+                                    aria-valuenow="{{ enrollment.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <small class="text-muted">{{ enrollment.progress }}% complete</small>
+                        </div>
+                        {% with first_module=modules.0 %}
+                        {% if first_module and first_module.lessons.all %}
+                        <a href="{% url 'education:lesson' course.slug first_module.lessons.all.0.id %}" class="btn btn-primary w-100">
+                            <i class="bi bi-play-circle me-1"></i> Continue learning
+                        </a>
+                        {% endif %}
+                        {% endwith %}
+                    {% else %}
+                        <div class="text-center mb-3">
+                            <span class="text-muted small">Demo enrollment</span>
+                            <h3 class="mb-0">Free <span class="text-muted fs-6">(demo)</span></h3>
+                        </div>
+                        <form method="post" action="{% url 'education:enroll' course.slug %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-bookmark-plus me-1"></i> Enroll now
+                            </button>
+                        </form>
+                        <p class="text-muted small text-center mt-2 mb-0">Unlocked by your demo deposit — no charge.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

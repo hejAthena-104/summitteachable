@@ -1,0 +1,29 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>Your course is unlocked 🎉</h2>
+
+<p>Hi {{ first_name }},</p>
+
+<p>Good news &mdash; your payment for <strong>{{ course_title }}</strong> has been verified and your course is now unlocked. Log in to start learning.</p>
+
+<div style="text-align: center;">
+    <a href="{{ login_url }}" class="btn" style="display:inline-block;padding:14px 34px;background-color:#8B5CF6;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px;margin:18px 0;">Start Learning</a>
+</div>
+
+<div class="info-box" style="background-color:#F3F0FE; border-left-color:#8B5CF6;">
+    <p><strong>{{ course_title }}</strong></p>
+    <p style="margin-top:10px;">Your access is ready. Pick up where the lessons begin and work through them at your own pace from your dashboard.</p>
+</div>
+
+<p>Alternatively, you can copy and paste this link into your browser:</p>
+<p style="word-break: break-all; color: #8B5CF6; font-size: 14px;">{{ login_url }}</p>
+
+<div class="divider"></div>
+
+<p>Thank you for choosing {{ site_name }}. We're here to support your learning journey every step of the way.</p>
+
+<p>Happy learning!</p>
+
+<p>Best regards,<br>The {{ site_name }} Team</p>
+{% endblock %}

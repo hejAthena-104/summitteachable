@@ -1,0 +1,196 @@
+<!-- NAVIGATION SIDEBAR -->
+<nav id="mainNavbar" class="navbar navbar-vertical navbar-expand-lg scrollbar bg-white navbar-light">
+    <!-- Theme configuration (navbar) -->
+    <script>
+        let navigationColor = localStorage.getItem('navigationColor'),
+            navbar = document.getElementById('mainNavbar');
+
+        if (navigationColor != null && navbar != null) {
+            if (navigationColor == 'inverted') {
+                navbar.classList.add('bg-dark', 'navbar-dark');
+                navbar.classList.remove('bg-white', 'navbar-light');
+            } else {
+                navbar.classList.add('bg-white', 'navbar-light');
+                navbar.classList.remove('bg-dark', 'navbar-dark');
+            }
+        }
+    </script>
+    <div class="container-fluid">
+        <!-- Brand -->
+        <a class="navbar-brand py-3" href="{% url 'dashboard:index' %}">
+            {% load static %}
+            {# Deep-purple wordmark for the light sidebar (default) #}
+            <img src="{% static 'images/logo-dark.png' %}"
+                class="navbar-brand-img brand-logo-dark" alt="Summit Teachable"
+                style="width: auto; height: 42px; max-width: 200px;">
+            {# Near-white wordmark for the dark sidebar #}
+            <img src="{% static 'images/logo.png' %}"
+                class="navbar-brand-img brand-logo-light" alt="Summit Teachable"
+                style="width: auto; height: 42px; max-width: 200px;">
+        </a>
+
+        <!-- Navbar toggler -->
+        <a href="javascript: void(0);" class="navbar-toggler" data-bs-toggle="collapse"
+            data-bs-target="#sidenavCollapse" aria-controls="sidenavCollapse" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </a>
+
+        <!-- Collapse -->
+        <div class="collapse navbar-collapse" id="sidenavCollapse">
+            <!-- Navigation -->
+            <ul class="navbar-nav mb-lg-7">
+
+                <!-- OVERVIEW -->
+                <li class="nav-item nav-section-heading">Overview</li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+                       href="{% url 'dashboard:index' %}">
+                        <i class="bi bi-grid-1x2-fill nav-link-icon fs-3"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'account_history' %}active{% endif %}"
+                       href="{% url 'dashboard:account_history' %}">
+                        <i class="bi bi-clock-history nav-link-icon fs-3"></i>
+                        <span>Account Statement</span>
+                    </a>
+                </li>
+
+                <!-- TRADING & MARKETS -->
+                <li class="nav-item nav-section-heading">Trading &amp; Markets</li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+                       href="{% url 'dashboard:index' %}">
+                        <i class="bi bi-graph-up-arrow nav-link-icon fs-3"></i>
+                        <span>Demo Trading</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'markets' %}active{% endif %}"
+                       href="{% url 'news:markets' %}">
+                        <i class="bi bi-bar-chart-line-fill nav-link-icon fs-3"></i>
+                        <span>Live Markets</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.app_name == 'copytrading' %}active{% endif %}"
+                       href="{% url 'copytrading:traders' %}">
+                        <i class="bi bi-people-fill nav-link-icon fs-3"></i>
+                        <span>Copy Trading</span>
+                    </a>
+                </li>
+
+                <!-- MARKET INTELLIGENCE -->
+                <li class="nav-item nav-section-heading">Market Intelligence</li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.app_name == 'analysis' %}active{% endif %}"
+                       href="{% url 'analysis:feed' %}">
+                        <i class="bi bi-clipboard-data-fill nav-link-icon fs-3"></i>
+                        <span>Market Analysis</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'index' and request.resolver_match.app_name == 'news' %}active{% endif %}"
+                       href="{% url 'news:index' %}">
+                        <i class="bi bi-newspaper nav-link-icon fs-3"></i>
+                        <span>News</span>
+                    </a>
+                </li>
+
+                <!-- WALLET & FUNDS -->
+                <li class="nav-item nav-section-heading">Wallet &amp; Funds</li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'deposits' %}active{% endif %}"
+                       href="{% url 'dashboard:deposits' %}">
+                        <i class="bi bi-wallet-fill nav-link-icon fs-3"></i>
+                        <span>Deposit</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name in 'withdrawals,withdraw_funds,select_withdrawal_method' %}active{% endif %}"
+                       href="{% url 'dashboard:withdrawals' %}">
+                        <i class="bi bi-cash-stack nav-link-icon fs-3"></i>
+                        <span>Withdraw</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name in 'transfers,local_transfer,international_transfer,transfer_funds' %}active{% endif %}"
+                       href="{% url 'dashboard:transfers' %}">
+                        <i class="bi bi-send-fill nav-link-icon fs-3"></i>
+                        <span>Internal Transfer</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'swap' %}active{% endif %}"
+                       href="{% url 'dashboard:swap' %}">
+                        <i class="bi bi-arrow-left-right nav-link-icon fs-3"></i>
+                        <span>Swap</span>
+                    </a>
+                </li>
+
+                <!-- EDUCATION -->
+                <li class="nav-item nav-section-heading">Education</li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.app_name == 'education' %}active{% endif %}"
+                       href="{% url 'education:catalog' %}">
+                        <i class="bi bi-mortarboard-fill nav-link-icon fs-3"></i>
+                        <span>Courses</span>
+                    </a>
+                </li>
+
+                <!-- ACCOUNT -->
+                <li class="nav-item nav-section-heading">Account</li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'account_settings' %}active{% endif %}"
+                       href="{% url 'dashboard:account_settings' %}">
+                        <i class="bi bi-person-gear nav-link-icon fs-3"></i>
+                        <span>Profile Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'manage_account_security' %}active{% endif %}"
+                       href="{% url 'dashboard:manage_account_security' %}">
+                        <i class="bi bi-shield-lock-fill nav-link-icon fs-3"></i>
+                        <span>Security</span>
+                    </a>
+                </li>
+
+                <!-- GROWTH -->
+                <li class="nav-item nav-section-heading">Growth</li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'refer_user' %}active{% endif %}"
+                       href="{% url 'dashboard:refer_user' %}">
+                        <i class="bi bi-gift-fill nav-link-icon fs-3"></i>
+                        <span>Referral</span>
+                    </a>
+                </li>
+
+                <!-- SUPPORT -->
+                <li class="nav-item nav-section-heading">Support</li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'support' %}active{% endif %}"
+                       href="{% url 'dashboard:support' %}">
+                        <i class="bi bi-life-preserver nav-link-icon fs-3"></i>
+                        <span>Support Center</span>
+                    </a>
+                </li>
+
+                <li class="nav-item w-100"><hr></li>
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="{% url 'accounts:logout' %}"
+                       onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();">
+                        <i class="bi bi-box-arrow-right nav-link-icon fs-3"></i>
+                        <span>Sign Out</span>
+                    </a>
+                    <form id="sidebar-logout-form" action="{% url 'accounts:logout' %}" method="POST" style="display:none;">
+                        {% csrf_token %}
+                    </form>
+                </li>
+            </ul>
+            <!-- End of Navigation -->
+        </div>
+        <!-- End of Collapse -->
+    </div>
+</nav>

@@ -1,0 +1,72 @@
+<svg width="800" height="450" viewBox="0 0 800 450" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Trading Psychology &amp; Risk">
+  <defs>
+    <linearGradient id="bg-course-psychology" x1="0" y1="0" x2="760" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.55" stop-color="#FAF7FF"/>
+      <stop offset="1" stop-color="#F1EAFD"/>
+    </linearGradient>
+    <radialGradient id="glow-course-psychology" cx="560" cy="150" r="360" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#C9B4FB" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#C9B4FB" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="panelglow-course-psychology" cx="578.0" cy="104" r="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F4EEFE" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="purple-course-psychology" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="gold-course-psychology" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FCD877"/>
+      <stop offset="0.5" stop-color="#F5B942"/>
+      <stop offset="1" stop-color="#E09A1F"/>
+    </linearGradient>
+    <linearGradient id="green-course-psychology" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22C55E"/>
+      <stop offset="1" stop-color="#118A3D"/>
+    </linearGradient>
+    <linearGradient id="red-course-psychology" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F05252"/>
+      <stop offset="1" stop-color="#B91C1C"/>
+    </linearGradient>
+    <filter id="soft-course-psychology" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="22" flood-color="#7C3AED" flood-opacity="0.16"/>
+    </filter>
+    <filter id="ds-course-psychology" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="6" stdDeviation="9" flood-color="#3B1E78" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <!-- bright background -->
+  <rect width="800" height="450" fill="url(#bg-course-psychology)"/>
+  <rect width="800" height="450" fill="url(#glow-course-psychology)"/>
+
+  <!-- airy dotted grid -->
+  <g fill="#8B5CF6" fill-opacity="0.10">
+    <circle cx="70" cy="70" r="2.2"/><circle cx="120" cy="70" r="2.2"/><circle cx="170" cy="70" r="2.2"/><circle cx="220" cy="70" r="2.2"/><circle cx="270" cy="70" r="2.2"/><circle cx="320" cy="70" r="2.2"/><circle cx="370" cy="70" r="2.2"/><circle cx="420" cy="70" r="2.2"/><circle cx="470" cy="70" r="2.2"/><circle cx="520" cy="70" r="2.2"/><circle cx="570" cy="70" r="2.2"/><circle cx="620" cy="70" r="2.2"/><circle cx="670" cy="70" r="2.2"/><circle cx="720" cy="70" r="2.2"/><circle cx="70" cy="120" r="2.2"/><circle cx="120" cy="120" r="2.2"/><circle cx="170" cy="120" r="2.2"/><circle cx="220" cy="120" r="2.2"/><circle cx="270" cy="120" r="2.2"/><circle cx="320" cy="120" r="2.2"/><circle cx="370" cy="120" r="2.2"/><circle cx="420" cy="120" r="2.2"/><circle cx="470" cy="120" r="2.2"/><circle cx="520" cy="120" r="2.2"/><circle cx="570" cy="120" r="2.2"/><circle cx="620" cy="120" r="2.2"/><circle cx="670" cy="120" r="2.2"/><circle cx="720" cy="120" r="2.2"/><circle cx="70" cy="170" r="2.2"/><circle cx="120" cy="170" r="2.2"/><circle cx="170" cy="170" r="2.2"/><circle cx="220" cy="170" r="2.2"/><circle cx="270" cy="170" r="2.2"/><circle cx="320" cy="170" r="2.2"/><circle cx="370" cy="170" r="2.2"/><circle cx="420" cy="170" r="2.2"/><circle cx="470" cy="170" r="2.2"/><circle cx="520" cy="170" r="2.2"/><circle cx="570" cy="170" r="2.2"/><circle cx="620" cy="170" r="2.2"/><circle cx="670" cy="170" r="2.2"/><circle cx="720" cy="170" r="2.2"/><circle cx="70" cy="220" r="2.2"/><circle cx="120" cy="220" r="2.2"/><circle cx="170" cy="220" r="2.2"/><circle cx="220" cy="220" r="2.2"/><circle cx="270" cy="220" r="2.2"/><circle cx="320" cy="220" r="2.2"/><circle cx="370" cy="220" r="2.2"/><circle cx="420" cy="220" r="2.2"/><circle cx="470" cy="220" r="2.2"/><circle cx="520" cy="220" r="2.2"/><circle cx="570" cy="220" r="2.2"/><circle cx="620" cy="220" r="2.2"/><circle cx="670" cy="220" r="2.2"/><circle cx="720" cy="220" r="2.2"/><circle cx="70" cy="270" r="2.2"/><circle cx="120" cy="270" r="2.2"/><circle cx="170" cy="270" r="2.2"/><circle cx="220" cy="270" r="2.2"/><circle cx="270" cy="270" r="2.2"/><circle cx="320" cy="270" r="2.2"/><circle cx="370" cy="270" r="2.2"/><circle cx="420" cy="270" r="2.2"/><circle cx="470" cy="270" r="2.2"/><circle cx="520" cy="270" r="2.2"/><circle cx="570" cy="270" r="2.2"/><circle cx="620" cy="270" r="2.2"/><circle cx="670" cy="270" r="2.2"/><circle cx="720" cy="270" r="2.2"/><circle cx="70" cy="320" r="2.2"/><circle cx="120" cy="320" r="2.2"/><circle cx="170" cy="320" r="2.2"/><circle cx="220" cy="320" r="2.2"/><circle cx="270" cy="320" r="2.2"/><circle cx="320" cy="320" r="2.2"/><circle cx="370" cy="320" r="2.2"/><circle cx="420" cy="320" r="2.2"/><circle cx="470" cy="320" r="2.2"/><circle cx="520" cy="320" r="2.2"/><circle cx="570" cy="320" r="2.2"/><circle cx="620" cy="320" r="2.2"/><circle cx="670" cy="320" r="2.2"/><circle cx="720" cy="320" r="2.2"/><circle cx="70" cy="370" r="2.2"/><circle cx="120" cy="370" r="2.2"/><circle cx="170" cy="370" r="2.2"/><circle cx="220" cy="370" r="2.2"/><circle cx="270" cy="370" r="2.2"/><circle cx="320" cy="370" r="2.2"/><circle cx="370" cy="370" r="2.2"/><circle cx="420" cy="370" r="2.2"/><circle cx="470" cy="370" r="2.2"/><circle cx="520" cy="370" r="2.2"/><circle cx="570" cy="370" r="2.2"/><circle cx="620" cy="370" r="2.2"/><circle cx="670" cy="370" r="2.2"/><circle cx="720" cy="370" r="2.2"/>
+  </g>
+
+  <!-- hero panel -->
+  <rect x="404" y="64" width="348" height="272" rx="30" fill="#FFFFFF" filter="url(#soft-course-psychology)"/><rect x="404" y="64" width="348" height="272" rx="30" fill="none" stroke="#8B5CF6" stroke-opacity="0.22" stroke-width="1.5"/><rect x="404" y="64" width="348" height="272" rx="30" fill="url(#panelglow-course-psychology)"/>
+
+  <!-- hero motif -->
+  <circle cx="560" cy="172" r="92" fill="none" stroke="#8B5CF6" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round" stroke-dasharray="500 60" transform="rotate(35 560 172)"/><g filter="url(#ds-course-psychology)"><path d="M534 116 C496 110 468 140 474 170 C462 190 480 216 506 216 C510 230 534 232 534 218 Z" fill="url(#purple-course-psychology)"/><path d="M546 116 C584 110 612 140 606 170 C618 190 600 216 574 216 C570 230 546 232 546 218 Z" fill="url(#purple-course-psychology)"/><line x1="540" y1="118" x2="540" y2="224" stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="3"/><path d="M496 146 C514 138 518 162 500 166" fill="none" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="3" stroke-linecap="round"/><path d="M584 146 C566 138 562 162 580 166" fill="none" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="3" stroke-linecap="round"/><path d="M500 190 C518 182 522 204 506 206" fill="none" stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="3" stroke-linecap="round"/><path d="M580 190 C562 182 558 204 574 206" fill="none" stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="3" stroke-linecap="round"/></g><circle cx="540" cy="166" r="9" fill="#F5B942"/><circle cx="540" cy="166" r="9" fill="none" stroke="#FFFFFF" stroke-width="2"/><line x1="636" y1="202" x2="636" y2="256" stroke="url(#green-course-psychology)" stroke-width="4" stroke-linecap="round"/><rect x="628.0" y="214" width="16" height="30.0" rx="4" fill="url(#green-course-psychology)"/><line x1="666" y1="198" x2="666" y2="254" stroke="url(#red-course-psychology)" stroke-width="4" stroke-linecap="round"/><rect x="658.0" y="210" width="16" height="32.0" rx="4" fill="url(#red-course-psychology)"/><line x1="696" y1="194" x2="696" y2="250" stroke="url(#green-course-psychology)" stroke-width="4" stroke-linecap="round"/><rect x="688.0" y="206" width="16" height="32.0" rx="4" fill="url(#green-course-psychology)"/><line x1="726" y1="190" x2="726" y2="246" stroke="url(#green-course-psychology)" stroke-width="4" stroke-linecap="round"/><rect x="718.0" y="202" width="16" height="32.0" rx="4" fill="url(#green-course-psychology)"/><line x1="624" y1="262" x2="742" y2="262" stroke="#6E6685" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
+
+  <!-- brand mark -->
+  <g>
+    <path d="M56 78 L70 50 L84 78 Z" fill="url(#purple-course-psychology)"/>
+    <path d="M62 78 L70 62 L78 78 Z" fill="#FFFFFF" fill-opacity="0.85"/>
+    <circle cx="70" cy="48" r="3.4" fill="#F5B942"/>
+    <text x="96" y="64" font-family="'Inter','Sora','Segoe UI',system-ui,-apple-system,sans-serif" font-size="15" font-weight="800" fill="#1A1430" letter-spacing="0.5">Summit Teachable</text>
+    <text x="96" y="80" font-family="'Inter','Sora','Segoe UI',system-ui,-apple-system,sans-serif" font-size="9.5" font-weight="600" fill="#6E6685" letter-spacing="2.4">TRADING ACADEMY</text>
+  </g>
+
+  <!-- eyebrow + title -->
+  <g>
+    <rect x="56" y="278" width="22" height="22" rx="7" fill="url(#purple-course-psychology)"/>
+    <text x="86" y="293" font-family="'Inter','Sora','Segoe UI',system-ui,-apple-system,sans-serif" font-size="12.5" font-weight="800" fill="#7C3AED" letter-spacing="2.6">MINDSET</text>
+  </g>
+  <text x="56" y="322" font-family="'Inter','Sora','Segoe UI',system-ui,-apple-system,sans-serif" font-size="33" font-weight="800" fill="#1A1430" letter-spacing="-0.6">Trading</text><text x="56" y="360" font-family="'Inter','Sora','Segoe UI',system-ui,-apple-system,sans-serif" font-size="33" font-weight="800" fill="#1A1430" letter-spacing="-0.6">Psychology</text>
+  <rect x="57" y="372" width="62" height="5" rx="2.5" fill="url(#purple-course-psychology)"/>
+</svg>

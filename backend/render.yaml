@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: summitteachable-backend
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.14
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings

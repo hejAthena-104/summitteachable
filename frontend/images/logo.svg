@@ -1,0 +1,37 @@
+<svg width="440" height="120" viewBox="0 0 440 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Summit Teachable">
+  <defs>
+    <linearGradient id="st-grad" x1="20" y1="96" x2="104" y2="24" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+    <linearGradient id="st-grad-v" x1="84" y1="96" x2="84" y2="24" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon (summit + rising candlesticks), 120x120 box on the left -->
+  <g>
+    <path d="M14 100 L48 32 L70 76 L62 100 Z" fill="url(#st-grad)"/>
+    <path d="M48 32 L58 52 L48 58 L40 48 Z" fill="#0F0A1E" opacity="0.18"/>
+    <path d="M62 88 L78 66 L92 74 L110 38"
+          stroke="url(#st-grad)" stroke-width="6"
+          stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <g stroke="#A78BFA" stroke-width="3.5" stroke-linecap="round">
+      <line x1="78" y1="56" x2="78" y2="80"/>
+      <line x1="92" y1="62" x2="92" y2="86"/>
+      <line x1="110" y1="26" x2="110" y2="52"/>
+    </g>
+    <g fill="url(#st-grad-v)">
+      <rect x="73"  y="60" width="10" height="16" rx="2.5"/>
+      <rect x="87"  y="68" width="10" height="14" rx="2.5"/>
+      <rect x="105" y="32" width="10" height="20" rx="2.5"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <g font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+    <text x="136" y="56" font-size="34" font-weight="700" letter-spacing="-0.5" fill="#ECEAF5">Summit</text>
+    <text x="136" y="92" font-size="34" font-weight="400" letter-spacing="0.5" fill="#A78BFA">Teachable</text>
+  </g>
+</svg>

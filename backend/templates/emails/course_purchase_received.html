@@ -1,0 +1,35 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>Payment received &mdash; under review</h2>
+
+<p>Hi {{ first_name }},</p>
+
+<p>We've received your payment submission for <strong>{{ course_title }}</strong> and our team is reviewing your proof of payment. You'll get an email the moment your course access is unlocked.</p>
+
+<div class="info-box" style="background-color:#F3F0FE; border-left-color:#8B5CF6;">
+    <p><strong>Submission summary</strong></p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:12px;">
+        <tr>
+            <td style="padding:6px 0; color:#6e727f; font-size:14px;">Course</td>
+            <td style="padding:6px 0; color:#18122B; font-size:14px; font-weight:700; text-align:right;">{{ course_title }}</td>
+        </tr>
+        <tr>
+            <td style="padding:6px 0; color:#6e727f; font-size:14px;">Amount</td>
+            <td style="padding:6px 0; color:#18122B; font-size:14px; font-weight:700; text-align:right;">{{ amount }}</td>
+        </tr>
+        <tr>
+            <td style="padding:6px 0; color:#6e727f; font-size:14px;">Payment method</td>
+            <td style="padding:6px 0; color:#18122B; font-size:14px; font-weight:700; text-align:right;">{{ payment_method }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="divider"></div>
+
+<p style="font-size:14px; color:#718096;">This is a one-time course purchase &mdash; it is not a trading deposit.</p>
+
+<p>Thanks for choosing {{ site_name }} to grow your trading knowledge.</p>
+
+<p>Best regards,<br>The {{ site_name }} Team</p>
+{% endblock %}

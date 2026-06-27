@@ -1,0 +1,26 @@
+[build]
+  publish = "frontend"
+
+[[redirects]]
+  from = "/login"
+  to = "https://dashboard.summitteachable.com/auth/login/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/register"
+  to = "https://dashboard.summitteachable.com/auth/register/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/dashboard/*"
+  to = "https://dashboard.summitteachable.com/dashboard/:splat"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/buy/*"
+  to = "https://dashboard.summitteachable.com/buy/:splat"
+  status = 302
+  force = true

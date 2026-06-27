@@ -1,0 +1,81 @@
+{% extends 'base_auth.html' %}
+{% load static %}
+
+{% block title %}Verify Your Email | Summit Teachable{% endblock %}
+
+{% block content %}
+<div class="row align-items-center justify-content-center vh-100 py-5">
+    <div class="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4 col-xxl-3 py-6 shadow-sm">
+
+        <div class="text-center mb-5">
+            <a href="{% url 'accounts:login' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" class="w-50">
+            </a>
+        </div>
+
+        <!-- Success Icon -->
+        <div class="text-center mb-4">
+            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                <i class="bi bi-envelope-check text-success" style="font-size: 3rem;"></i>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="mb-2 text-center">
+            Check Your Email
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-secondary text-center mb-4">
+            We've sent a verification email to
+        </p>
+
+        <div class="alert alert-info text-center mb-4">
+            <strong>{{ email }}</strong>
+        </div>
+
+        <!-- Instructions -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="card-title mb-3">
+                    <i class="bi bi-info-circle text-primary me-2"></i>Next Steps
+                </h6>
+                <ol class="mb-0 ps-3">
+                    <li class="mb-2">Check your email inbox (and spam folder)</li>
+                    <li class="mb-2">Click the verification link in the email</li>
+                    <li class="mb-2">You'll be verified and can login to your dashboard</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Resend Email -->
+        <div class="text-center mb-4">
+            <p class="text-muted small">Didn't receive the email?</p>
+            <a href="{% url 'accounts:resend_verification' %}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-arrow-clockwise me-2"></i>Resend Verification Email
+            </a>
+        </div>
+
+        <!-- Login Link -->
+        <div class="text-center">
+            <small class="text-muted">
+                Already verified?
+                <a href="{% url 'accounts:login' %}" class="fw-semibold">Sign in</a>
+            </small>
+        </div>
+
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Auto-refresh email icon animation
+    setInterval(function() {
+        document.querySelector('.bi-envelope-check').classList.add('animate__animated', 'animate__pulse');
+        setTimeout(function() {
+            document.querySelector('.bi-envelope-check').classList.remove('animate__animated', 'animate__pulse');
+        }, 1000);
+    }, 3000);
+</script>
+{% endblock %}
+{% endblock %}

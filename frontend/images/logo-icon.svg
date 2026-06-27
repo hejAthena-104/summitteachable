@@ -1,0 +1,35 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Summit Teachable icon">
+  <defs>
+    <linearGradient id="st-grad" x1="20" y1="104" x2="108" y2="24" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+    <linearGradient id="st-grad-v" x1="84" y1="100" x2="84" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Solid mountain summit (left mass). Peak at top, base along the bottom. -->
+  <path d="M14 100 L48 32 L70 76 L62 100 Z" fill="url(#st-grad)"/>
+
+  <!-- Snow-cap facet on the peak for depth -->
+  <path d="M48 32 L58 52 L48 58 L40 48 Z" fill="#0F0A1E" opacity="0.18"/>
+
+  <!-- The right ridge continues as a rising market line into stepped candlesticks -->
+  <path d="M62 88 L78 66 L92 74 L110 38"
+        stroke="url(#st-grad)" stroke-width="6"
+        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- Candlesticks rising up to the right -->
+  <g stroke="#A78BFA" stroke-width="3.5" stroke-linecap="round">
+    <line x1="78" y1="56" x2="78" y2="80"/>
+    <line x1="92"  y1="62" x2="92"  y2="86"/>
+    <line x1="110" y1="26" x2="110" y2="52"/>
+  </g>
+  <g fill="url(#st-grad-v)">
+    <rect x="73"  y="60" width="10" height="16" rx="2.5"/>
+    <rect x="87"  y="68" width="10" height="14" rx="2.5"/>
+    <rect x="105" y="32" width="10" height="20" rx="2.5"/>
+  </g>
+</svg>

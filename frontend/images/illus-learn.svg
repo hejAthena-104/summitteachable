@@ -1,0 +1,39 @@
+<svg width="640" height="400" viewBox="0 0 640 400" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Learning illustration">
+  <defs>
+    <linearGradient id="il-peak" x1="120" y1="340" x2="360" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+    <linearGradient id="il-peak2" x1="300" y1="340" x2="520" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8B5CF6" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#A78BFA" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="24" y="24" width="592" height="352" rx="24" fill="#0F0A1E"/>
+  <rect x="24" y="24" width="592" height="352" rx="24" fill="#8B5CF6" opacity="0.04"/>
+
+  <!-- back peak (the goal, learning summit) -->
+  <path d="M300 320 L450 130 L560 320 Z" fill="url(#il-peak2)"/>
+  <!-- front peak -->
+  <path d="M96 320 L260 96 L380 320 Z" fill="url(#il-peak)"/>
+  <!-- snow-cap facet -->
+  <path d="M260 96 L300 154 L260 168 L220 150 Z" fill="#FFFFFF" opacity="0.15"/>
+
+  <!-- ascending checkpoint flags / milestones (learning path) -->
+  <path d="M120 308 Q210 250 270 200 T430 150"
+        stroke="#A78BFA" stroke-width="3" stroke-dasharray="2 12"
+        stroke-linecap="round" fill="none" opacity="0.8"/>
+
+  <g>
+    <circle cx="120" cy="308" r="9" fill="#0F0A1E" stroke="#A78BFA" stroke-width="3"/>
+    <circle cx="240" cy="218" r="9" fill="#0F0A1E" stroke="#A78BFA" stroke-width="3"/>
+    <circle cx="430" cy="150" r="11" fill="#A78BFA"/>
+  </g>
+
+  <!-- little flag at the summit milestone -->
+  <g stroke="#ECEAF5" stroke-width="3" stroke-linecap="round">
+    <line x1="430" y1="150" x2="430" y2="108"/>
+  </g>
+  <path d="M430 108 L462 116 L430 126 Z" fill="#8B5CF6"/>
+</svg>

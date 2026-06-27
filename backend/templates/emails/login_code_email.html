@@ -1,0 +1,26 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>Your login code</h2>
+
+<p>Hi {{ first_name }},</p>
+
+<p>Here's your one-time login code. Enter it on the login screen to access your account.</p>
+
+<div style="text-align: center; margin: 28px 0;">
+    <div style="display:inline-block; background-color:#F3F0FE; border:1px solid #DDD3FB; border-radius:12px; padding:22px 36px;">
+        <span style="display:block; font-family:'Courier New',Courier,monospace; font-size:40px; font-weight:700; letter-spacing:12px; color:#18122B;">{{ login_code }}</span>
+    </div>
+</div>
+
+<div class="info-box" style="background-color:#F3F0FE; border-left-color:#8B5CF6;">
+    <p><strong>⏰ This code expires in {{ expires_in }}</strong></p>
+    <p style="margin-top:10px;">For your security, enter it promptly. A new code can be requested at any time from the login screen.</p>
+</div>
+
+<div class="divider"></div>
+
+<p style="font-size:14px; color:#718096;">If you didn't request this, ignore this email &mdash; your account is safe and no action is needed.</p>
+
+<p>Best regards,<br>The {{ site_name }} Team</p>
+{% endblock %}

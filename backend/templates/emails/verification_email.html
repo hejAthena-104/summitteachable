@@ -1,0 +1,37 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>Hi {{ first_name }},</h2>
+
+<p>Welcome to {{ site_name }}! We're excited to have you on board.</p>
+
+<p>To complete your registration and start learning to trade, please verify your email address by clicking the button below:</p>
+
+<div style="text-align: center;">
+    <a href="{{ verification_link }}" class="btn" style="display:inline-block;padding:14px 34px;background-color:#8B5CF6;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px;margin:18px 0;">Verify Email Address</a>
+</div>
+
+<div class="info-box">
+    <p><strong>⏰ This link will expire in 24 hours</strong></p>
+    <p style="margin-top: 10px;">If you didn't create an account with {{ site_name }}, please ignore this email.</p>
+</div>
+
+<p>Alternatively, you can copy and paste this link into your browser:</p>
+<p style="word-break: break-all; color: #8B5CF6; font-size: 14px;">{{ verification_link }}</p>
+
+<div class="divider"></div>
+
+<p style="font-size: 14px; color: #718096;">
+    Once verified, you'll have access to:
+</p>
+<ul style="color: #4a5568; margin-left: 20px; margin-bottom: 20px;">
+    <li>Trading courses and lessons</li>
+    <li>A paper-trading dashboard with simulated funds</li>
+    <li>Real-time practice portfolio tracking</li>
+    <li>24/7 customer support</li>
+</ul>
+
+<p>If you have any questions, feel free to reach out to our support team.</p>
+
+<p>Best regards,<br>The {{ site_name }} Team</p>
+{% endblock %}

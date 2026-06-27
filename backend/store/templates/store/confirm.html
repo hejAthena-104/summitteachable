@@ -1,0 +1,25 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Payment submitted | Summit Teachable{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width:640px;margin:40px auto;text-align:center;">
+  <div style="font-size:3rem;color:var(--lilac);"><i class="bi bi-check-circle-fill"></i></div>
+  <h1 style="font-size:1.8rem;margin:10px 0;">Payment submitted — pending review</h1>
+  <p class="muted">Thanks! We've received your payment submission for
+    <strong class="pri">{{ course.title }}</strong> and our team is verifying your proof of payment.
+    You'll get an email the moment your course is unlocked.</p>
+
+  <div style="text-align:left;background:var(--raised);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin:20px 0;">
+    <p style="margin:0 0 8px;"><i class="bi bi-envelope-check pri"></i> We sent <strong>{{ email }}</strong> two emails:</p>
+    <ul style="margin:0;padding-left:22px;" class="muted">
+      <li>A link to <strong>verify your email</strong>.</li>
+      <li>A <strong>6-digit login code</strong> so you can log in to track your purchase.</li>
+    </ul>
+  </div>
+
+  <p class="muted" style="font-size:.85rem;">This was a one-time course purchase (course access) — not a trading deposit.</p>
+  <a class="btn btn-primary" href="/auth/login-code/">Log in to my account</a>
+  <a class="btn btn-ghost" href="{% url 'store:catalog' %}" style="margin-left:8px;">Browse more courses</a>
+</div>
+{% endblock %}

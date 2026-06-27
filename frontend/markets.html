@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Markets — Summit Teachable</title>
+  <meta name="description" content="Explore live market data across forex, crypto, indices and metals. Practice trading them all on a risk-free demo dashboard with simulated funds." />
+  <meta name="theme-color" content="#F5F3FB" />
+  <script>(function(){try{if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .widget-card { padding: 8px; border-radius: 18px; overflow: hidden; }
+    .widget-card .tradingview-widget-container { border-radius: 12px; overflow: hidden; }
+    .widget-grid { display: grid; gap: 24px; }
+  </style>
+</head>
+<body>
+  <div class="bg-atmosphere"></div>
+  <div class="bg-contours"></div>
+  <div class="bg-grain"></div>
+
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="Summit Teachable home">
+        <img class="brand-logo logo-for-light" src="images/logo-dark.png" alt="Summit Teachable" width="220" height="60"
+             onerror="this.style.display='none';this.parentElement.querySelector('.brand-fallback').style.display='flex'" />
+        <img class="brand-logo logo-for-dark" src="images/logo.png" alt="Summit Teachable" width="220" height="60"
+             onerror="this.style.display='none'" />
+        <span class="brand-fallback" aria-hidden="true">
+          <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#04221a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 L9 8 L13 14 L17 5 L21 20 Z"/></svg></span>
+          <span style="font-family:var(--font-display);font-weight:700;font-size:19px;color:#fff;">Summit<b style="color:var(--mint);">Teachable</b></span>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="courses.html">Courses</a>
+        <a href="markets.html" class="active">Markets</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="/login" class="btn btn-ghost">Log In</a>
+        <a href="/register" class="btn btn-primary">Get Started</a>
+      </div>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+    <div class="mobile-nav">
+      <a href="index.html">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="markets.html">Markets</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="/login" class="btn btn-ghost btn-block">Log In</a>
+      <a href="/register" class="btn btn-primary btn-block">Get Started</a>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow reveal">Markets · Demo</span>
+      <h1 class="reveal d1">Practice across <span class="gradient-text">every major market</span></h1>
+      <p class="lead reveal d2">Real-time data, the same tools the pros use — and a demo account funded with simulated money so you can test your ideas without any risk. Charts below are illustrative market data; trading on Summit Teachable is simulated only.</p>
+      <div class="hero-cta reveal d3" style="justify-content:center;">
+        <a href="/login" class="btn btn-primary btn-lg">Open demo dashboard</a>
+        <a href="/register" class="btn btn-ghost btn-lg">Create account</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ticker tape -->
+  <div class="ticker-wrap">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+      {
+        "symbols": [
+          { "proName": "BINANCE:BTCUSDT", "title": "Bitcoin" },
+          { "proName": "BINANCE:ETHUSDT", "title": "Ethereum" },
+          { "proName": "FX:EURUSD", "title": "EUR/USD" },
+          { "proName": "FX:GBPUSD", "title": "GBP/USD" },
+          { "proName": "OANDA:XAUUSD", "title": "Gold" },
+          { "proName": "SP:SPX", "title": "S&P 500" }
+        ],
+        "showSymbolLogo": true,
+        "isTransparent": true,
+        "displayMode": "adaptive",
+        "colorTheme": "dark",
+        "locale": "en"
+      }
+      </script>
+    </div>
+  </div>
+
+  <!-- Market overview -->
+  <section class="section-tight">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Market overview</span>
+        <h2>What's moving right now</h2>
+        <p class="lead">A snapshot across indices, forex, futures and crypto. Use it to find your next demo practice idea.</p>
+      </div>
+      <div class="glass widget-card reveal d1">
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+          {
+            "colorTheme": "dark",
+            "dateRange": "12M",
+            "showChart": true,
+            "locale": "en",
+            "width": "100%",
+            "height": 560,
+            "largeChartUrl": "",
+            "isTransparent": true,
+            "showSymbolLogo": true,
+            "showFloatingTooltip": true,
+            "plotLineColorGrowing": "rgba(139, 92, 246, 1)",
+            "plotLineColorFalling": "rgba(239, 68, 68, 1)",
+            "gridLineColor": "rgba(148, 163, 184, 0.06)",
+            "scaleFontColor": "rgba(148, 163, 184, 1)",
+            "belowLineFillColorGrowing": "rgba(139, 92, 246, 0.12)",
+            "belowLineFillColorFalling": "rgba(239, 68, 68, 0.12)",
+            "belowLineFillColorGrowingBottom": "rgba(139, 92, 246, 0)",
+            "belowLineFillColorFallingBottom": "rgba(239, 68, 68, 0)",
+            "symbolActiveColor": "rgba(139, 92, 246, 0.12)",
+            "tabs": [
+              { "title": "Indices", "symbols": [
+                { "s": "FOREXCOM:SPXUSD", "d": "S&P 500" },
+                { "s": "FOREXCOM:NSXUSD", "d": "US 100" },
+                { "s": "FOREXCOM:DJI", "d": "Dow 30" },
+                { "s": "INDEX:NKY", "d": "Nikkei 225" },
+                { "s": "FOREXCOM:UKXGBP", "d": "FTSE 100" }
+              ]},
+              { "title": "Forex", "symbols": [
+                { "s": "FX:EURUSD", "d": "EUR/USD" },
+                { "s": "FX:GBPUSD", "d": "GBP/USD" },
+                { "s": "FX:USDJPY", "d": "USD/JPY" },
+                { "s": "FX:AUDUSD", "d": "AUD/USD" },
+                { "s": "FX:USDCAD", "d": "USD/CAD" }
+              ]},
+              { "title": "Crypto", "symbols": [
+                { "s": "BINANCE:BTCUSDT", "d": "Bitcoin" },
+                { "s": "BINANCE:ETHUSDT", "d": "Ethereum" },
+                { "s": "BINANCE:SOLUSDT", "d": "Solana" },
+                { "s": "BINANCE:BNBUSDT", "d": "BNB" }
+              ]}
+            ]
+          }
+          </script>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forex heat map -->
+  <section class="section-tight">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Forex heat map</span>
+        <h2>See currency strength at a glance</h2>
+        <p class="lead">A favourite tool for forex learners — spot which currencies are strong or weak before you place a demo trade.</p>
+      </div>
+      <div class="glass widget-card reveal d1">
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js" async>
+          {
+            "width": "100%",
+            "height": 460,
+            "currencies": ["EUR","USD","JPY","GBP","CHF","AUD","CAD","NZD"],
+            "isTransparent": true,
+            "colorTheme": "dark",
+            "locale": "en"
+          }
+          </script>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="cta-band reveal">
+        <span class="eyebrow">Put it into practice</span>
+        <h2>Trade these markets — risk-free</h2>
+        <p class="lead">Your demo dashboard is funded with simulated money. Test any market, any strategy, with nothing real on the line.</p>
+        <div class="hero-cta">
+          <a href="/login" class="btn btn-primary btn-lg">Open demo dashboard</a>
+          <a href="courses.html" class="btn btn-ghost btn-lg">Learn the basics first</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="footer-mount"></footer>
+
+  <script src="js/footer.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/integrations.js"></script>
+</body>
+</html>

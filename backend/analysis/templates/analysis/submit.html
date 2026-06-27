@@ -1,0 +1,105 @@
+{% extends 'analysis/base_analysis.html' %}
+{% load static %}
+
+{% block title %}Contribute Analysis{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between mb-1">
+    <div>
+        <h1 class="h2 mb-1">Contribute your analysis</h1>
+        <p class="text-muted mb-0">Share an educational market bias. Submissions are reviewed before publishing.</p>
+    </div>
+    <a href="{% url 'analysis:feed' %}" class="btn btn-outline-secondary mt-3 mt-md-0">
+        <i class="bi bi-arrow-left me-1"></i> Back to feed
+    </a>
+</div>
+
+<div class="row mt-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" action="{% url 'analysis:submit' %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label" for="title">Title</label>
+                        <input class="form-control" id="title" name="title" type="text"
+                            placeholder="e.g. EURUSD — Bullish continuation above 1.0850"
+                            value="{{ request.POST.title|default:'' }}" required>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="market">Market</label>
+                            <select class="form-select" id="market" name="market">
+                                {% for value, label in market_choices %}
+                                <option value="{{ value }}"
+                                    {% if request.POST.market == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="symbol">Symbol</label>
+                            <input class="form-control" id="symbol" name="symbol" type="text"
+                                placeholder="e.g. EURUSD, BTCUSD, AAPL"
+                                value="{{ request.POST.symbol|default:'' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="bias">Bias</label>
+                            <select class="form-select" id="bias" name="bias">
+                                {% for value, label in bias_choices %}
+                                <option value="{{ value }}"
+                                    {% if request.POST.bias == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="timeframe">Timeframe</label>
+                            <input class="form-control" id="timeframe" name="timeframe" type="text"
+                                placeholder="e.g. 4H, 1D"
+                                value="{{ request.POST.timeframe|default:'' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="tv_symbol">
+                            TradingView symbol <span class="text-muted">(optional)</span>
+                        </label>
+                        <input class="form-control" id="tv_symbol" name="tv_symbol" type="text"
+                            placeholder="e.g. FX:EURUSD"
+                            value="{{ request.POST.tv_symbol|default:'' }}">
+                        <div class="form-text">Adds a mini chart widget to your card.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="body">Analysis</label>
+                        <textarea class="form-control" id="body" name="body" rows="6"
+                            placeholder="Describe your educational read on the market…"
+                            required>{{ request.POST.body|default:'' }}</textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="chart_image">
+                            Chart image <span class="text-muted">(optional)</span>
+                        </label>
+                        <input class="form-control" id="chart_image" name="chart_image" type="file" accept="image/*">
+                    </div>
+
+                    <div class="alert alert-light border analysis-edu-note text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Keep it educational. Posts are reviewed for quality and to confirm they are
+                        framed as study material — not financial advice.
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-send me-1"></i> Submit for review
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

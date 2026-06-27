@@ -1,0 +1,609 @@
+/* ============================================================
+   Summit Teachable brand override — loaded AFTER the Dashly bundle.
+   Brand (matches the new EnvyTheme marketing site):
+     - RED #8B5CF6   = primary action colour
+     - NAVY #130D22  = headings / text / sidebar default
+     - light, clean background
+   ============================================================ */
+
+:root, [data-theme="light"], [data-theme="dark"] {
+  --bs-primary: #8B5CF6;
+  --bs-primary-rgb: 139, 92, 246;
+  --bs-link-color: #8B5CF6;
+  --bs-link-hover-color: #7C3AED;
+}
+
+/* ============================================================
+   LIGHT THEME (default) — bright surfaces, purple accent.
+   Explicit so a fresh visitor always lands on the clean light look,
+   regardless of any leftover dark-tuned defaults in the Dashly bundle.
+   ============================================================ */
+:root, [data-theme="light"] {
+  /* ---- Bootstrap core vars ---- */
+  --bs-body-bg: #F5F3FB;
+  --bs-body-bg-rgb: 245, 243, 251;
+  --bs-body-color: #211A38;
+  --bs-body-color-rgb: 33, 26, 56;
+  --bs-emphasis-color: #1A1430;
+  --bs-secondary-color: #6E6685;
+  --bs-secondary-bg: #F3EFFC;
+  --bs-tertiary-color: #8A82A0;
+  --bs-tertiary-bg: #F3EFFC;
+
+  --bs-border-color: #E8E3F6;
+  --bs-border-color-translucent: rgba(139, 92, 246, .16);
+
+  --bs-link-color: #8B5CF6;
+  --bs-link-hover-color: #7C3AED;
+
+  --bs-heading-color: #1A1430;
+  --bs-card-bg: #FFFFFF;
+  --bs-card-color: #211A38;
+  --bs-card-border-color: #E8E3F6;
+  --bs-card-cap-bg: transparent;
+
+  /* ---- Dashly's own custom properties ---- */
+  --dashly-body-bg: #F5F3FB;
+  --dashly-body-color: #211A38;
+  --dashly-card-bg: #FFFFFF;
+  --dashly-border-color: #E8E3F6;
+  --dashly-navbar-vertical-bg: #FFFFFF;
+  --dashly-light: #F3EFFC;
+
+  color-scheme: light;
+}
+
+/* ---- Light surfaces: white cards, soft purple-tinted borders/shadow ---- */
+:root .card, [data-theme="light"] .card,
+:root .trade-stat-card, [data-theme="light"] .trade-stat-card,
+:root .chart-panel, [data-theme="light"] .chart-panel,
+:root .list-group, [data-theme="light"] .list-group,
+:root .accordion-item, [data-theme="light"] .accordion-item {
+  background-color: #FFFFFF;
+  border-color: #E8E3F6;
+  color: #211A38;
+}
+:root .card, [data-theme="light"] .card {
+  box-shadow: 0 2px 14px rgba(17, 12, 46, .06);
+}
+:root h1, :root h2, :root h3, :root h4, :root h5, :root h6,
+[data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3,
+[data-theme="light"] h4, [data-theme="light"] h5, [data-theme="light"] h6 {
+  color: #1A1430;
+}
+:root .text-muted, :root .text-secondary,
+[data-theme="light"] .text-muted, [data-theme="light"] .text-secondary {
+  color: #6E6685 !important;
+}
+
+/* ---------- Red primary buttons / CTAs ---------- */
+.btn-primary {
+  --bs-btn-bg:#8B5CF6; --bs-btn-border-color:#8B5CF6;
+  --bs-btn-hover-bg:#7C3AED; --bs-btn-hover-border-color:#7C3AED;
+  --bs-btn-active-bg:#6D28D9; --bs-btn-active-border-color:#6D28D9;
+  --bs-btn-color:#fff; --bs-btn-hover-color:#fff; --bs-btn-active-color:#fff;
+  --bs-btn-disabled-bg:#8B5CF6; --bs-btn-disabled-border-color:#8B5CF6;
+}
+.btn-outline-primary {
+  --bs-btn-color:#8B5CF6; --bs-btn-border-color:#8B5CF6;
+  --bs-btn-hover-bg:#8B5CF6; --bs-btn-hover-border-color:#8B5CF6; --bs-btn-hover-color:#fff;
+  --bs-btn-active-bg:#8B5CF6; --bs-btn-active-border-color:#8B5CF6; --bs-btn-active-color:#fff;
+}
+/* opacity-aware so bg-opacity-10 / text-opacity tints still render (stat icons) */
+.bg-primary       { background-color:rgba(var(--bs-primary-rgb), var(--bs-bg-opacity,1)) !important; }
+.text-primary     { color:rgba(var(--bs-primary-rgb), var(--bs-text-opacity,1)) !important; }
+.link-primary     { color:#8B5CF6 !important; }
+.badge.bg-primary { --bs-bg-opacity:1; background-color:#8B5CF6 !important; }
+.progress-bar     { background-color:#8B5CF6; }
+.btn-link         { color:#8B5CF6; }
+
+/* ---------- Brand accent helpers ---------- */
+.text-red  { color:#8B5CF6 !important; }
+.bg-red    { background-color:#8B5CF6 !important; }
+.text-navy { color:#130D22 !important; }
+a:not(.btn):not(.nav-link):not(.navbar-brand) { color:#8B5CF6; }
+a:not(.btn):not(.nav-link):not(.navbar-brand):hover { color:#7C3AED; }
+
+/* ---------- Clean, light sidebar ---------- */
+#mainNavbar.bg-white,
+.navbar-vertical.bg-white {
+  background-color:#ffffff !important;
+  border-right:1px solid #E8E3F6;
+  box-shadow:0 2px 14px rgba(17,12,46,0.06);
+}
+#mainNavbar .navbar-nav .nav-link {
+  color:#130D22 !important;
+  border-radius:10px;
+  margin:2px 8px;
+  transition:background-color .15s ease,color .15s ease;
+}
+#mainNavbar .navbar-nav .nav-link i,
+#mainNavbar .navbar-nav .nav-link .fe {
+  color:#6e727f !important;
+}
+#mainNavbar .navbar-nav .nav-link:hover {
+  background-color:#F3EFFC !important;
+  color:#211A38 !important;
+}
+/* active item -> soft purple pill with purple text/icon */
+#mainNavbar .navbar-nav .nav-link.active,
+.navbar-vertical .navbar-nav .nav-link.active {
+  background-color:#EDE9FE !important;
+  color:#7C3AED !important;
+  font-weight:600;
+}
+#mainNavbar .navbar-nav .nav-link.active i,
+#mainNavbar .navbar-nav .nav-link.active .fe,
+#mainNavbar .navbar-nav .nav-link.active svg {
+  color:#7C3AED !important;
+}
+#mainNavbar .navbar-heading { color:#9aa0ad !important; }
+
+/* ---------- Logo: preserve aspect ratio ---------- */
+#mainNavbar .navbar-brand-img,
+.navbar-brand .navbar-brand-img {
+  height:36px !important;
+  width:auto !important;
+  max-width:none !important;
+  object-fit:contain !important;
+}
+/* ---------- Theme-aware brand logo swap ----------
+   Light (default): show the deep-purple wordmark (brand-logo-dark, for a light bg).
+   Dark: show the near-white wordmark (brand-logo-light, for a dark bg).
+   Keyed on data-theme (NOT Dashly's logo-light/logo-dark classes, which
+   double-rendered before). */
+.brand-logo-light { display:none !important; }
+.brand-logo-dark  { display:inline-block !important; }
+[data-theme="dark"] .brand-logo-dark  { display:none !important; }
+[data-theme="dark"] .brand-logo-light { display:inline-block !important; }
+
+/* ---------- Body ---------- */
+body { background-color:#F5F3FB; }
+
+/* ============================================================
+   DEMO / paper-account badge — persistent, visible everywhere money
+   or trading stats appear. Emerald accent on dark. Hard product
+   constraint: simulated funds, never real money.
+   ============================================================ */
+.demo-badge {
+  display:inline-flex;
+  align-items:center;
+  gap:.6rem;
+  background:#EDE9FE;
+  border:1px solid rgba(139, 92, 246,.45);
+  border-radius:10px;
+  padding:.5rem .85rem;
+  color:#211A38;
+  box-shadow:0 0 0 3px rgba(139, 92, 246,.10);
+}
+.demo-badge__icon {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:30px; height:30px;
+  border-radius:8px;
+  background:#FFFFFF;
+  color:#7C3AED;
+  font-size:1rem;
+  flex:0 0 auto;
+}
+.demo-badge__text { display:flex; flex-direction:column; line-height:1.15; }
+.demo-badge__text strong {
+  color:#6D28D9;
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+}
+.demo-badge__note { color:#5B5470; font-size:.72rem; }
+
+/* slim inline pill variant (headers / next to balances) */
+.demo-badge--inline {
+  gap:.45rem;
+  padding:.3rem .6rem;
+  box-shadow:none;
+  font-size:.72rem;
+}
+.demo-badge--inline i { color:#7C3AED; }
+.demo-badge--inline strong {
+  color:#6D28D9; text-transform:uppercase; letter-spacing:.3px; font-size:.7rem;
+}
+.demo-badge--inline .demo-badge__note { color:#5B5470; }
+@media (max-width: 575.98px) {
+  .demo-badge--inline .demo-badge__note { display:none; }
+}
+
+/* ============================================================
+   Trading dashboard stat cards
+   ============================================================ */
+.trade-stat-card {
+  border:1px solid var(--bs-border-color);
+  border-radius:14px;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.trade-stat-card:hover {
+  transform:translateY(-2px);
+  box-shadow:0 8px 25px rgba(9,16,31,.08);
+}
+.trade-stat-card .stat-icon {
+  width:46px; height:46px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center; font-size:1.4rem;
+}
+/* Semantic P&L colours — kept DISTINCT from the purple brand for clarity.
+   won = green, drawn = amber, lost = red. */
+.trade-win   { color:#16A34A !important; }
+.trade-draw  { color:#D97706 !important; }
+.trade-loss  { color:#DC2626 !important; }
+.bg-trade-win  { background:rgba(22,163,74,.12) !important; }
+.bg-trade-draw { background:rgba(217,119,6,.12) !important; }
+.bg-trade-loss { background:rgba(220,38,38,.12) !important; }
+/* Dark theme: brighter P&L tones for legibility on deep purple */
+[data-theme="dark"] .trade-win   { color:#22C55E !important; }
+[data-theme="dark"] .trade-draw  { color:#F59E0B !important; }
+[data-theme="dark"] .trade-loss  { color:#EF4444 !important; }
+[data-theme="dark"] .bg-trade-win  { background:rgba(34,197,94,.14) !important; }
+[data-theme="dark"] .bg-trade-draw { background:rgba(245,158,11,.14) !important; }
+[data-theme="dark"] .bg-trade-loss { background:rgba(239,68,68,.14) !important; }
+
+/* ---------- Sidebar grouped nav section headings ---------- */
+#mainNavbar .nav-section-heading {
+  color:#9aa0ad !important;
+  font-size:.68rem;
+  font-weight:700;
+  letter-spacing:.6px;
+  text-transform:uppercase;
+  padding:.5rem 1rem .25rem;
+  margin-top:.5rem;
+}
+
+/* ============================================================
+   DARK PURPLE THEME LAYER
+   Loaded after the Dashly bundle. Activates when <html data-theme="dark">.
+   Repaints Dashly's default dark navy/grey into the Summit dark-purple
+   brand. We override both Bootstrap (--bs-*) and Dashly's own surfaces.
+
+   Palette:
+     page bg        #0F0A1E   (deepest #0B0717)
+     cards/panels   #18122B / #1C1533
+     raised         #221A38
+     border         rgba(139,92,246,.15) / hairline rgba(255,255,255,.06)
+     accent         #8B5CF6 (hover #7C3AED, active #6D28D9, light #A78BFA)
+     text           #ECEAF5 primary / #9D94B8 muted
+   ============================================================ */
+[data-theme="dark"] {
+  /* ---- Bootstrap core vars ---- */
+  --bs-body-bg: #0F0A1E;
+  --bs-body-bg-rgb: 15, 10, 30;
+  --bs-body-color: #ECEAF5;
+  --bs-body-color-rgb: 236, 234, 245;
+  --bs-emphasis-color: #ffffff;
+  --bs-emphasis-color-rgb: 255, 255, 255;
+  --bs-secondary-color: rgba(157, 148, 184, .85);
+  --bs-secondary-bg: #1C1533;
+  --bs-tertiary-color: rgba(157, 148, 184, .65);
+  --bs-tertiary-bg: #18122B;
+
+  --bs-border-color: rgba(139, 92, 246, .15);
+  --bs-border-color-translucent: rgba(255, 255, 255, .06);
+
+  --bs-primary: #8B5CF6;
+  --bs-primary-rgb: 139, 92, 246;
+  --bs-link-color: #A78BFA;
+  --bs-link-color-rgb: 167, 139, 250;
+  --bs-link-hover-color: #C4B5FD;
+  --bs-link-hover-color-rgb: 196, 181, 253;
+
+  --bs-heading-color: #F5F3FF;
+  --bs-card-bg: #18122B;
+  --bs-card-color: #ECEAF5;
+  --bs-card-border-color: rgba(139, 92, 246, .15);
+  --bs-card-cap-bg: transparent;
+
+  /* ---- Dashly's own custom properties (best-effort coverage) ---- */
+  --dashly-body-bg: #0F0A1E;
+  --dashly-body-color: #ECEAF5;
+  --dashly-card-bg: #18122B;
+  --dashly-border-color: rgba(139, 92, 246, .15);
+  --dashly-navbar-vertical-bg: #130D22;
+  --dashly-light: #1C1533;
+  --dashly-light-rgb: 28, 21, 51;
+
+  color-scheme: dark;
+}
+
+/* ---- Page surface ---- */
+[data-theme="dark"] body,
+[data-theme="dark"] .main-content,
+[data-theme="dark"] main {
+  background-color: #0F0A1E !important;
+  color: #ECEAF5;
+}
+[data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3,
+[data-theme="dark"] h4, [data-theme="dark"] h5, [data-theme="dark"] h6,
+[data-theme="dark"] .h1, [data-theme="dark"] .h2, [data-theme="dark"] .h3,
+[data-theme="dark"] .h4, [data-theme="dark"] .h5, [data-theme="dark"] .h6 {
+  color: #F5F3FF;
+}
+[data-theme="dark"] .text-muted,
+[data-theme="dark"] .text-secondary,
+[data-theme="dark"] small.text-muted {
+  color: #9D94B8 !important;
+}
+[data-theme="dark"] .text-body { color: #ECEAF5 !important; }
+[data-theme="dark"] .text-dark { color: #ECEAF5 !important; }
+[data-theme="dark"] hr { border-color: rgba(139, 92, 246, .18); opacity: 1; }
+
+/* ---- Cards / panels / surfaces ---- */
+[data-theme="dark"] .card,
+[data-theme="dark"] .trade-stat-card,
+[data-theme="dark"] .chart-panel,
+[data-theme="dark"] .list-group,
+[data-theme="dark"] .accordion-item {
+  background-color: #18122B !important;
+  border-color: rgba(139, 92, 246, .15) !important;
+  color: #ECEAF5;
+}
+[data-theme="dark"] .card-header,
+[data-theme="dark"] .card-footer {
+  background-color: transparent !important;
+  border-color: rgba(139, 92, 246, .15) !important;
+  color: #ECEAF5;
+}
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-light {
+  background-color: #18122B !important;
+}
+[data-theme="dark"] .bg-body,
+[data-theme="dark"] .bg-body-tertiary,
+[data-theme="dark"] .bg-body-secondary {
+  background-color: #1C1533 !important;
+}
+[data-theme="dark"] .border,
+[data-theme="dark"] .border-top,
+[data-theme="dark"] .border-bottom,
+[data-theme="dark"] .border-start,
+[data-theme="dark"] .border-end {
+  border-color: rgba(139, 92, 246, .15) !important;
+}
+[data-theme="dark"] .shadow,
+[data-theme="dark"] .shadow-sm,
+[data-theme="dark"] .shadow-lg {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .45) !important;
+}
+
+/* ---- Navbar (top) / dropdowns / modals / offcanvas ---- */
+[data-theme="dark"] .navbar.bg-white,
+[data-theme="dark"] .navbar.bg-light {
+  background-color: #130D22 !important;
+  border-color: rgba(139, 92, 246, .15) !important;
+}
+[data-theme="dark"] .dropdown-menu {
+  --bs-dropdown-bg: #1C1533;
+  --bs-dropdown-color: #ECEAF5;
+  --bs-dropdown-border-color: rgba(139, 92, 246, .18);
+  --bs-dropdown-link-color: #ECEAF5;
+  --bs-dropdown-link-hover-color: #ffffff;
+  --bs-dropdown-link-hover-bg: rgba(139, 92, 246, .14);
+  --bs-dropdown-link-active-bg: #8B5CF6;
+  --bs-dropdown-link-active-color: #ffffff;
+  background-color: #1C1533;
+  border-color: rgba(139, 92, 246, .18);
+}
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .offcanvas {
+  background-color: #18122B;
+  color: #ECEAF5;
+  border-color: rgba(139, 92, 246, .18);
+}
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .modal-footer {
+  border-color: rgba(139, 92, 246, .15);
+}
+[data-theme="dark"] .btn-close {
+  filter: invert(1) grayscale(1) brightness(1.6);
+}
+
+/* ---- Tables ---- */
+[data-theme="dark"] .table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #ECEAF5;
+  --bs-table-border-color: rgba(139, 92, 246, .14);
+  --bs-table-striped-bg: rgba(139, 92, 246, .05);
+  --bs-table-striped-color: #ECEAF5;
+  --bs-table-hover-bg: rgba(139, 92, 246, .10);
+  --bs-table-hover-color: #ffffff;
+  color: #ECEAF5;
+}
+[data-theme="dark"] .table > :not(caption) > * > * {
+  border-color: rgba(139, 92, 246, .14);
+}
+[data-theme="dark"] .table thead th,
+[data-theme="dark"] .table th {
+  color: #C4B5FD;
+}
+
+/* ---- Form controls ---- */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .input-group-text,
+[data-theme="dark"] textarea.form-control {
+  background-color: #221A38 !important;
+  border-color: rgba(139, 92, 246, .22) !important;
+  color: #ECEAF5 !important;
+}
+[data-theme="dark"] .form-control::placeholder { color: #8076a0 !important; }
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  background-color: #221A38 !important;
+  border-color: #8B5CF6 !important;
+  box-shadow: 0 0 0 .2rem rgba(139, 92, 246, .25) !important;
+  color: #ECEAF5 !important;
+}
+[data-theme="dark"] .input-group-text {
+  color: #A78BFA !important;
+}
+[data-theme="dark"] .form-label,
+[data-theme="dark"] .form-check-label,
+[data-theme="dark"] .col-form-label { color: #ECEAF5; }
+[data-theme="dark"] .form-check-input {
+  background-color: #221A38;
+  border-color: rgba(139, 92, 246, .35);
+}
+[data-theme="dark"] .form-check-input:checked {
+  background-color: #8B5CF6;
+  border-color: #8B5CF6;
+}
+
+/* ---- Buttons ----
+   Dashly's dark theme hardcodes a teal primary (--bs-btn-bg:#00bac7) via a
+   [data-theme="dark"] .btn-primary rule that out-specifies our plain
+   .btn-primary block. Re-assert the purple brand at equal specificity. */
+[data-theme="dark"] .btn-primary {
+  --bs-btn-bg: #8B5CF6; --bs-btn-border-color: #8B5CF6;
+  --bs-btn-hover-bg: #7C3AED; --bs-btn-hover-border-color: #7C3AED;
+  --bs-btn-active-bg: #6D28D9; --bs-btn-active-border-color: #6D28D9;
+  --bs-btn-color: #fff; --bs-btn-hover-color: #fff; --bs-btn-active-color: #fff;
+  --bs-btn-disabled-bg: #8B5CF6; --bs-btn-disabled-border-color: #8B5CF6;
+}
+[data-theme="dark"] .btn-outline-primary {
+  --bs-btn-color: #A78BFA; --bs-btn-border-color: #8B5CF6;
+  --bs-btn-hover-bg: #8B5CF6; --bs-btn-hover-border-color: #8B5CF6; --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: #6D28D9; --bs-btn-active-border-color: #6D28D9; --bs-btn-active-color: #fff;
+}
+[data-theme="dark"] .btn-light {
+  --bs-btn-bg: #221A38; --bs-btn-border-color: rgba(139, 92, 246, .25);
+  --bs-btn-color: #ECEAF5;
+  --bs-btn-hover-bg: #2A2046; --bs-btn-hover-border-color: rgba(139, 92, 246, .4); --bs-btn-hover-color: #fff;
+}
+[data-theme="dark"] .text-bg-primary,
+[data-theme="dark"] .bg-primary { background-color: #8B5CF6 !important; }
+[data-theme="dark"] .progress-bar { background-color: #8B5CF6; }
+
+/* ---- Links / primary text ---- */
+[data-theme="dark"] a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item) { color: #A78BFA; }
+[data-theme="dark"] a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item):hover { color: #C4B5FD; }
+[data-theme="dark"] .text-primary { color: #A78BFA !important; }
+
+/* ---- Badges / alerts ---- */
+[data-theme="dark"] .badge.bg-light,
+[data-theme="dark"] .badge.bg-secondary {
+  background-color: rgba(139, 92, 246, .18) !important;
+  color: #C4B5FD !important;
+}
+[data-theme="dark"] .alert-primary {
+  --bs-alert-bg: rgba(139, 92, 246, .14);
+  --bs-alert-border-color: rgba(139, 92, 246, .35);
+  --bs-alert-color: #C4B5FD;
+}
+[data-theme="dark"] .alert-success {
+  --bs-alert-bg: rgba(34, 197, 94, .12);
+  --bs-alert-border-color: rgba(34, 197, 94, .35);
+  --bs-alert-color: #86EFAC;
+}
+[data-theme="dark"] .alert-danger {
+  --bs-alert-bg: rgba(239, 68, 68, .12);
+  --bs-alert-border-color: rgba(239, 68, 68, .35);
+  --bs-alert-color: #FCA5A5;
+}
+[data-theme="dark"] .alert-warning {
+  --bs-alert-bg: rgba(245, 158, 11, .12);
+  --bs-alert-border-color: rgba(245, 158, 11, .35);
+  --bs-alert-color: #FCD34D;
+}
+[data-theme="dark"] .alert-info {
+  --bs-alert-bg: rgba(167, 139, 250, .12);
+  --bs-alert-border-color: rgba(167, 139, 250, .35);
+  --bs-alert-color: #C4B5FD;
+}
+[data-theme="dark"] .alert-light,
+[data-theme="dark"] .alert-secondary {
+  --bs-alert-bg: #221A38;
+  --bs-alert-border-color: rgba(139, 92, 246, .22);
+  --bs-alert-color: #ECEAF5;
+  background-color: #221A38;
+  color: #ECEAF5;
+}
+[data-theme="dark"] .alert-light .text-muted,
+[data-theme="dark"] .alert-secondary .text-muted { color: #9D94B8 !important; }
+
+/* ---- Sidebar -> dark purple under the dark theme ----
+   The sidebar JS only adds .bg-dark when localStorage.navigationColor=='inverted';
+   a fresh visitor keeps .bg-white. So we key the dark sidebar off the page theme
+   (data-theme="dark") and cover BOTH bg-white and bg-dark navbar states, with
+   enough specificity to beat the light-sidebar rules above. */
+[data-theme="dark"] #mainNavbar,
+[data-theme="dark"] #mainNavbar.bg-white,
+[data-theme="dark"] #mainNavbar.bg-dark,
+[data-theme="dark"] .navbar-vertical {
+  background-color: #130D22 !important;
+  border-right: 1px solid rgba(139, 92, 246, .15) !important;
+  box-shadow: 0 0 28px rgba(0, 0, 0, .35);
+}
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link {
+  color: #C7C0DC !important;
+  border-radius: 10px;
+  margin: 2px 8px;
+  transition: background-color .15s ease, color .15s ease;
+}
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link i,
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link .fe {
+  color: #9D94B8 !important;
+}
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link:hover {
+  background-color: rgba(139, 92, 246, .12) !important;
+  color: #ECEAF5 !important;
+}
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link:hover i {
+  color: #A78BFA !important;
+}
+/* active item -> filled purple pill */
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link.active,
+[data-theme="dark"] .navbar-vertical .navbar-nav .nav-link.active {
+  background-color: rgba(139, 92, 246, .20) !important;
+  color: #C4B5FD !important;
+  font-weight: 600;
+}
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link.active i,
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link.active .fe,
+[data-theme="dark"] #mainNavbar .navbar-nav .nav-link.active svg {
+  color: #A78BFA !important;
+}
+[data-theme="dark"] #mainNavbar .nav-section-heading,
+[data-theme="dark"] #mainNavbar .navbar-heading {
+  color: #7c7395 !important;
+}
+[data-theme="dark"] #mainNavbar .nav-link.text-danger { color: #F87171 !important; }
+[data-theme="dark"] #mainNavbar hr { border-color: rgba(139, 92, 246, .18); }
+
+/* ---- Demo badge on dark purple (already dark; ensure legible) ---- */
+[data-theme="dark"] .demo-badge {
+  background: #0B0717;
+  border-color: rgba(139, 92, 246, .55);
+  color: #ECEAF5;
+}
+[data-theme="dark"] .demo-badge__icon {
+  background: rgba(139, 92, 246, .18);
+  color: #A78BFA;
+}
+[data-theme="dark"] .demo-badge__text strong,
+[data-theme="dark"] .demo-badge--inline strong,
+[data-theme="dark"] .demo-badge--inline i { color: #A78BFA; }
+[data-theme="dark"] .demo-badge__note,
+[data-theme="dark"] .demo-badge--inline .demo-badge__note { color: #B8AFD0; }
+
+/* ---- Trade stat hover shadow on dark ---- */
+[data-theme="dark"] .trade-stat-card:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+}
+
+/* ---- Auth pages: neutralise leftover light glass-cards on dark ---- */
+[data-theme="dark"] .auth-form-side { background: #0F0A1E !important; }
+[data-theme="dark"] .glass-card {
+  background: rgba(28, 21, 51, .72) !important;
+  border: 1px solid rgba(139, 92, 246, .22) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .45) !important;
+}
+[data-theme="dark"] .stat-card {
+  background: rgba(255, 255, 255, .06);
+  border-color: rgba(255, 255, 255, .12);
+}
