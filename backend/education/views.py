@@ -43,12 +43,12 @@ def enroll(request, slug):
     course = get_object_or_404(Course, slug=slug, is_published=True)
 
     if not education_unlocked(request.user):
-        messages.warning(request, 'Make a demo deposit to unlock the academy.')
+        messages.warning(request, 'Make a deposit to unlock the academy.')
         return redirect('dashboard:deposits')
 
     enrollment, created = Enrollment.objects.get_or_create(user=request.user, course=course)
     if created:
-        messages.success(request, f'You are now enrolled in "{course.title}" (demo — free access).')
+        messages.success(request, f'You are now enrolled in "{course.title}".')
     else:
         messages.info(request, f'You are already enrolled in "{course.title}".')
     return redirect('education:course_detail', slug=course.slug)
@@ -64,7 +64,7 @@ def lesson_player(request, slug, lesson_id):
     # Access: enrolled, or this lesson is a free preview.
     if enrollment is None and not lesson.is_preview:
         if not education_unlocked(request.user):
-            messages.warning(request, 'Make a demo deposit to unlock the academy.')
+            messages.warning(request, 'Make a deposit to unlock the academy.')
             return redirect('dashboard:deposits')
         messages.info(request, 'Enroll to access this lesson.')
         return redirect('education:course_detail', slug=course.slug)

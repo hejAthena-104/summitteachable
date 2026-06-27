@@ -1,5 +1,6 @@
 {% extends 'education/base_education.html' %}
 {% load static %}
+{% load copy_cleanup %}
 
 {% block title %}{{ lesson.title }}{% endblock %}
 
@@ -7,8 +8,8 @@
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{% url 'education:catalog' %}">Academy</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'education:course_detail' course.slug %}">{{ course.title }}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ lesson.title }}</li>
+            <li class="breadcrumb-item"><a href="{% url 'education:course_detail' course.slug %}">{{ course.title|platform_copy }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ lesson.title|platform_copy }}</li>
         </ol>
     </nav>
 
@@ -18,7 +19,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="ratio ratio-16x9">
                     {% if lesson.video_url %}
-                    <iframe src="{{ lesson.video_url }}" title="{{ lesson.title }}"
+                    <iframe src="{{ lesson.video_url }}" title="{{ lesson.title|platform_copy }}"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowfullscreen style="border:0; border-top-left-radius: var(--bs-card-border-radius); border-top-right-radius: var(--bs-card-border-radius);"></iframe>
                     {% else %}
@@ -29,17 +30,15 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-2">
-                        <h1 class="h3 mb-0 me-2">{{ lesson.title }}</h1>
+                        <h1 class="h3 mb-0 me-2">{{ lesson.title|platform_copy }}</h1>
                         {% if lesson.is_preview and not is_enrolled %}<span class="badge text-bg-success">Preview</span>{% endif %}
                     </div>
                     <p class="text-muted small mb-3">
                         <i class="bi bi-clock me-1"></i>{{ lesson.duration_label }}
-                        <span class="mx-2">·</span>
-                        {% include 'includes/demo_badge.html' with inline=True %}
                     </p>
                     <hr>
                     <div class="lesson-content">
-                        {{ lesson.content|linebreaks }}
+                        {{ lesson.content|platform_copy|linebreaks }}
                     </div>
 
                     <div class="d-flex align-items-center justify-content-between mt-4">
@@ -82,7 +81,7 @@
                 <div class="card-body p-0" style="max-height: 70vh; overflow-y: auto;">
                     {% for module in modules %}
                     <div class="px-3 pt-3 pb-1">
-                        <span class="text-uppercase small fw-bold text-muted">{{ forloop.counter }}. {{ module.title }}</span>
+                        <span class="text-uppercase small fw-bold text-muted">{{ forloop.counter }}. {{ module.title|platform_copy }}</span>
                     </div>
                     <ul class="list-group list-group-flush">
                         {% for l in module.lessons.all %}
@@ -93,7 +92,7 @@
                                 {% else %}
                                 <i class="bi bi-circle me-1 text-muted"></i>
                                 {% endif %}
-                                {{ l.title }}
+                                {{ l.title|platform_copy }}
                                 {% if l.is_preview %}<span class="badge text-bg-success ms-1">Preview</span>{% endif %}
                             </span>
                             {% if is_enrolled or l.is_preview %}

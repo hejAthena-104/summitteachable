@@ -161,59 +161,6 @@ a:not(.btn):not(.nav-link):not(.navbar-brand):hover { color:#7C3AED; }
 body { background-color:#F5F3FB; }
 
 /* ============================================================
-   DEMO / paper-account badge — persistent, visible everywhere money
-   or trading stats appear. Emerald accent on dark. Hard product
-   constraint: simulated funds, never real money.
-   ============================================================ */
-.demo-badge {
-  display:inline-flex;
-  align-items:center;
-  gap:.6rem;
-  background:#EDE9FE;
-  border:1px solid rgba(139, 92, 246,.45);
-  border-radius:10px;
-  padding:.5rem .85rem;
-  color:#211A38;
-  box-shadow:0 0 0 3px rgba(139, 92, 246,.10);
-}
-.demo-badge__icon {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:30px; height:30px;
-  border-radius:8px;
-  background:#FFFFFF;
-  color:#7C3AED;
-  font-size:1rem;
-  flex:0 0 auto;
-}
-.demo-badge__text { display:flex; flex-direction:column; line-height:1.15; }
-.demo-badge__text strong {
-  color:#6D28D9;
-  font-size:.78rem;
-  font-weight:700;
-  letter-spacing:.4px;
-  text-transform:uppercase;
-}
-.demo-badge__note { color:#5B5470; font-size:.72rem; }
-
-/* slim inline pill variant (headers / next to balances) */
-.demo-badge--inline {
-  gap:.45rem;
-  padding:.3rem .6rem;
-  box-shadow:none;
-  font-size:.72rem;
-}
-.demo-badge--inline i { color:#7C3AED; }
-.demo-badge--inline strong {
-  color:#6D28D9; text-transform:uppercase; letter-spacing:.3px; font-size:.7rem;
-}
-.demo-badge--inline .demo-badge__note { color:#5B5470; }
-@media (max-width: 575.98px) {
-  .demo-badge--inline .demo-badge__note { display:none; }
-}
-
-/* ============================================================
    Trading dashboard stat cards
    ============================================================ */
 .trade-stat-card {
@@ -574,22 +521,6 @@ body { background-color:#F5F3FB; }
 }
 [data-theme="dark"] #mainNavbar .nav-link.text-danger { color: #F87171 !important; }
 [data-theme="dark"] #mainNavbar hr { border-color: rgba(139, 92, 246, .18); }
-
-/* ---- Demo badge on dark purple (already dark; ensure legible) ---- */
-[data-theme="dark"] .demo-badge {
-  background: #0B0717;
-  border-color: rgba(139, 92, 246, .55);
-  color: #ECEAF5;
-}
-[data-theme="dark"] .demo-badge__icon {
-  background: rgba(139, 92, 246, .18);
-  color: #A78BFA;
-}
-[data-theme="dark"] .demo-badge__text strong,
-[data-theme="dark"] .demo-badge--inline strong,
-[data-theme="dark"] .demo-badge--inline i { color: #A78BFA; }
-[data-theme="dark"] .demo-badge__note,
-[data-theme="dark"] .demo-badge--inline .demo-badge__note { color: #B8AFD0; }
 
 /* ---- Trade stat hover shadow on dark ---- */
 [data-theme="dark"] .trade-stat-card:hover {

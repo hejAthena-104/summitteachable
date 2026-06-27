@@ -8,7 +8,6 @@ class AnalysisPost(models.Model):
     Posts authored by the house team (author=None, is_house=True) are seeded
     "market bias & flow" notes. Member submissions default to status='pending'
     and are surfaced through the admin moderation actions before publishing.
-    All content is educational — paper/demo trading, NOT financial advice.
     """
 
     MARKET_CHOICES = [

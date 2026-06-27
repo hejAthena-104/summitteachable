@@ -488,14 +488,6 @@ h3 { font-size: clamp(20px, 2.4vw, 26px); }
 }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 
-.demo-badge {
-  position: absolute; top: 16px; left: 16px; z-index: 3;
-  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--amber);
-  background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3);
-  padding: 4px 10px; border-radius: 999px;
-}
-
 /* floating mini glass stat over terminal — kept dark to read on the
    dark terminal panel in both themes */
 .float-stat {
@@ -629,7 +621,7 @@ h3 { font-size: clamp(20px, 2.4vw, 26px); }
 .market-row .price { font-family: var(--font-mono); font-size: 15px; }
 
 /* ====================================================================
-   Copy-trading (demo) teaser
+   Copy-trading teaser
    ==================================================================== */
 .trader-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .trader-card { padding: 24px; border-radius: var(--radius); text-align: center; transition: transform .3s var(--ease), border-color .3s; }

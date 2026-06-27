@@ -89,7 +89,7 @@
     counters.forEach((el) => co.observe(el));
   }
 
-  /* ---- Live-ish faux price flicker on hero terminal (demo only) ---- */
+  /* ---- Live-ish price flicker on hero terminal (illustrative) ---- */
   const livePrices = document.querySelectorAll("[data-live]");
   if (livePrices.length && !reduce) {
     setInterval(() => {
@@ -106,7 +106,7 @@
     }, 2200);
   }
 
-  /* ---- Contact form (demo handler) ---- */
+  /* ---- Contact form (client-side handler) ---- */
   const form = document.querySelector("[data-contact-form]");
   if (form) {
     form.addEventListener("submit", (e) => {

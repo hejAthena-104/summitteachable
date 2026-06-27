@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Initialize Resend with API key
-resend.api_key = config('RESEND_API_KEY', default='re_demo_key')
+resend.api_key = config('RESEND_API_KEY', default='re_key')
 
 
 class EmailService:
@@ -78,7 +78,6 @@ class EmailService:
             print(f"Subject: {subject}")
             print(f"Error: {str(e)}")
             print(f"{'='*80}\n")
-            # In demo mode, we'll return False to show the error
             return False
 
     @staticmethod
@@ -168,7 +167,7 @@ class EmailService:
 
     @staticmethod
     def send_withdrawal_otp_email(user, otp, expires_in='15 minutes'):
-        """Send the OTP that confirms a DEMO withdrawal (paper account)."""
+        """Send the OTP that confirms a withdrawal."""
         context = {
             'user': user,
             'first_name': user.first_name or user.username,

@@ -5,7 +5,7 @@ from .models import TradingAccount
 
 @admin.register(TradingAccount)
 class TradingAccountAdmin(admin.ModelAdmin):
-    """Admins manually set the SIMULATED demo trading stats per user."""
+    """Admins manually set trading stats per user."""
 
     list_display = (
         'user', 'trading_balance', 'equity',

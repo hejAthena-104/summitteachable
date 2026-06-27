@@ -69,7 +69,7 @@
 
             activeBtn && activeBtn.classList.add('active');
 
-            // Set button if demo mode is enabled
+            // Set button when the stored theme mode is enabled
             document.querySelectorAll('[data-theme-control="theme"]').forEach(element => {
                 if (element.value == theme) {
                     element.checked = true;
@@ -112,7 +112,7 @@
     <link rel="icon" href="{% static 'images/favicon.png' %}?v=3" type="image/png">
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}?v=3" type="image/png">
 
-    <!-- Demo script -->
+    <!-- Theme script -->
     <script>
         var themeConfig = {
             theme: JSON.parse('"light"'),
@@ -499,8 +499,6 @@ window.smartsupp||(function(d) {
         </header>
 
         <div class="container-fluid mb-5">
-            <!-- Persistent DEMO badge — money screen, hard product constraint -->
-            <div class="mb-4">{% include 'includes/demo_badge.html' %}</div>
             <!-- Title -->
             <h1 class="h2 mb-1">Transfers</h1>
             <p class="text-muted mb-4">Send funds locally or internationally from your account.</p>

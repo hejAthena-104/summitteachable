@@ -1,23 +1,23 @@
 {% extends 'emails/base_email.html' %}
 
 {% block content %}
-<h2>Demo Withdrawal Recorded</h2>
+<h2>Withdrawal Recorded</h2>
 
 <p>Hi {{ first_name }},</p>
 
-<p>Your withdrawal request has been recorded in your practice account. This is a simulated transaction &mdash; no real money is paid out.</p>
+<p>Your withdrawal request has been recorded on your account.</p>
 
 <div class="info-box">
     <p><strong>Request Details:</strong></p>
     <ul style="margin-top: 10px; margin-left: 20px; color: #4a5568;">
-        <li><strong>Simulated amount:</strong> ${{ amount }}</li>
-        <li><strong>Destination (demo):</strong> {{ destination }}</li>
+        <li><strong>Amount:</strong> ${{ amount }}</li>
+        <li><strong>Destination:</strong> {{ destination }}</li>
         <li><strong>Status:</strong> <span style="color: #8B5CF6;">Recorded</span></li>
         <li><strong>Reference:</strong> {{ reference }}</li>
     </ul>
 </div>
 
-<p>Your practice balance has been updated to reflect this simulated withdrawal. You can review the change anytime from your dashboard.</p>
+<p>Your account balance has been updated to reflect this withdrawal. You can review the change anytime from your dashboard.</p>
 
 <div style="text-align: center;">
     <a href="{{ dashboard_url }}" class="btn" style="display:inline-block;padding:14px 34px;background-color:#8B5CF6;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px;margin:18px 0;">View Dashboard</a>
@@ -26,7 +26,7 @@
 <div class="divider"></div>
 
 <p style="font-size: 14px; color: #718096;">
-    Summit Teachable is an educational demo platform. All balances and transactions are simulated; no real funds are transferred.
+    Summit Teachable is a trading education platform. Nothing here is financial advice.
 </p>
 
 <p>Thank you for choosing {{ site_name }}.</p>

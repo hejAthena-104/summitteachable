@@ -5,13 +5,7 @@ from django.utils.text import slugify
 
 
 class MasterTrader(models.Model):
-    """
-    A demo/illustrative "master trader" users can copy on their DEMO account.
-
-    HARD CONSTRAINT: these are SIMULATED traders for practice only. All stats
-    (win_rate, return_pct, followers) are demo/illustrative figures. No real
-    person's real money or real performance is represented here.
-    """
+    """A master trader users can copy."""
 
     RISK_LOW = "low"
     RISK_MEDIUM = "medium"
@@ -43,23 +37,23 @@ class MasterTrader(models.Model):
         help_text='Short tagline, e.g. "Swing trader · FX & indices".',
     )
     strategy = models.TextField(
-        help_text="Demo description of the trader's approach.",
+        help_text="Description of the trader's approach.",
     )
     win_rate = models.DecimalField(
         max_digits=5,
         decimal_places=1,
         default=0,
-        help_text="Demo win rate %, e.g. 68.5.",
+        help_text="Win rate %, e.g. 68.5.",
     )
     return_pct = models.DecimalField(
         max_digits=6,
         decimal_places=1,
         default=0,
-        help_text="Demo 30-day return %, e.g. 14.2.",
+        help_text="30-day return %, e.g. 14.2.",
     )
     followers = models.PositiveIntegerField(
         default=0,
-        help_text="Demo follower count (illustrative).",
+        help_text="Follower count.",
     )
     risk_level = models.CharField(
         max_length=10,
@@ -83,8 +77,8 @@ class MasterTrader(models.Model):
 
     class Meta:
         ordering = ["order", "name"]
-        verbose_name = "Master Trader (Demo)"
-        verbose_name_plural = "Master Traders (Demo)"
+        verbose_name = "Master Trader"
+        verbose_name_plural = "Master Traders"
 
     def __str__(self):
         return self.name
@@ -113,12 +107,7 @@ class MasterTrader(models.Model):
 
 
 class CopyRelationship(models.Model):
-    """
-    Records that a user is copying a master trader on their DEMO account.
-
-    HARD CONSTRAINT: allocated_demo_amount is a SIMULATED allocation only. No
-    real balance is ever moved when a relationship is created or stopped.
-    """
+    """Records that a user is copying a master trader."""
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -131,10 +120,11 @@ class CopyRelationship(models.Model):
         related_name="relationships",
     )
     allocated_demo_amount = models.DecimalField(
+        "Allocation",
         max_digits=12,
         decimal_places=2,
         default=0,
-        help_text="Simulated demo allocation. Not a real balance transfer.",
+        help_text="Allocation amount.",
     )
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -142,8 +132,8 @@ class CopyRelationship(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
-        verbose_name = "Copy Relationship (Demo)"
-        verbose_name_plural = "Copy Relationships (Demo)"
+        verbose_name = "Copy Relationship"
+        verbose_name_plural = "Copy Relationships"
         constraints = [
             # One active copy per (user, master). Stopped ones may repeat.
             models.UniqueConstraint(
@@ -154,7 +144,7 @@ class CopyRelationship(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user} → {self.master} (demo)"
+        return f"{self.user} → {self.master}"
 
     def stop(self):
         self.is_active = False

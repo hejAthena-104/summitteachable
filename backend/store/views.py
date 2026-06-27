@@ -1,11 +1,4 @@
-"""Public course storefront views (no login required).
-
-A purchase here is a REAL course sale. On submit we create/find the buyer's
-account, file a pending CoursePurchase with their proof of payment, verify their
-email (existing flow) and send a passwordless login code. An admin then approves
-the purchase, which grants course access via an Enrollment. None of this ever
-touches the demo trading balance.
-"""
+"""Public course storefront views."""
 from decimal import Decimal, InvalidOperation
 import base64
 import io

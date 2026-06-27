@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from analysis.models import AnalysisPost
 
 
-# House "market bias & flow" notes — educational only, not financial advice.
+# House "market bias & flow" notes.
 HOUSE_POSTS = [
     {
         'title': 'EURUSD — Bullish continuation above 1.0850',
@@ -16,7 +16,7 @@ HOUSE_POSTS = [
             'Educational flow note: price is holding above the 1.0850 area with higher '
             'lows on the 4H. As a learning exercise, observe how a bullish bias often '
             'looks for pullbacks into prior support rather than chasing extension. '
-            'This is teaching content for paper trading only — not financial advice.'
+            'Use this as chart context while reviewing pullbacks into prior support.'
         ),
     },
     {
@@ -30,7 +30,7 @@ HOUSE_POSTS = [
             'Educational flow note: BTC is compressing between range support and '
             'resistance with no clear directional commitment. Use this as a study of '
             'how a neutral bias favours patience and reacting to a confirmed breakout '
-            'rather than predicting one. Demo/educational content — not financial advice.'
+            'rather than predicting one.'
         ),
     },
     {
@@ -44,7 +44,7 @@ HOUSE_POSTS = [
             'Educational flow note: broad index breadth has improved into the earnings '
             'window, a textbook risk-on backdrop. Notice how index strength often '
             'correlates with appetite for higher-beta names. Provided for learning on '
-            'the demo platform only — this is not financial advice.'
+            'the platform.'
         ),
     },
     {
@@ -57,8 +57,7 @@ HOUSE_POSTS = [
         'body': (
             'Educational flow note: repeated wicks into the range high suggest sellers '
             'defending the level. A bearish study here would watch for a lower-high and '
-            'a break of intraday structure. Shared as paper-trading education — not '
-            'financial advice.'
+            'a break of intraday structure.'
         ),
     },
     {
@@ -71,8 +70,7 @@ HOUSE_POSTS = [
         'body': (
             'Educational flow note: price is coiling near the 50-day average with mixed '
             'momentum into the report. A neutral stance is a good lesson in sizing down '
-            'and waiting for the event to resolve. Educational content for the demo '
-            'environment only — not financial advice.'
+            'and waiting for the event to resolve.'
         ),
     },
     {
@@ -85,8 +83,7 @@ HOUSE_POSTS = [
         'body': (
             'Educational flow note: gold is grinding higher with steady demand on '
             'pullbacks. Use it to study how a trend can persist while staying above a '
-            'rising moving average. This is teaching material for simulated trading — '
-            'not financial advice.'
+            'rising moving average.'
         ),
     },
 ]

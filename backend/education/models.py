@@ -4,8 +4,7 @@ from django.urls import reverse
 
 
 class Course(models.Model):
-    """A demo-platform academy course. `price` is a display-only "demo" price —
-    access is unlocked by a DEMO deposit, not by paying for the course."""
+    """An academy course."""
 
     LEVEL_CHOICES = [
         ('beginner', 'Beginner'),
@@ -19,7 +18,6 @@ class Course(models.Model):
     short_description = models.CharField(max_length=300, blank=True)
     instructor = models.CharField(max_length=120, default='Summit Teachable')
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='beginner')
-    # Display-only "demo" price (no real money changes hands).
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     duration_label = models.CharField(max_length=40, blank=True, help_text='e.g. "6h 30m"')
     # Thumbnails live at static/images/courses/<thumbnail_slug>.png

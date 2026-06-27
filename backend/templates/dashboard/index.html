@@ -106,9 +106,6 @@
     <main>
         <!-- HEADER -->
         <header class="container-fluid d-flex align-items-center py-6 mb-4">
-            <!-- Persistent DEMO badge — hard product constraint -->
-            {% include 'includes/demo_badge.html' %}
-
             <div class="d-flex align-items-center ms-auto me-n1 me-lg-n2">
                 <!-- Theme Switcher -->
                 <div class="dropdown" id="themeSwitcher">
@@ -166,7 +163,7 @@
                         </div>
                         <hr class="dropdown-divider">
                         <a class="dropdown-item" href="{% url 'dashboard:account_settings' %}">Profile &amp; Account</a>
-                        <a class="dropdown-item" href="{% url 'dashboard:deposits' %}">Top up demo balance</a>
+                        <a class="dropdown-item" href="{% url 'dashboard:deposits' %}">Top up balance</a>
                         <a class="dropdown-item" href="{% url 'dashboard:transfers' %}">Transfers</a>
                         <hr class="dropdown-divider">
                         <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"
@@ -190,13 +187,13 @@
                             {% endif %}
                         </h1>
                         <p class="mb-0 opacity-75">
-                            Your simulated demo balance is <strong>${{ user.balance|floatformat:2 }}</strong>.
-                            Practice trading with paper funds — no real money is ever involved.
+                            Your account balance is <strong>${{ user.balance|floatformat:2 }}</strong>.
+                            Track your activity, review market data, and continue your learning from one place.
                         </p>
                     </div>
                     <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
                         <a href="{% url 'dashboard:deposits' %}" class="btn btn-primary btn-lg">
-                            <i class="bi bi-plus-circle me-2"></i>Top up demo balance
+                            <i class="bi bi-plus-circle me-2"></i>Top up balance
                         </a>
                     </div>
                 </div>
@@ -228,19 +225,18 @@
                 </div>
             </div>
 
-            <!-- Simulated Trading Stats -->
+            <!-- Trading Stats -->
             <div class="d-flex align-items-center justify-content-between mb-3">
-                <h6 class="section-title text-muted mb-0">Simulated Trading Performance</h6>
-                {% include 'includes/demo_badge.html' with inline=True %}
+                <h6 class="section-title text-muted mb-0">Trading Performance</h6>
             </div>
             <div class="row g-3 mb-4">
-                <!-- Trading / Demo Balance -->
+                <!-- Trading Balance -->
                 <div class="col-sm-6 col-lg-4">
                     <div class="card trade-stat-card h-100">
                         <div class="card-body d-flex align-items-center">
                             <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3"><i class="bi bi-wallet-fill"></i></div>
                             <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Trading / Demo Balance <span class="text-muted">(simulated)</span></p>
+                                <p class="text-muted small mb-1">Trading Balance</p>
                                 <h3 class="mb-0">${{ trading_account.trading_balance|default:user.balance|floatformat:2 }}</h3>
                             </div>
                         </div>
@@ -252,7 +248,7 @@
                         <div class="card-body d-flex align-items-center">
                             <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3"><i class="bi bi-bar-chart-line-fill"></i></div>
                             <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Total Trades <span class="text-muted">(simulated)</span></p>
+                                <p class="text-muted small mb-1">Total Trades</p>
                                 <h3 class="mb-0">{{ trading_account.total_trades }}</h3>
                             </div>
                         </div>
@@ -264,7 +260,7 @@
                         <div class="card-body d-flex align-items-center">
                             <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3"><i class="bi bi-trophy-fill"></i></div>
                             <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Win Rate <span class="text-muted">(simulated)</span></p>
+                                <p class="text-muted small mb-1">Win Rate</p>
                                 <h3 class="mb-0">{{ trading_account.win_rate }}%</h3>
                             </div>
                         </div>
@@ -276,7 +272,7 @@
                         <div class="card-body d-flex align-items-center">
                             <div class="stat-icon bg-trade-win trade-win me-3"><i class="bi bi-check-circle-fill"></i></div>
                             <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Trades Won <span class="text-muted">(simulated)</span></p>
+                                <p class="text-muted small mb-1">Trades Won</p>
                                 <h3 class="mb-0 trade-win">{{ trading_account.trades_won }}</h3>
                             </div>
                         </div>
@@ -288,7 +284,7 @@
                         <div class="card-body d-flex align-items-center">
                             <div class="stat-icon bg-trade-draw trade-draw me-3"><i class="bi bi-dash-circle-fill"></i></div>
                             <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Trades Drawn <span class="text-muted">(simulated)</span></p>
+                                <p class="text-muted small mb-1">Trades Drawn</p>
                                 <h3 class="mb-0 trade-draw">{{ trading_account.trades_drawn }}</h3>
                             </div>
                         </div>
@@ -300,7 +296,7 @@
                         <div class="card-body d-flex align-items-center">
                             <div class="stat-icon bg-trade-loss trade-loss me-3"><i class="bi bi-x-circle-fill"></i></div>
                             <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Trades Lost <span class="text-muted">(simulated)</span></p>
+                                <p class="text-muted small mb-1">Trades Lost</p>
                                 <h3 class="mb-0 trade-loss">{{ trading_account.trades_lost }}</h3>
                             </div>
                         </div>
@@ -314,7 +310,6 @@
                     <div class="card chart-panel h-100">
                         <div class="card-header bg-transparent d-flex align-items-center justify-content-between">
                             <h6 class="section-title text-muted mb-0">Market Chart</h6>
-                            <span class="coming-soon-note"><i class="bi bi-cone-striped"></i> Live broker execution — coming soon</span>
                         </div>
                         <div class="card-body p-0" style="height:480px;">
                             <div class="tradingview-widget-container" style="height:100%;width:100%;">
@@ -375,7 +370,7 @@
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="section-title text-muted mb-0">Recent Activity <span class="text-muted">(simulated)</span></h6>
+                        <h6 class="section-title text-muted mb-0">Recent Activity</h6>
                         <a href="{% url 'dashboard:account_history' %}" class="btn btn-sm btn-outline-primary">View All</a>
                     </div>
                     <div class="card">
@@ -412,7 +407,7 @@
                                             <tr>
                                                 <td colspan="4" class="text-center py-4 text-muted">
                                                     <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                                                    No activity yet — top up your demo balance to get started
+                                                    No activity yet
                                                 </td>
                                             </tr>
                                         {% endif %}
@@ -430,7 +425,7 @@
             <div class="container-fluid mt-4 mb-6 text-muted">
                 <div class="row justify-content-between">
                     <div class="col">
-                        &copy; {{ "now"|date:"Y" }} Summit Teachable. All Rights Reserved. Demo paper-trading platform — simulated funds only.
+                        &copy; {{ "now"|date:"Y" }} Summit Teachable. All Rights Reserved.
                     </div>
                     <div class="col-auto">
                         <div id="google_translate_element"></div>

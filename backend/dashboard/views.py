@@ -20,23 +20,18 @@ from support.models import SupportTicket, EmailLog
 from accounts.email_utils import EmailService
 
 
-# Preset top-up amounts offered on the demo deposit screen (play money).
-DEMO_TOPUP_AMOUNTS = [1000, 5000, 10000, 25000]
-DEMO_MIN_TOPUP = Decimal('100')
-DEMO_MAX_TOPUP = Decimal('1000000')
+# Preset top-up amounts offered on the deposit screen.
+TOPUP_AMOUNTS = [1000, 5000, 10000, 25000]
+MIN_TOPUP = Decimal('100')
+MAX_TOPUP = Decimal('1000000')
 
 
 @login_required
 def dashboard_index(request):
-    """SIMULATED trading dashboard.
-
-    Surfaces the user's demo trading account stats (manually set by an admin)
-    alongside the demo wallet balance. Everything shown is paper-trading data —
-    a live broker integration is a "coming soon" stub.
-    """
+    """Trading dashboard."""
     user = request.user
 
-    # Auto-provision a demo trading account on first access.
+    # Auto-provision a trading account on first access.
     trading_account, _ = TradingAccount.objects.get_or_create(user=user)
 
     # Recent transactions for the activity feed.
@@ -56,12 +51,7 @@ def dashboard_index(request):
 
 @login_required
 def deposits(request):
-    """Demo top-up screen.
-
-    HARD CONSTRAINT: this is a SIMULATED paper account. We never show a real
-    bank account or crypto wallet, and never collect proof of payment. The user
-    just picks an amount and their demo balance is credited instantly.
-    """
+    """Top-up screen."""
     user_deposits = Transaction.objects.filter(
         user=request.user,
         type='deposit'
@@ -69,9 +59,9 @@ def deposits(request):
 
     context = {
         'user': request.user,
-        'preset_amounts': DEMO_TOPUP_AMOUNTS,
-        'min_amount': DEMO_MIN_TOPUP,
-        'max_amount': DEMO_MAX_TOPUP,
+        'preset_amounts': TOPUP_AMOUNTS,
+        'min_amount': MIN_TOPUP,
+        'max_amount': MAX_TOPUP,
         'deposits': user_deposits,
     }
 
@@ -80,12 +70,7 @@ def deposits(request):
 
 @login_required
 def new_deposit(request):
-    """Instantly credit the user's DEMO balance (play money).
-
-    Creates an approved deposit Transaction and runs approve() so the balance is
-    credited immediately — there is no payment step. A non-zero total_deposited
-    also unlocks education content downstream.
-    """
+    """Credit the user's balance after a top-up request."""
     if request.method != 'POST':
         return redirect('dashboard:deposits')
 
@@ -94,43 +79,40 @@ def new_deposit(request):
         messages.error(request, 'Please enter a valid amount.')
         return redirect('dashboard:deposits')
 
-    # Min/max sanity validation on the simulated top-up.
-    if amount < DEMO_MIN_TOPUP:
-        messages.error(request, f'Minimum demo top-up is ${DEMO_MIN_TOPUP:,.0f}.')
+    # Min/max sanity validation on the top-up.
+    if amount < MIN_TOPUP:
+        messages.error(request, f'Minimum top-up is ${MIN_TOPUP:,.0f}.')
         return redirect('dashboard:deposits')
-    if amount > DEMO_MAX_TOPUP:
-        messages.error(request, f'Maximum demo top-up is ${DEMO_MAX_TOPUP:,.0f}.')
+    if amount > MAX_TOPUP:
+        messages.error(request, f'Maximum top-up is ${MAX_TOPUP:,.0f}.')
         return redirect('dashboard:deposits')
 
-    # Create the approved deposit and credit the demo balance immediately.
+    # Create the approved deposit and credit the balance.
     txn = Transaction.objects.create(
         user=request.user,
         type='deposit',
         amount=amount,
         status='pending',
-        description='Demo balance top-up (simulated funds)',
+        description='Balance top-up',
     )
     Deposit.objects.create(transaction=txn)
     txn.approve()  # flips to approved and credits user.balance
 
     Notification.objects.create(
         user=request.user,
-        title='Demo balance topped up',
-        message=f'${amount:,.2f} of simulated funds was added to your demo balance.',
+        title='Balance topped up',
+        message=f'${amount:,.2f} was added to your balance.',
         type='deposit',
     )
 
-    messages.success(request, f'Demo balance topped up with ${amount:,.2f} of simulated funds.')
+    messages.success(request, f'Balance topped up with ${amount:,.2f}.')
     return redirect('dashboard:deposits')
 
 
 @login_required
 def payment(request, transaction_id):
-    """Legacy payment route — demo deposits are instant, so just bounce back.
-
-    Kept only so old URLs/bookmarks don't 404. There is no real payment step.
-    """
-    messages.info(request, 'Demo top-ups are instant — your balance was credited immediately.')
+    """Legacy payment route kept so old URLs/bookmarks do not 404."""
+    messages.info(request, 'Your balance was credited immediately.')
     return redirect('dashboard:deposits')
 
 
@@ -281,7 +263,7 @@ def withdraw_funds(request):
             type='withdrawal'
         )
 
-        messages.success(request, 'Simulated withdrawal submitted. No real payout occurs — this is a demo paper account.')
+        messages.success(request, 'Withdrawal request submitted.')
         return redirect('dashboard:withdrawals')
 
     context = {
@@ -294,7 +276,7 @@ def withdraw_funds(request):
 
 @login_required
 def request_otp(request):
-    """Generate and email a withdrawal OTP (demo paper account)."""
+    """Generate and email a withdrawal OTP."""
     otp = ''.join([str(random.randint(0, 9)) for _ in range(6)])
     request.user.withdrawal_otp = otp
     request.user.save(update_fields=['withdrawal_otp'])

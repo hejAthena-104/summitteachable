@@ -23,7 +23,7 @@
     </script>
 
     <link rel="icon" href="{% static 'images/favicon.png' %}?v=3" type="image/png">
-    <title>Top up demo balance | Summit Teachable</title>
+    <title>Top up balance | Summit Teachable</title>
 
     <style>
         .topup-amount { cursor: pointer; transition: all .15s ease; border: 2px solid var(--bs-border-color); border-radius: 12px; }
@@ -38,18 +38,14 @@
 
     <main>
         <header class="container-fluid d-flex align-items-center py-6 mb-4">
-            {% include 'includes/demo_badge.html' %}
             <div class="d-flex align-items-center ms-auto">
                 <a href="{% url 'dashboard:index' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-grid-1x2 me-1"></i>Dashboard</a>
             </div>
         </header>
 
         <div class="container-fluid mb-5">
-            <h1 class="h2 mb-1">Top up demo balance</h1>
-            <p class="text-muted">Add simulated funds to practice. This is a paper account — no real bank or wallet, no payment, instant credit.</p>
-
-            <!-- Reinforced demo notice on this money screen -->
-            {% include 'includes/demo_badge.html' with inline=True %}
+            <h1 class="h2 mb-1">Top up balance</h1>
+            <p class="text-muted">Choose an amount to add to your account balance.</p>
 
             <div class="row mt-4 g-4">
                 <div class="col-lg-7">
@@ -57,7 +53,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="mb-0">Choose an amount</h5>
-                                <span class="text-muted small">Current demo balance: <strong>${{ user.balance|floatformat:2 }}</strong></span>
+                                <span class="text-muted small">Current balance: <strong>${{ user.balance|floatformat:2 }}</strong></span>
                             </div>
 
                             <form action="{% url 'dashboard:new_deposit' %}" method="POST" id="topup-form">
@@ -79,10 +75,10 @@
                                         min="{{ min_amount }}" max="{{ max_amount }}" type="number" step="any"
                                         name="amount" id="amount" required>
                                 </div>
-                                <p class="text-muted small">Min ${{ min_amount|floatformat:0 }} · Max ${{ max_amount|floatformat:0 }} (simulated funds)</p>
+                                <p class="text-muted small">Min ${{ min_amount|floatformat:0 }} · Max ${{ max_amount|floatformat:0 }}</p>
 
                                 <button class="btn btn-primary btn-lg w-100" type="submit">
-                                    <i class="bi bi-lightning-charge-fill me-2"></i>Top up demo balance instantly
+                                    <i class="bi bi-lightning-charge-fill me-2"></i>Top up balance
                                 </button>
                             </form>
                         </div>
@@ -95,9 +91,9 @@
                             <h5 class="mb-3">How this works</h5>
                             <ul class="list-unstyled mb-0">
                                 <li class="d-flex mb-3"><i class="bi bi-check-circle-fill trade-win me-2 mt-1"></i><span>Pick a preset or type any amount.</span></li>
-                                <li class="d-flex mb-3"><i class="bi bi-check-circle-fill trade-win me-2 mt-1"></i><span>Your <strong>demo balance</strong> is credited <strong>instantly</strong> — one click.</span></li>
-                                <li class="d-flex mb-3"><i class="bi bi-shield-lock-fill text-primary me-2 mt-1"></i><span>No bank account, no crypto wallet, no proof of payment — ever.</span></li>
-                                <li class="d-flex"><i class="bi bi-info-circle-fill text-warning me-2 mt-1"></i><span>These are simulated funds for practice. They are not real money and cannot be withdrawn for cash.</span></li>
+                                <li class="d-flex mb-3"><i class="bi bi-check-circle-fill trade-win me-2 mt-1"></i><span>Your <strong>balance</strong> is updated after submission.</span></li>
+                                <li class="d-flex mb-3"><i class="bi bi-shield-lock-fill text-primary me-2 mt-1"></i><span>Your account activity is recorded in your transaction history.</span></li>
+                                <li class="d-flex"><i class="bi bi-info-circle-fill text-warning me-2 mt-1"></i><span>Contact support if you need help with a balance update.</span></li>
                             </ul>
                         </div>
                     </div>
@@ -107,7 +103,7 @@
             <!-- Top-up history -->
             <div class="row mt-4">
                 <div class="col-12">
-                    <h6 class="text-muted text-uppercase small mb-3">Demo top-up history (simulated)</h6>
+                    <h6 class="text-muted text-uppercase small mb-3">Top-up history</h6>
                     <div class="card">
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -136,7 +132,7 @@
 
         <footer class="mt-auto">
             <div class="container-fluid mt-4 mb-6 text-muted">
-                <div class="row"><div class="col">&copy; {{ "now"|date:"Y" }} Summit Teachable. Demo paper account — simulated funds only.</div></div>
+                <div class="row"><div class="col">&copy; {{ "now"|date:"Y" }} Summit Teachable. All Rights Reserved.</div></div>
             </div>
         </footer>
     </main>

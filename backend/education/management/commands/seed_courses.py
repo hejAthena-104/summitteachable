@@ -6,10 +6,9 @@ from education.models import Course, Lesson, Module
 PLACEHOLDER_VIDEO = 'https://www.youtube.com/embed/p7HKvqRI_Bo'
 
 LOREM = (
-    'In this demo lesson we walk through the concept using the Summit Teachable '
-    'paper account. Nothing here involves real money — every figure is simulated '
-    'so you can practice the mechanics risk-free. Follow along, then try it in '
-    'your demo wallet.'
+    'In this lesson we walk through the concept using Summit Teachable account '
+    'tools. Follow the chart context, review the mechanics, then apply the '
+    'workflow from your dashboard.'
 )
 
 # Each course: slug, title, thumbnail_slug, level, short_description, duration,
@@ -20,7 +19,7 @@ COURSES = [
         'title': 'Stock Market Money Glitch',
         'thumbnail_slug': 'course-stock-glitch',
         'level': 'beginner',
-        'short_description': 'Spot repeatable, high-probability setups in the stock market — demo only.',
+        'short_description': 'Spot repeatable, high-probability setups in the stock market.',
         'duration_label': '4h 15m',
         'modules': [
             ('Reading the Tape', [
@@ -30,11 +29,11 @@ COURSES = [
             ]),
             ('Building the Setup', [
                 'Defining your entry trigger',
-                'Stop placement on a demo account',
-                'Sizing the play money',
+                'Stop placement on an account',
+                'Sizing a position',
             ]),
             ('Putting It Together', [
-                'Paper-trading a live example',
+                'Walking through a live example',
                 'Reviewing the result',
             ]),
         ],
@@ -44,13 +43,13 @@ COURSES = [
         'title': "$1 Million: Ultimate Beginner's Guide to Trading",
         'thumbnail_slug': 'course-million',
         'level': 'beginner',
-        'short_description': 'A from-scratch roadmap for the brand-new trader, taught on a paper account.',
+        'short_description': 'A from-scratch roadmap for the brand-new trader.',
         'duration_label': '6h 30m',
         'modules': [
             ('Foundations', [
                 'How markets actually work',
-                'Brokers, orders and the demo wallet',
-                'Your first simulated trade',
+                'Brokers, orders and the account wallet',
+                'Your first trade workflow',
             ]),
             ('Strategy 101', [
                 'Trend vs range',
@@ -58,8 +57,8 @@ COURSES = [
                 'Building a simple plan',
             ]),
             ('Scaling Up Safely', [
-                'Compounding play money',
-                'Tracking your demo performance',
+                'Compounding an account',
+                'Tracking your performance',
                 'Avoiding beginner traps',
             ]),
         ],
@@ -69,17 +68,17 @@ COURSES = [
         'title': 'Futures Trading',
         'thumbnail_slug': 'course-futures',
         'level': 'intermediate',
-        'short_description': 'Leverage, contracts and margin — explained and practiced risk-free.',
+        'short_description': 'Leverage, contracts and margin — explained with practical examples.',
         'duration_label': '5h 45m',
         'modules': [
             ('Futures Fundamentals', [
                 'Contracts, ticks and multipliers',
-                'Margin and leverage on a demo',
+                'Margin and leverage',
                 'Rollover and expiry',
             ]),
             ('Intraday Execution', [
                 'Scalping the open',
-                'Managing a simulated runner',
+                'Managing a runner',
                 'When to stand aside',
             ]),
         ],
@@ -89,7 +88,7 @@ COURSES = [
         'title': 'So Many Options',
         'thumbnail_slug': 'course-options',
         'level': 'intermediate',
-        'short_description': 'Calls, puts and spreads demystified — paper-trade every strategy.',
+        'short_description': 'Calls, puts and spreads demystified for every strategy.',
         'duration_label': '7h 10m',
         'modules': [
             ('Options Basics', [
@@ -98,13 +97,13 @@ COURSES = [
                 'The greeks at a glance',
             ]),
             ('Core Strategies', [
-                'Covered calls on a demo',
+                'Covered calls',
                 'Vertical spreads',
                 'Defined-risk plays',
             ]),
             ('Risk & Review', [
                 'Sizing an options position',
-                'Reviewing a simulated trade',
+                'Reviewing a trade',
             ]),
         ],
     },
@@ -113,22 +112,22 @@ COURSES = [
         'title': 'Crypto & Stocks University',
         'thumbnail_slug': 'course-csu',
         'level': 'beginner',
-        'short_description': 'One curriculum, two asset classes — all on the Summit demo platform.',
+        'short_description': 'One curriculum, two asset classes on Summit Teachable.',
         'duration_label': '8h 00m',
         'modules': [
             ('Crypto Track', [
-                'Wallets, exchanges and the demo BTC balance',
+                'Wallets, exchanges and the BTC balance',
                 'Reading a crypto chart',
-                'Your first simulated swap',
+                'Your first swap',
             ]),
             ('Stocks Track', [
                 'Equities vs crypto',
                 'Earnings and catalysts',
-                'Paper-trading a stock',
+                'Reviewing a stock trade',
             ]),
             ('Bringing It Together', [
-                'Building a mixed demo portfolio',
-                'Rebalancing play money',
+                'Building a mixed portfolio',
+                'Rebalancing an account',
             ]),
         ],
     },
@@ -137,18 +136,18 @@ COURSES = [
         'title': 'Bear Market Money',
         'thumbnail_slug': 'course-bear-market',
         'level': 'advanced',
-        'short_description': 'Profiting in down markets with hedges and shorts — demo execution.',
+        'short_description': 'Navigating down markets with hedges and shorts.',
         'duration_label': '6h 50m',
         'modules': [
             ('Shorting the Market', [
-                'How shorting works on a demo',
+                'How shorting works',
                 'Borrow, margin and risk',
                 'Timing the breakdown',
             ]),
             ('Hedging Playbook', [
                 'Protective puts',
                 'Inverse instruments',
-                'Managing drawdown on play money',
+                'Managing drawdown',
             ]),
         ],
     },
@@ -157,18 +156,18 @@ COURSES = [
         'title': 'Trading Psychology & Risk Management',
         'thumbnail_slug': 'course-psychology',
         'level': 'intermediate',
-        'short_description': 'Master the mental game and protect your (demo) capital.',
+        'short_description': 'Master the mental game and protect your capital.',
         'duration_label': '4h 40m',
         'modules': [
             ('The Mental Game', [
-                'Fear, greed and the demo account',
+                'Fear, greed and the trading account',
                 'Building discipline',
-                'Journaling your simulated trades',
+                'Journaling your trades',
             ]),
             ('Risk Management', [
                 'Position sizing rules',
                 'Defining max loss',
-                'Surviving a losing streak on paper',
+                'Surviving a losing streak',
             ]),
         ],
     },
@@ -176,7 +175,7 @@ COURSES = [
 
 
 class Command(BaseCommand):
-    help = 'Seed the academy with demo courses, modules and lessons (idempotent).'
+    help = 'Seed the academy with courses, modules and lessons (idempotent).'
 
     def handle(self, *args, **options):
         created_courses = 0
@@ -189,9 +188,8 @@ class Command(BaseCommand):
                     'level': data['level'],
                     'short_description': data['short_description'],
                     'description': (
-                        f"{data['short_description']} This is a simulated, demo-only "
-                        f"course on Summit Teachable — practice every concept with play "
-                        f"money, no real funds at risk."
+                        f"{data['short_description']} This Summit Teachable course "
+                        f"helps learners study each concept with practical examples."
                     ),
                     'duration_label': data['duration_label'],
                     'instructor': 'Summit Teachable',

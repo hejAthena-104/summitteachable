@@ -1,5 +1,6 @@
 {% extends 'store/base.html' %}
 {% load static %}
+{% load copy_cleanup %}
 
 {% block title %}Buy {{ course.title }} | Summit Teachable{% endblock %}
 
@@ -104,7 +105,7 @@
       <details class="cur-module" {% if forloop.first %}open{% endif %}>
         <summary>
           <span class="cur-ix">{{ forloop.counter }}</span>
-          <span class="cur-mtitle">{{ module.title }}</span>
+          <span class="cur-mtitle">{{ module.title|platform_copy }}</span>
           <span class="cur-mcount">{{ module.lessons.count }} lesson{{ module.lessons.count|pluralize }}</span>
           <i class="bi bi-chevron-down cur-chev"></i>
         </summary>
@@ -112,7 +113,7 @@
           {% for lesson in module.lessons.all %}
           <li class="cur-lesson {% if lesson.is_preview %}is-preview{% endif %}">
             <i class="bi {% if lesson.is_preview %}bi-play-circle-fill{% else %}bi-lock-fill{% endif %}"></i>
-            <span class="cur-ltitle">{{ lesson.title }}</span>
+            <span class="cur-ltitle">{{ lesson.title|platform_copy }}</span>
             {% if lesson.is_preview %}<span class="cur-badge">Free preview</span>{% endif %}
             <span class="cur-dur">{{ lesson.duration_label|default:"—" }}</span>
           </li>
@@ -129,7 +130,7 @@
     {% if course.description %}
     <section class="panel reveal" style="margin-top:16px;">
       <h3 style="font-size:1.05rem;margin:0 0 6px;">About this course</h3>
-      <p class="muted" style="margin:0;">{{ course.description }}</p>
+      <p class="muted" style="margin:0;">{{ course.description|platform_copy }}</p>
     </section>
     {% endif %}
   </div>
@@ -138,7 +139,7 @@
   <aside class="buy-aside">
     <div class="panel">
       <div class="pc-price"><span class="amt">${{ course.price|floatformat:0 }}</span><span class="muted" style="font-size:.85rem;">one-time · lifetime</span></div>
-      <p class="muted" style="font-size:.82rem;margin:8px 0 0;">A one-time <strong>course purchase</strong> — not a trading deposit or investment.</p>
+      <p class="muted" style="font-size:.82rem;margin:8px 0 0;">A one-time <strong>course purchase</strong> with lifetime access.</p>
 
       <div class="pc-divider"></div>
 

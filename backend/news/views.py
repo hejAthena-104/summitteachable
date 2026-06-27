@@ -9,5 +9,5 @@ def index(request):
 
 @login_required
 def markets(request):
-    """Live Markets — free TradingView market widgets (demo/educational)."""
+    """Live Markets — TradingView market widgets."""
     return render(request, 'news/markets.html')

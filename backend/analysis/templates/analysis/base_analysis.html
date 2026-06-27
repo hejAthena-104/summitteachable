@@ -100,26 +100,11 @@
             </div>
         </header>
 
-        {% comment %} <div class="container-fluid mb-5">
-            <!-- Persistent DEMO badge -->
-            <div class="mb-4">{% include 'includes/demo_badge.html' %}</div>
-
-            {% block content %}{% endblock %}
-
-            <!-- Educational disclaimer -->
-            <div class="alert alert-light border mt-4 analysis-edu-note text-muted" role="note">
-                <i class="bi bi-mortarboard me-1"></i>
-                Market analysis on Summit Teachable is <strong>educational content</strong> for
-                simulated/paper trading practice. It is <strong>not financial advice</strong> and
-                no real funds are involved.
-            </div>
-        </div> {% endcomment %}
-
         <!-- Footer -->
         <footer class="mt-auto">
             <div class="container-fluid mt-4 mb-6 text-muted">
                 <div class="row justify-content-between">
-                    <div class="col">All Rights Reserved &copy; Summit Teachable 2025</div>
+                    <div class="col">All Rights Reserved &copy; Summit Teachable {{ "now"|date:"Y" }}</div>
                 </div>
             </div>
         </footer>

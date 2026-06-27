@@ -1,11 +1,4 @@
-"""Public course storefront — REAL course purchases.
-
-HARD FIREWALL: a CoursePurchase is a real purchase of a real product (course
-access). It is completely separate from the demo `transactions` wallet and MUST
-NEVER touch `user.balance` (the simulated paper-trading balance). Approving a
-purchase grants an `education.Enrollment` — nothing else. There is no path from
-this app to the demo trading balance.
-"""
+"""Public course storefront purchases."""
 from decimal import Decimal
 
 from django.conf import settings
@@ -54,8 +47,7 @@ class CoursePurchase(models.Model):
         return f'{self.buyer_email} → {self.course.title} ({self.status})'
 
     def approve(self):
-        """Grant course access. Creates an Enrollment ONLY — never credits any
-        balance. Idempotent on status."""
+        """Grant course access. Idempotent on status."""
         if self.status == 'approved':
             return False
         self.status = 'approved'

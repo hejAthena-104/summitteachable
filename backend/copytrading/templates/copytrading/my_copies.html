@@ -3,6 +3,7 @@
 
 <head>
     {% load static %}
+    {% load copy_cleanup %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'themes/dashly/assets/css/theme.bundle.css' %}" id="stylesheetLTR">
@@ -28,7 +29,6 @@
         .ct-accent-blue    { background: #3B82F6; }
         .ct-accent-violet  { background: #8B5CF6; }
         .ct-accent-amber   { background: #F59E0B; }
-        .ct-sim-banner { border-left: 4px solid #8B5CF6; }
     </style>
 </head>
 
@@ -37,34 +37,18 @@
     {% include 'includes/sidebar.html' %}
 
     <main>
-        <header class="container-fluid d-flex py-6 mb-2">
-            <div class="ms-auto">{% include 'includes/demo_badge.html' with inline=True %}</div>
-        </header>
+        <header class="container-fluid d-flex py-6 mb-2"></header>
 
         <div class="container-fluid mb-5">
-            <!-- Persistent DEMO badge -->
-            <div class="mb-4">{% include 'includes/demo_badge.html' %}</div>
-
             <!-- Title -->
             <div class="d-flex flex-wrap align-items-center justify-content-between mb-1">
                 <div>
                     <h1 class="h2 mb-1">My Copies</h1>
-                    <p class="text-muted mb-0">Master traders you're currently copying on your practice account.</p>
+                    <p class="text-muted mb-0">Master traders you're currently copying from your account.</p>
                 </div>
                 <a href="{% url 'copytrading:traders' %}" class="btn btn-primary mt-2 mt-md-0">
                     <i class="bi bi-plus-lg me-1"></i> Find traders
                 </a>
-            </div>
-
-            <!-- SIMULATED — practice only banner -->
-            <div class="alert alert-success ct-sim-banner d-flex align-items-center mt-3" role="alert">
-                <i class="bi bi-shield-lock-fill fs-4 me-3"></i>
-                <div>
-                    <strong>Simulated copy trading — practice only, not real money.</strong>
-                    <div class="small mb-0">
-                        Allocations shown are virtual demo amounts. Stopping a copy never touches real funds.
-                    </div>
-                </div>
             </div>
 
             <!-- Active copies -->
@@ -77,12 +61,12 @@
                                 <div class="ct-avatar ct-accent-{{ rel.master.accent }}">{{ rel.master.initials }}</div>
                                 <div class="ms-3">
                                     <h4 class="mb-0">{{ rel.master.name }}</h4>
-                                    <span class="text-muted small">{{ rel.master.headline }}</span>
+                                    <span class="text-muted small">{{ rel.master.headline|platform_copy }}</span>
                                 </div>
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="text-muted">Simulated allocation</span>
+                                <span class="text-muted">Allocation</span>
                                 <span class="fw-bold">${{ rel.allocated_demo_amount }}</span>
                             </div>
                             <div class="d-flex align-items-center justify-content-between mb-3">
@@ -91,7 +75,7 @@
                             </div>
 
                             <span class="badge rounded-pill bg-success-subtle text-success align-self-start mb-3">
-                                <i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i> Active (Demo)
+                                <i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i> Active
                             </span>
 
                             <form method="post" action="{% url 'copytrading:stop' rel.pk %}" class="mt-auto">
@@ -123,7 +107,7 @@
 
         <footer class="mt-auto">
             <div class="container-fluid mt-4 mb-6 text-muted">
-                Simulated copy trading — practice only, not real money. &copy; Summit Teachable 2025
+                &copy; {{ "now"|date:"Y" }} Summit Teachable. All Rights Reserved.
             </div>
         </footer>
     </main>

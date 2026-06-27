@@ -18,7 +18,7 @@
     '          <span style="font-family:var(--font-display);font-weight:700;font-size:19px;color:#fff;">Summit<b style="color:var(--mint);">Teachable</b></span>',
     '        </span>',
     '      </a>',
-    '      <p>An educational trading platform. Structured courses plus a risk-free demo trading dashboard powered by simulated funds — so you can build real skill before real money is ever involved.</p>',
+    '      <p>An educational trading platform. Structured courses plus a hands-on trading dashboard — so you can build real skill and trade with confidence.</p>',
     '      <div class="footer-social">',
     socialLink("https://twitter.com", "X / Twitter", '<path d="M18 6 6 18M6 6l12 12"/>'),
     socialLink("https://youtube.com", "YouTube", '<path d="M22 12s0-3.5-.45-5.18a2.78 2.78 0 0 0-1.95-2C17.88 4.33 12 4.33 12 4.33s-5.88 0-7.6.49a2.78 2.78 0 0 0-1.95 2C2 8.5 2 12 2 12s0 3.5.45 5.18a2.78 2.78 0 0 0 1.95 2c1.72.49 7.6.49 7.6.49s5.88 0 7.6-.49a2.78 2.78 0 0 0 1.95-2C22 15.5 22 12 22 12z"/><path d="m10 15 5-3-5-3z"/>'),
@@ -29,7 +29,7 @@
     footerCol("Platform", [
       ["courses.html", "Courses"],
       ["markets.html", "Markets"],
-      ["/register", "Demo dashboard"],
+      ["/register", "Trading dashboard"],
       ["about.html", "About us"],
     ]),
     footerCol("Account", [
@@ -47,7 +47,7 @@
     '',
     '  <div class="disclaimer" id="disclaimer">',
     '    <span class="warn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>',
-    '    <p><strong>Educational &amp; risk disclaimer:</strong> Summit Teachable is an educational platform. The trading dashboard uses simulated demo funds only — not real money. Nothing here is financial advice. Trading real financial instruments carries significant risk; past or simulated performance is not indicative of future results. Always do your own research and consider seeking advice from a licensed professional before making any real investment decision.</p>',
+    '    <p><strong>Educational &amp; risk disclaimer:</strong> Summit Teachable is an educational platform. The trading dashboard is provided for learning and practice. Nothing here is financial advice. Trading financial instruments carries significant risk; past or illustrative performance is not indicative of future results. Always do your own research and consider seeking advice from a licensed professional before making any investment decision.</p>',
     '  </div>',
     '',
     '  <div class="footer-bottom">',

@@ -1,5 +1,6 @@
 {% extends 'store/base.html' %}
 {% load static %}
+{% load copy_cleanup %}
 
 {% block title %}Trading Courses | Summit Teachable{% endblock %}
 
@@ -46,7 +47,7 @@
   <div class="cat-hero-c">
     <span class="cat-eyebrow"><i class="bi bi-mortarboard-fill"></i> Summit Teachable Academy</span>
     <h1>Learn to trade.<br><span class="hl">Practice without risk.</span></h1>
-    <p>Expert-led trading courses with lifetime access — then apply everything on a realistic demo dashboard. No real money at risk.</p>
+    <p>Expert-led trading courses with lifetime access, practical workflows, and account tools for continued learning.</p>
     <div class="cat-stats">
       <div><b>15,000+</b><span>Learners</span></div>
       <div><b>{{ courses|length }}</b><span>Courses</span></div>
@@ -66,7 +67,7 @@
     <img src="{% static 'images/courses/' %}{{ course.thumbnail_slug }}.png?v=6" alt="{{ course.title }}" onerror="this.style.display='none'">
     <div class="ccard-body">
       <h3 class="ccard-title">{{ course.title }}</h3>
-      <p class="ccard-sub">{{ course.short_description|default:course.description|truncatewords:14 }}</p>
+      <p class="ccard-sub">{{ course.short_description|default:course.description|platform_copy|truncatewords:14 }}</p>
       <div class="ccard-foot">
         <span class="ccard-author"><img src="{% static 'images/favicon.png' %}" alt=""> {{ course.instructor }}</span>
         <span class="price">${{ course.price|floatformat:0 }}</span>
