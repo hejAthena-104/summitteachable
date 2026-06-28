@@ -88,7 +88,7 @@
         </a>
         <div class="links">
           <a class="txt hide-sm" href="{% url 'store:catalog' %}">Courses</a>
-          <a class="btn btn-primary" href="/auth/login-code/">Log in</a>
+          <a class="btn btn-primary" href="/auth/login/">Log in</a>
         </div>
       </nav>
     </div>
@@ -105,6 +105,41 @@
     </div>
   </footer>
 
+  <!-- Welcome greeting bubble (opens Smartsupp) -->
+  <style>
+    #st-greet{position:fixed;right:20px;bottom:96px;z-index:9998;width:340px;max-width:calc(100vw - 40px);
+      background:#fff;border:1px solid var(--border);border-radius:20px;
+      box-shadow:0 16px 48px rgba(43,54,54,.18);padding:20px;
+      font-family:'Metropolis',system-ui,sans-serif;
+      opacity:0;transform:translateY(12px) scale(.98);pointer-events:none;
+      transition:opacity .35s ease,transform .35s ease}
+    #st-greet.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+    #st-greet .st-greet-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+    #st-greet .st-greet-av{width:46px;height:46px;border-radius:50%;flex-shrink:0;
+      background:linear-gradient(135deg,var(--teal) 0%,var(--teal-darker) 100%);
+      display:flex;align-items:center;justify-content:center;font-size:1.4rem;
+      box-shadow:0 4px 12px rgba(9,165,154,.3)}
+    #st-greet .st-greet-msg{color:var(--heading);font-size:.98rem;line-height:1.5;margin:0;flex:1}
+    #st-greet .st-greet-x{background:none;border:none;color:var(--muted);cursor:pointer;
+      font-size:1.5rem;line-height:1;padding:0 2px;flex-shrink:0}
+    #st-greet .st-greet-x:hover{color:var(--heading)}
+    #st-greet .st-greet-cta{display:flex;align-items:center;justify-content:center;gap:9px;
+      width:100%;background:var(--teal);color:#fff;border:none;border-radius:12px;
+      padding:13px;font-weight:700;font-size:.98rem;font-family:inherit;cursor:pointer;transition:.15s}
+    #st-greet .st-greet-cta:hover{background:var(--teal-dark)}
+  </style>
+  <div id="st-greet" role="dialog" aria-label="Welcome message">
+    <div class="st-greet-top">
+      <div class="st-greet-av">📈</div>
+      <p class="st-greet-msg">Welcome to Summit Teachable! 👋 Ready to level up your trading? 🚀 Whether it's picking a course, funding your account, or a quick question — our team's got you. 😊 What can we help with?</p>
+      <button class="st-greet-x" type="button" aria-label="Close" onclick="window.stCloseGreet()">&times;</button>
+    </div>
+    <button class="st-greet-cta" type="button" onclick="window.stOpenChat()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      Let's chat
+    </button>
+  </div>
+
   <!-- Smartsupp Live Chat -->
   <script type="text/javascript">
     var _smartsupp = _smartsupp || {};
@@ -112,6 +147,23 @@
     window.smartsupp||(function(d){var s,c,o=smartsupp=function(){o._.push(arguments)};o._=[];
     s=d.getElementsByTagName('script')[0];c=d.createElement('script');c.type='text/javascript';
     c.charset='utf-8';c.async=true;c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);})(document);
+  </script>
+  <script type="text/javascript">
+    (function(){
+      var KEY='st_greet_dismissed';
+      var box=document.getElementById('st-greet');
+      window.stCloseGreet=function(){
+        box.classList.remove('show');
+        try{localStorage.setItem(KEY,'1');}catch(e){}
+      };
+      window.stOpenChat=function(){
+        window.stCloseGreet();
+        try{window.smartsupp('chat:open');}catch(e){}
+      };
+      var dismissed=false;
+      try{dismissed=localStorage.getItem(KEY)==='1';}catch(e){}
+      if(!dismissed){ setTimeout(function(){ box.classList.add('show'); },2500); }
+    })();
   </script>
 </body>
 </html>
