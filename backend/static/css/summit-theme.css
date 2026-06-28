@@ -629,6 +629,10 @@ body { background-color:#F5F3FB; }
 /* Logo mark is desktop-rail only; hide it everywhere else (mobile shows wordmark). */
 .brand-mark { display: none; }
 
+/* Section headings (Overview, Trading & Markets, …) are hidden on every screen,
+   including the mobile menu — the nav reads as one clean list. */
+#mainNavbar .nav-section-heading { display: none !important; }
+
 /* Dashboard top header bar */
 .st-topbar {
   height: 66px;
