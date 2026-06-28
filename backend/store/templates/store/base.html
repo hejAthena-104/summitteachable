@@ -76,7 +76,12 @@
     .alert-warn{background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn-tx)}
     .alert-err{background:var(--err-bg);border-color:var(--err-bd);color:var(--err-tx)}
     footer{border-top:1px solid var(--border);margin-top:64px;padding:30px 0;color:var(--muted);font-size:.85rem;background:#fafbfb}
-    @media(max-width:560px){.nav .links a.hide-sm{display:none}}
+    @media(max-width:560px){
+      .nav .links a.hide-sm{display:none}
+      .nav .links{gap:8px}
+      .nav .links a.btn{padding:8px 12px;font-size:.82rem}
+      .nav .brand img{height:30px}
+    }
   </style>
 </head>
 <body>
@@ -88,7 +93,8 @@
         </a>
         <div class="links">
           <a class="txt hide-sm" href="{% url 'store:catalog' %}">Courses</a>
-          <a class="btn btn-primary" href="/auth/login/">Log in</a>
+          <a class="btn btn-ghost" href="/auth/login/">Log in</a>
+          <a class="btn btn-primary" href="/auth/register/">Create account</a>
         </div>
       </nav>
     </div>
