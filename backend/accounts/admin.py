@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
-from .models import User, LoginHistory, Notification, LoginCode, AccessCode
+from .models import User, LoginHistory, Notification, LoginCode
 
 # Remove the default Django "Groups" model from the admin — this platform does not
 # use group-based permissions, so it is just clutter.
@@ -232,43 +232,3 @@ class LoginCodeAdmin(admin.ModelAdmin):
     def reactivate_codes(self, request, queryset):
         n = queryset.update(is_active=True)
         self.message_user(request, f'{n} login code(s) reactivated.')
-
-
-@admin.register(AccessCode)
-class AccessCodeAdmin(admin.ModelAdmin):
-    """Manage the shared platform access codes (e.g. SUMMIT26).
-
-    Users enter one of these once to unlock courses + the store. Create new
-    codes here and deactivate old ones; codes are stored upper-cased and matched
-    case-insensitively.
-    """
-    list_display = ('code', 'is_active', 'times_used', 'label', 'created_at', 'created_by')
-    list_filter = ('is_active', 'created_at')
-    search_fields = ('code', 'label')
-    ordering = ('-created_at',)
-    actions = ('activate_codes', 'deactivate_codes')
-
-    def get_fields(self, request, obj=None):
-        if obj is None:
-            return ('code', 'label', 'is_active')
-        return ('code', 'label', 'is_active', 'times_used', 'created_at', 'created_by')
-
-    def get_readonly_fields(self, request, obj=None):
-        if obj is None:
-            return ()
-        return ('times_used', 'created_at', 'created_by')
-
-    def save_model(self, request, obj, form, change):
-        if not change and not obj.created_by_id:
-            obj.created_by = request.user
-        super().save_model(request, obj, form, change)
-
-    @admin.action(description='Activate selected access codes')
-    def activate_codes(self, request, queryset):
-        n = queryset.update(is_active=True)
-        self.message_user(request, f'{n} access code(s) activated.')
-
-    @admin.action(description='Deactivate selected access codes')
-    def deactivate_codes(self, request, queryset):
-        n = queryset.update(is_active=False)
-        self.message_user(request, f'{n} access code(s) deactivated.')

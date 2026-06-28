@@ -73,14 +73,6 @@ class User(AbstractUser):
         help_text="Email verification status"
     )
 
-    # Platform access gate — users must enter a valid access code (e.g. SUMMIT26)
-    # before they can browse courses or buy anything. Unlock is permanent per account.
-    course_access_unlocked = models.BooleanField(
-        default=False,
-        help_text="Whether this user has entered a valid platform access code.",
-    )
-    course_access_unlocked_at = models.DateTimeField(null=True, blank=True)
-
     # Security
     withdrawal_otp = models.CharField(max_length=6, blank=True, null=True)
     transaction_pin = models.CharField(
@@ -116,17 +108,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-
-    @property
-    def has_course_access(self):
-        """Staff always pass; everyone else needs to have entered an access code."""
-        return self.is_staff or self.course_access_unlocked
-
-    def grant_course_access(self):
-        if not self.course_access_unlocked:
-            self.course_access_unlocked = True
-            self.course_access_unlocked_at = timezone.now()
-            self.save(update_fields=['course_access_unlocked', 'course_access_unlocked_at'])
 
     def save(self, *args, **kwargs):
         # Generate referral code if not exists
@@ -335,58 +316,6 @@ class LoginCode(models.Model):
         if self.expires_at is not None and timezone.now() >= self.expires_at:
             return 'Expired'
         return 'Active'
-
-
-class AccessCode(models.Model):
-    """A shared platform access code (e.g. SUMMIT26).
-
-    Users must enter a valid, active code once before they can browse courses or
-    buy anything; the unlock is then saved permanently on their account. Admins
-    manage these codes (create new ones, deactivate old ones) from the admin."""
-    code = models.CharField(
-        max_length=32,
-        unique=True,
-        help_text='The access code users type to unlock the platform (case-insensitive).',
-    )
-    label = models.CharField(
-        max_length=120,
-        blank=True,
-        help_text='Optional note, e.g. "Launch cohort" or "Q3 promo".',
-    )
-    is_active = models.BooleanField(
-        default=True,
-        help_text='Only active codes can be redeemed. Uncheck to retire a code.',
-    )
-    times_used = models.PositiveIntegerField(default=0, editable=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='created_access_codes',
-    )
-
-    class Meta:
-        verbose_name = 'Access Code'
-        verbose_name_plural = 'Access Codes'
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return self.code
-
-    def save(self, *args, **kwargs):
-        # Store codes normalised so matching is reliable and case-insensitive.
-        if self.code:
-            self.code = self.code.strip().upper()
-        super().save(*args, **kwargs)
-
-    @classmethod
-    def match(cls, raw_code):
-        """Return the active AccessCode matching the entered value, or None."""
-        if not raw_code:
-            return None
-        return cls.objects.filter(code=raw_code.strip().upper(), is_active=True).first()
 
 
 class LoginHistory(models.Model):

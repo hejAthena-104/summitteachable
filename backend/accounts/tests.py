@@ -8,7 +8,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from accounts.models import LoginCode, AccessCode
+from accounts.models import LoginCode
 
 User = get_user_model()
 
@@ -182,106 +182,3 @@ class LoginCodeAdminTests(TestCase):
         self.assertEqual(resp.status_code, 302)
         self.assertIn('_auth_user_id', guest.session)
 
-
-@_TEST_STATIC
-class AccessCodeModelTests(TestCase):
-    def test_code_normalised_uppercase(self):
-        ac = AccessCode.objects.create(code='  launch99 ')
-        self.assertEqual(ac.code, 'LAUNCH99')
-
-    def test_match_is_case_insensitive_and_active_only(self):
-        # SUMMIT26 is seeded by migration 0008
-        self.assertIsNotNone(AccessCode.match('summit26'))
-        self.assertIsNotNone(AccessCode.match('  SuMMit26 '))
-        self.assertIsNone(AccessCode.match('nope'))
-
-        AccessCode.objects.create(code='OLD2025', is_active=False)
-        self.assertIsNone(AccessCode.match('old2025'))
-
-
-@_TEST_STATIC
-class AccessGateTests(TestCase):
-    EDU_PATH = '/education/'
-    BUY_PATH = '/buy/'
-
-    def setUp(self):
-        # SUMMIT26 is seeded by migration 0008; reuse it.
-        self.code, _ = AccessCode.objects.get_or_create(
-            code='SUMMIT26', defaults={'is_active': True}
-        )
-        self.code.is_active = True
-        self.code.times_used = 0
-        self.code.save()
-        self.user = User.objects.create_user(
-            username='member', email='member@example.com', password='pw'
-        )
-        self.gate_url = reverse('accounts:access_gate')
-
-    # --- middleware gating ---
-    def test_locked_user_redirected_to_gate_from_courses(self):
-        self.client.force_login(self.user)
-        resp = self.client.get(self.EDU_PATH)
-        self.assertEqual(resp.status_code, 302)
-        self.assertIn(self.gate_url, resp.url)
-
-    def test_locked_user_redirected_to_gate_from_store(self):
-        self.client.force_login(self.user)
-        resp = self.client.get(self.BUY_PATH)
-        self.assertEqual(resp.status_code, 302)
-        self.assertIn(self.gate_url, resp.url)
-
-    def test_anonymous_redirected_to_login(self):
-        resp = self.client.get(self.EDU_PATH)
-        self.assertEqual(resp.status_code, 302)
-        self.assertIn('/auth/login/', resp.url)
-
-    def test_staff_bypasses_gate(self):
-        self.user.is_staff = True
-        self.user.save(update_fields=['is_staff'])
-        self.client.force_login(self.user)
-        resp = self.client.get(self.EDU_PATH)
-        self.assertNotEqual(resp.status_code, 302)
-
-    def test_unlocked_user_passes(self):
-        self.user.grant_course_access()
-        self.client.force_login(self.user)
-        resp = self.client.get(self.EDU_PATH)
-        self.assertEqual(resp.status_code, 200)
-
-    # --- gate view redemption ---
-    def test_correct_code_unlocks_permanently_and_redirects_next(self):
-        self.client.force_login(self.user)
-        resp = self.client.post(
-            self.gate_url, {'access_code': 'summit26', 'next': self.EDU_PATH}
-        )
-        self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp.url, self.EDU_PATH)
-        self.user.refresh_from_db()
-        self.assertTrue(self.user.course_access_unlocked)
-        self.assertIsNotNone(self.user.course_access_unlocked_at)
-        self.code.refresh_from_db()
-        self.assertEqual(self.code.times_used, 1)
-
-    def test_wrong_code_does_not_unlock(self):
-        self.client.force_login(self.user)
-        resp = self.client.post(self.gate_url, {'access_code': 'WRONG'})
-        self.assertEqual(resp.status_code, 200)
-        self.user.refresh_from_db()
-        self.assertFalse(self.user.course_access_unlocked)
-
-    def test_inactive_code_does_not_unlock(self):
-        self.code.is_active = False
-        self.code.save(update_fields=['is_active'])
-        self.client.force_login(self.user)
-        resp = self.client.post(self.gate_url, {'access_code': 'SUMMIT26'})
-        self.assertEqual(resp.status_code, 200)
-        self.user.refresh_from_db()
-        self.assertFalse(self.user.course_access_unlocked)
-
-    def test_gate_rejects_open_redirect_next(self):
-        self.client.force_login(self.user)
-        resp = self.client.post(
-            self.gate_url, {'access_code': 'SUMMIT26', 'next': 'https://evil.com/x'}
-        )
-        self.assertEqual(resp.status_code, 302)
-        self.assertNotIn('evil.com', resp.url)
