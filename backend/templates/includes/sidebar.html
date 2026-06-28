@@ -19,13 +19,15 @@
         <!-- Brand -->
         <a class="navbar-brand py-3" href="{% url 'dashboard:index' %}">
             {% load static %}
+            {# Logo mark — shown when the rail is collapsed #}
+            <img src="{% static 'images/favicon.png' %}" class="brand-mark" alt="Summit Teachable">
             {# Deep-purple wordmark for the light sidebar (default) #}
             <img src="{% static 'images/logo-dark.png' %}"
-                class="navbar-brand-img brand-logo-dark" alt="Summit Teachable"
+                class="navbar-brand-img brand-wordmark brand-logo-dark" alt="Summit Teachable"
                 style="width: auto; height: 42px; max-width: 200px;">
             {# Near-white wordmark for the dark sidebar #}
             <img src="{% static 'images/logo.png' %}"
-                class="navbar-brand-img brand-logo-light" alt="Summit Teachable"
+                class="navbar-brand-img brand-wordmark brand-logo-light" alt="Summit Teachable"
                 style="width: auto; height: 42px; max-width: 200px;">
         </a>
 

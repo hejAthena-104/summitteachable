@@ -548,13 +548,13 @@ body { background-color:#F5F3FB; }
   #mainNavbar.navbar-vertical.navbar-expand-lg {
     width: 86px !important;
     max-width: 86px !important;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden !important;       /* never scrolls — everything fits at once */
     transition: width .2s ease, box-shadow .2s ease;
     z-index: 1050;
   }
-  /* Content keeps the collapsed offset — the open sidebar floats over it. */
-  #mainNavbar.navbar-vertical.navbar-expand-lg ~ main { margin-left: 86px !important; }
+  /* Content keeps the collapsed offset — the open sidebar floats over it.
+     Zero the right margin dashly reserves so the layout fills evenly (no lean). */
+  #mainNavbar.navbar-vertical.navbar-expand-lg ~ main { margin-left: 86px !important; margin-right: 0 !important; }
 
   /* Dashly leaves the collapse/list at content-width; force them to fill the rail
      so links can center (collapsed) and align (expanded). */
@@ -565,26 +565,28 @@ body { background-color:#F5F3FB; }
   #mainNavbar .nav-item { width: 100% !important; }
   #mainNavbar .navbar-nav { padding: 0 !important; margin: 0 !important; }
 
-  /* Brand */
-  #mainNavbar .navbar-brand { width: 100%; justify-content: center; padding: 12px 0 !important; margin: 0 !important; }
-  #mainNavbar .navbar-brand-img { height: 28px !important; max-width: 44px !important; transition: max-width .2s ease; }
+  /* Brand: logo mark when collapsed, full wordmark when expanded */
+  #mainNavbar .navbar-brand { width: 100%; justify-content: center; padding: 10px 0 !important; margin: 0 !important; }
+  #mainNavbar .brand-mark { display: block; height: 34px; width: auto; margin: 0 auto; }
+  #mainNavbar .brand-wordmark { display: none !important; }
 
   /* No section headings — keep the nav compact so every item fits in one view. */
   #mainNavbar .nav-section-heading { display: none !important; }
   #mainNavbar .navbar-nav { margin-bottom: 0 !important; }
 
-  /* Collapsed: icon-only, perfectly centered. */
+  /* Collapsed: icon-only, perfectly centered. Compact so all items fit (no scroll). */
   #mainNavbar .navbar-nav .nav-link {
     display: flex !important;
     align-items: center;
     justify-content: center;
     gap: 0;
-    height: 40px;
+    height: 34px;
     padding: 0 !important;
-    margin: 2px 14px !important;
-    border-radius: 11px;
+    margin: 1px 14px !important;
+    border-radius: 10px;
     white-space: nowrap;
   }
+  #mainNavbar hr { margin: 6px 14px !important; }
   #mainNavbar .navbar-nav .nav-link > span { display: none !important; }
   #mainNavbar .navbar-nav .nav-link .nav-link-icon,
   #mainNavbar .navbar-nav .nav-link > i {
@@ -603,7 +605,10 @@ body { background-color:#F5F3FB; }
     max-width: 264px !important;
     box-shadow: 8px 0 30px rgba(17, 12, 46, .16);
   }
-  #mainNavbar:hover .navbar-brand-img { max-width: 175px !important; }
+  #mainNavbar:hover .brand-mark { display: none; }
+  #mainNavbar:hover .brand-logo-dark { display: block !important; height: 32px !important; max-width: 180px !important; }
+  [data-theme="dark"] #mainNavbar:hover .brand-logo-dark { display: none !important; }
+  [data-theme="dark"] #mainNavbar:hover .brand-logo-light { display: block !important; height: 32px !important; max-width: 180px !important; }
   #mainNavbar:hover .navbar-nav .nav-link {
     justify-content: flex-start;
     gap: 12px;
@@ -621,13 +626,42 @@ body { background-color:#F5F3FB; }
   box-shadow: 8px 0 28px rgba(0, 0, 0, .4);
 }
 
-/* Minimal top strip */
+/* Logo mark is desktop-rail only; hide it everywhere else (mobile shows wordmark). */
+.brand-mark { display: none; }
+
+/* Dashboard top header bar */
 .st-topbar {
-  height: 64px;
+  height: 66px;
+  padding: 0 22px;
   border-bottom: 1px solid var(--bs-border-color, #E8E3F6);
   margin-bottom: 1.25rem;
-  background: transparent;
+  background: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  justify-content: space-between !important;  /* left actions ↔ right user, fully spread */
+  gap: 12px;
 }
+[data-theme="dark"] .st-topbar { background: #15101f; border-bottom-color: rgba(139,92,246,.18); }
+
+/* Round ghost icon buttons (search / bookmark) */
+.st-icon-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--bs-border-color, #E8E3F6);
+  background: transparent; color: #6e727f; font-size: 1rem;
+  text-decoration: none; transition: background .15s ease, color .15s ease;
+}
+.st-icon-btn:hover { background: rgba(139,92,246,.10); color: #7C3AED; }
+
+/* Avatar with online status dot */
+.st-avatar-wrap { position: relative; display: inline-flex; }
+.st-status-dot {
+  position: absolute; right: -1px; bottom: -1px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #22C55E; border: 2px solid #fff;
+}
+[data-theme="dark"] .st-status-dot { border-color: #15101f; }
 .st-balance-chip {
   background: rgba(139,92,246,.10);
   color: #7C3AED;

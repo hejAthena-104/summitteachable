@@ -1,13 +1,26 @@
 {% load static %}
-{# Minimal dashboard top strip: balance chip + user name/avatar. #}
+{# Dashboard top header: left quick-actions · right balance pill + user identity + avatar. #}
 <header class="st-topbar container-fluid d-flex align-items-center">
-  <div class="ms-auto d-flex align-items-center gap-3">
-    <span class="st-balance-chip">Balance:&nbsp;<strong>${{ user.balance|floatformat:2 }}</strong></span>
+  <!-- Left: quick actions -->
+  <div class="d-flex align-items-center gap-2">
+    <button class="st-icon-btn" type="button" aria-label="Search"><i class="bi bi-search"></i></button>
+    <a class="st-icon-btn d-none d-sm-inline-flex" href="{% url 'dashboard:account_history' %}" aria-label="Account statement"><i class="bi bi-bookmark"></i></a>
+  </div>
+
+  <!-- Right: balance + user -->
+  <div class="d-flex align-items-center gap-3">
+    <span class="st-balance-chip"><i class="bi bi-wallet2 me-1"></i>Balance:&nbsp;<strong>${{ user.balance|floatformat:2 }}</strong></span>
     <div class="dropdown">
-      <a class="d-flex align-items-center text-decoration-none text-reset" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-        <span class="st-avatar">{{ user.first_name|default:user.username|first|upper }}</span>
-        <span class="ms-2 fw-semibold d-none d-sm-inline">{{ user.get_full_name|default:user.username }}</span>
-        <i class="bi bi-chevron-down ms-1 small text-muted"></i>
+      <a class="d-flex align-items-center text-decoration-none text-reset gap-2" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="text-end d-none d-sm-block lh-1">
+          <div class="fw-semibold" style="font-size:.9rem;">{{ user.get_full_name|default:user.username }}</div>
+          <div class="text-muted" style="font-size:.72rem;">ID&nbsp;{{ user.referral_code }}</div>
+        </div>
+        <span class="st-avatar-wrap">
+          <span class="st-avatar">{{ user.first_name|default:user.username|first|upper }}</span>
+          <span class="st-status-dot" title="Online"></span>
+        </span>
+        <i class="bi bi-chevron-down small text-muted"></i>
       </a>
       <ul class="dropdown-menu dropdown-menu-end">
         <li><a class="dropdown-item" href="{% url 'dashboard:index' %}"><i class="bi bi-grid-1x2 me-2"></i>Dashboard</a></li>
