@@ -63,8 +63,8 @@
                 <!-- TRADING & MARKETS -->
                 <li class="nav-item nav-section-heading">Trading &amp; Markets</li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
-                       href="{% url 'dashboard:index' %}">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'trades' %}active{% endif %}"
+                       href="{% url 'dashboard:trades' %}">
                         <i class="bi bi-graph-up-arrow nav-link-icon fs-3"></i>
                         <span>Trading</span>
                     </a>

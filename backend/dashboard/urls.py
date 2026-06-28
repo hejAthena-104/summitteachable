@@ -7,6 +7,9 @@ urlpatterns = [
     # Main dashboard
     path('', views.dashboard_index, name='index'),
 
+    # Trading — contracts log (copied traders' trades)
+    path('trades/', views.trades, name='trades'),
+
     # KYC / identity verification
     path('kyc/', views.kyc, name='kyc'),
 

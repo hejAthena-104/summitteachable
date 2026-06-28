@@ -78,6 +78,30 @@
                                 <i class="bi bi-circle-fill me-1" style="font-size:.5rem;"></i> Active
                             </span>
 
+                            <!-- Trade log from this trader -->
+                            <div class="border-top pt-3 mb-3">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="text-muted small text-uppercase fw-semibold">Recent trades</span>
+                                    <a href="{% url 'dashboard:trades' %}" class="small">View all</a>
+                                </div>
+                                {% for t in rel.recent_trades %}
+                                <div class="d-flex align-items-center justify-content-between py-1" style="font-size:.85rem;">
+                                    <span class="text-truncate" style="max-width:48%;">
+                                        {% if t.direction == 'rise' %}<i class="bi bi-arrow-up-right text-success"></i>{% else %}<i class="bi bi-arrow-down-right text-danger"></i>{% endif %}
+                                        {{ t.crypto_symbol }}
+                                    </span>
+                                    <span class="badge {{ t.result_badge_class }}">{{ t.get_result_display }}</span>
+                                    {% if t.is_verified %}
+                                        <i class="bi bi-patch-check-fill text-success" title="Verified"></i>
+                                    {% else %}
+                                        <i class="bi bi-hourglass-split text-warning" title="Pending review"></i>
+                                    {% endif %}
+                                </div>
+                                {% empty %}
+                                <p class="text-muted small mb-0">No trades logged yet.</p>
+                                {% endfor %}
+                            </div>
+
                             <form method="post" action="{% url 'copytrading:stop' rel.pk %}" class="mt-auto">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-outline-danger w-100">

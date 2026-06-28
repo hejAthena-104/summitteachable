@@ -150,3 +150,57 @@ class CopyRelationship(models.Model):
         self.is_active = False
         self.stopped_at = timezone.now()
         self.save(update_fields=["is_active", "stopped_at"])
+
+
+class MasterTrade(models.Model):
+    """An individual trade taken by a master trader.
+
+    Copiers see these on their Trading (Contracts Log) page for any master they
+    are actively copying. An admin reviews/verifies each trade before it counts;
+    unverified trades still show, badged "Pending review"."""
+
+    DIRECTION_CHOICES = [("rise", "Rise"), ("fall", "Fall")]
+    RESULT_CHOICES = [
+        ("pending", "Pending"), ("win", "Win"), ("loss", "Loss"), ("draw", "Draw"),
+    ]
+    STATUS_CHOICES = [
+        ("open", "Open"), ("closed", "Closed"), ("cancelled", "Cancelled"),
+    ]
+
+    master = models.ForeignKey(
+        MasterTrader, on_delete=models.CASCADE, related_name="trades"
+    )
+    crypto_currency = models.CharField(max_length=120, help_text="e.g. Bitcoin")
+    crypto_symbol = models.CharField(max_length=40, help_text="e.g. BTC/USD")
+    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    direction = models.CharField(max_length=4, choices=DIRECTION_CHOICES, default="rise")
+    result = models.CharField(max_length=8, choices=RESULT_CHOICES, default="pending")
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="open")
+    is_verified = models.BooleanField(
+        default=False,
+        help_text="Verified by an admin — the trade has been checked and meets standards.",
+    )
+    notes = models.CharField(max_length=255, blank=True)
+    opened_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Trade"
+        verbose_name_plural = "Trades"
+        ordering = ["-opened_at"]
+
+    def __str__(self):
+        return f"{self.master.name} · {self.crypto_symbol} {self.get_direction_display()}"
+
+    @property
+    def result_badge_class(self):
+        return {
+            "win": "bg-success", "loss": "bg-danger",
+            "draw": "bg-secondary", "pending": "bg-warning",
+        }.get(self.result, "bg-secondary")
+
+    @property
+    def status_badge_class(self):
+        return {
+            "open": "bg-info", "closed": "bg-success", "cancelled": "bg-secondary",
+        }.get(self.status, "bg-secondary")

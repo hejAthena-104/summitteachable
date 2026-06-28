@@ -60,10 +60,13 @@ def copy(request, slug):
 @login_required
 def my_copies(request):
     """List the user's active copy relationships."""
-    relationships = (
+    relationships = list(
         CopyRelationship.objects.filter(user=request.user, is_active=True)
         .select_related("master")
     )
+    # Attach each copied trader's recent trade log (shown on the copy side).
+    for rel in relationships:
+        rel.recent_trades = list(rel.master.trades.all()[:5])
     return render(
         request,
         "copytrading/my_copies.html",

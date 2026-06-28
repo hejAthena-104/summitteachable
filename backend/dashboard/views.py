@@ -67,6 +67,34 @@ def dashboard_index(request):
 
     return render(request, 'dashboard/index.html', context)
 
+
+@login_required
+def trades(request):
+    """Contracts Log — the trades of every master trader the user is copying."""
+    from copytrading.models import MasterTrader, MasterTrade
+
+    masters = MasterTrader.objects.filter(
+        relationships__user=request.user, relationships__is_active=True
+    ).distinct()
+    qs = MasterTrade.objects.filter(master__in=masters).select_related('master')
+
+    q = (request.GET.get('q') or '').strip()
+    if q:
+        qs = qs.filter(
+            Q(crypto_currency__icontains=q)
+            | Q(crypto_symbol__icontains=q)
+            | Q(master__name__icontains=q)
+        )
+
+    context = {
+        'user': request.user,
+        'trades': qs.order_by('-opened_at'),
+        'q': q,
+        'copied_count': masters.count(),
+    }
+    return render(request, 'dashboard/trades.html', context)
+
+
 @login_required
 def deposits(request):
     """Deposit screen — pay to a platform crypto wallet, then upload proof."""

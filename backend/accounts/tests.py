@@ -273,3 +273,46 @@ class KYCAndDepositTests(TestCase):
         self.client.force_login(self.user)
         for path in [reverse('dashboard:index'), reverse('dashboard:kyc'), reverse('dashboard:deposits')]:
             self.assertEqual(self.client.get(path).status_code, 200)
+
+
+@_TEST_STATIC
+class TradesPageTests(TestCase):
+    def setUp(self):
+        from copytrading.models import MasterTrader, MasterTrade, CopyRelationship
+        self.MasterTrade = MasterTrade
+        self.CopyRelationship = CopyRelationship
+        self.user = User.objects.create_user('tp', 'tp@example.com', 'pw')
+        self.master = MasterTrader.objects.create(name='Pro Trader', slug='pro-trader',
+                                                  headline='x', strategy='x', win_rate=60, return_pct=10)
+        self.t_verified = MasterTrade.objects.create(
+            master=self.master, crypto_currency='Bitcoin', crypto_symbol='BTC/USD',
+            amount='100', direction='rise', result='win', status='closed', is_verified=True)
+        self.t_pending = MasterTrade.objects.create(
+            master=self.master, crypto_currency='Gold', crypto_symbol='XAU/USD',
+            amount='50', direction='fall', result='pending', status='open', is_verified=False)
+        self.url = reverse('dashboard:trades')
+
+    def test_non_copier_sees_empty(self):
+        self.client.force_login(self.user)
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "not copying any traders")
+        self.assertNotContains(r, 'BTC/USD')
+
+    def test_copier_sees_all_master_trades_incl_pending(self):
+        self.CopyRelationship.objects.create(user=self.user, master=self.master,
+                                             allocated_demo_amount='1000', is_active=True)
+        self.client.force_login(self.user)
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, 'BTC/USD')          # verified trade shown
+        self.assertContains(r, 'XAU/USD')          # unverified trade also shown
+        self.assertContains(r, 'Pending review')   # flagged
+
+    def test_search_filters(self):
+        self.CopyRelationship.objects.create(user=self.user, master=self.master,
+                                             allocated_demo_amount='1000', is_active=True)
+        self.client.force_login(self.user)
+        r = self.client.get(self.url, {'q': 'BTC'})
+        self.assertContains(r, 'BTC/USD')
+        self.assertNotContains(r, 'XAU/USD')

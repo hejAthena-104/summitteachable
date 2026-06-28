@@ -1,7 +1,21 @@
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 from django.utils.text import slugify
 
-from copytrading.models import MasterTrader
+from copytrading.models import MasterTrader, MasterTrade
+
+# Sample trade log seeded for each master (only when they have none yet).
+# (currency, symbol, amount, direction, result, status, is_verified, days_ago)
+SAMPLE_TRADES = [
+    ("Bitcoin", "BTC/USD", "1200.00", "rise", "win", "closed", True, 1),
+    ("Ethereum", "ETH/USD", "800.00", "fall", "loss", "closed", True, 2),
+    ("Euro", "EUR/USD", "1500.00", "rise", "win", "closed", True, 3),
+    ("Gold", "XAU/USD", "1000.00", "rise", "pending", "open", False, 0),
+    ("Solana", "SOL/USD", "600.00", "fall", "draw", "closed", True, 4),
+    ("Bitcoin", "BTC/USD", "950.00", "rise", "win", "closed", True, 6),
+]
 
 MASTER_TRADERS = [
     {
@@ -116,6 +130,17 @@ class Command(BaseCommand):
                 created_count += 1
             else:
                 updated_count += 1
+
+            # Seed a sample trade log once (only if this master has no trades).
+            if not obj.trades.exists():
+                now = timezone.now()
+                for cur, sym, amt, direction, result, status, verified, days_ago in SAMPLE_TRADES:
+                    MasterTrade.objects.create(
+                        master=obj, crypto_currency=cur, crypto_symbol=sym,
+                        amount=amt, direction=direction, result=result,
+                        status=status, is_verified=verified,
+                        opened_at=now - timedelta(days=days_ago, hours=obj.order),
+                    )
 
         self.stdout.write(
             self.style.SUCCESS(
