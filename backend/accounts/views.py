@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib.auth.forms import SetPasswordForm
 from django.utils import timezone
 from django.conf import settings
@@ -280,9 +281,11 @@ def reset_password_view(request, token):
         return redirect('accounts:forgot_password')
 
 
+@require_POST
 @login_required
 def logout_view(request):
-    """Handle user logout"""
+    """Handle user logout. POST-only so a GET (e.g. an <img> tag) can't force a
+    logout (logout-CSRF). All sign-out controls submit a CSRF-protected form."""
     user_name = request.user.get_full_name()
     logout(request)
     messages.success(request, f'Goodbye, {user_name}! You have been logged out successfully.')
