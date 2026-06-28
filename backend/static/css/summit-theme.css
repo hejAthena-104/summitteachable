@@ -544,46 +544,81 @@ body { background-color:#F5F3FB; }
    On <992px the dashly navbar collapses to a toggler as usual.
    ============================================================ */
 @media (min-width: 992px) {
-  /* Narrow the fixed vertical navbar to an icon rail */
+  /* Fixed 86px icon rail that slides open to 250px on hover. */
   #mainNavbar.navbar-vertical.navbar-expand-lg {
-    width: 84px !important;
-    max-width: 84px !important;
-    overflow: visible;
+    width: 86px !important;
+    max-width: 86px !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: width .2s ease, box-shadow .2s ease;
+    z-index: 1050;
   }
-  #mainNavbar.navbar-vertical.navbar-expand-lg ~ main { margin-left: 84px !important; }
+  /* Content keeps the collapsed offset — the open sidebar floats over it. */
+  #mainNavbar.navbar-vertical.navbar-expand-lg ~ main { margin-left: 86px !important; }
 
-  #mainNavbar .container-fluid { padding-left: 6px; padding-right: 6px; }
+  /* Dashly leaves the collapse/list at content-width; force them to fill the rail
+     so links can center (collapsed) and align (expanded). */
+  #mainNavbar .container-fluid { padding: 0 !important; width: 100%; align-items: stretch; }
+  #mainNavbar .navbar-collapse,
+  #mainNavbar .collapse.navbar-collapse,
+  #mainNavbar .navbar-nav,
+  #mainNavbar .nav-item { width: 100% !important; }
+  #mainNavbar .navbar-nav { padding: 0 !important; margin: 0 !important; }
 
-  /* Compact, centered brand */
-  #mainNavbar .navbar-brand { justify-content: center; padding: 14px 0 !important; margin: 0 auto; }
-  #mainNavbar .navbar-brand-img { height: 30px !important; max-width: 56px !important; }
+  /* Brand */
+  #mainNavbar .navbar-brand { width: 100%; justify-content: center; padding: 12px 0 !important; margin: 0 !important; }
+  #mainNavbar .navbar-brand-img { height: 28px !important; max-width: 44px !important; transition: max-width .2s ease; }
 
-  /* Hide section headings in the rail */
+  /* No section headings — keep the nav compact so every item fits in one view. */
   #mainNavbar .nav-section-heading { display: none !important; }
+  #mainNavbar .navbar-nav { margin-bottom: 0 !important; }
 
-  /* Centered icon-only links */
-  #mainNavbar .navbar-nav { align-items: stretch; }
+  /* Collapsed: icon-only, perfectly centered. */
   #mainNavbar .navbar-nav .nav-link {
+    display: flex !important;
+    align-items: center;
     justify-content: center;
-    padding: 11px 0 !important;
-    margin: 3px 12px !important;
-    border-radius: 12px;
-    position: relative;
+    gap: 0;
+    height: 40px;
+    padding: 0 !important;
+    margin: 2px 14px !important;
+    border-radius: 11px;
+    white-space: nowrap;
   }
-  #mainNavbar .navbar-nav .nav-link .nav-link-icon,
-  #mainNavbar .navbar-nav .nav-link i { margin: 0 !important; }
   #mainNavbar .navbar-nav .nav-link > span { display: none !important; }
-
-  /* Label flyout tooltip on hover */
-  #mainNavbar .navbar-nav .nav-link:hover > span {
-    display: block !important;
-    position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
-    margin-left: 12px;
-    background: #130D22; color: #fff;
-    padding: 6px 11px; border-radius: 8px;
-    white-space: nowrap; font-size: .8rem; font-weight: 600;
-    z-index: 1090; box-shadow: 0 8px 22px rgba(0,0,0,.22); pointer-events: none;
+  #mainNavbar .navbar-nav .nav-link .nav-link-icon,
+  #mainNavbar .navbar-nav .nav-link > i {
+    width: 24px !important;
+    min-width: 24px;
+    margin: 0 !important;
+    text-align: center;
+    font-size: 1.15rem;
+    line-height: 1;
+    flex-shrink: 0;
   }
+
+  /* ---- Hover: expand the whole rail and reveal single-line labels ---- */
+  #mainNavbar.navbar-vertical.navbar-expand-lg:hover {
+    width: 264px !important;
+    max-width: 264px !important;
+    box-shadow: 8px 0 30px rgba(17, 12, 46, .16);
+  }
+  #mainNavbar:hover .navbar-brand-img { max-width: 175px !important; }
+  #mainNavbar:hover .navbar-nav .nav-link {
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 0 18px !important;
+  }
+  #mainNavbar:hover .navbar-nav .nav-link > span {
+    display: inline-block !important;
+    white-space: nowrap;       /* one line, shown in full */
+    overflow: visible;
+    text-overflow: clip;
+  }
+}
+
+[data-theme="dark"] #mainNavbar.navbar-vertical.navbar-expand-lg:hover {
+  box-shadow: 8px 0 28px rgba(0, 0, 0, .4);
 }
 
 /* Minimal top strip */
