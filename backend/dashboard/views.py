@@ -7,12 +7,10 @@ from django.db import transaction
 from django.utils import timezone
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
-import random
-import string
 
 from functools import wraps
 
-from accounts.models import User, Notification, KYCVerification
+from accounts.models import User, Notification, KYCVerification, LoginCode
 from accounts.forms import KYCForm
 from transactions.models import (
     Transaction, Deposit, Withdrawal, Transfer, PaymentMethod,
@@ -426,7 +424,7 @@ def withdraw_funds(request):
 @kyc_required
 def request_otp(request):
     """Generate and email a withdrawal OTP."""
-    otp = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+    otp = LoginCode.generate_code()
     request.user.withdrawal_otp = otp
     request.user.save(update_fields=['withdrawal_otp'])
 

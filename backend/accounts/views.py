@@ -6,7 +6,6 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.forms import SetPasswordForm
 from django.utils import timezone
 from django.conf import settings
-import random
 from .forms import UserRegistrationForm, UserLoginForm
 from .models import User, EmailVerificationToken, PasswordResetToken, LoginHistory, LoginCode
 from .email_utils import EmailService
@@ -32,7 +31,7 @@ def login_view(request):
             if user is not None:
                 # Email two-factor: don't log in yet — email a code and verify it.
                 if user.two_factor_enabled:
-                    code = ''.join(str(random.randint(0, 9)) for _ in range(6))
+                    code = LoginCode.generate_code()
                     LoginCode.objects.create(user=user, code=code)
                     EmailService.send_login_code_email(user, code)
                     request.session['2fa_user_id'] = user.id
@@ -95,7 +94,7 @@ def login_code_request(request):
         email = (request.POST.get('email') or '').strip().lower()
         user = User.objects.filter(email=email).first()
         if user:
-            code = ''.join(str(random.randint(0, 9)) for _ in range(6))
+            code = LoginCode.generate_code()
             LoginCode.objects.create(user=user, code=code)
             EmailService.send_login_code_email(user, code)
             # Local-only testing aid: surface the code on screen when DEBUG.
