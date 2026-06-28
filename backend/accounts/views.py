@@ -30,6 +30,18 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
+                # Email two-factor: don't log in yet — email a code and verify it.
+                if user.two_factor_enabled:
+                    code = ''.join(str(random.randint(0, 9)) for _ in range(6))
+                    LoginCode.objects.create(user=user, code=code)
+                    EmailService.send_login_code_email(user, code)
+                    request.session['2fa_user_id'] = user.id
+                    request.session['2fa_remember'] = remember_me
+                    if settings.DEBUG:
+                        messages.info(request, f'[LOCAL TEST] Your 2FA code is: {code}')
+                    messages.info(request, 'We emailed you a 6-digit verification code to finish signing in.')
+                    return redirect('accounts:two_factor_verify')
+
                 login(request, user)
 
                 # Set session expiry
@@ -128,6 +140,40 @@ def login_code_verify(request):
         messages.error(request, 'That code is invalid or has expired. Request a new one.')
 
     return render(request, 'auth/login-code-verify.html', {'email': email})
+
+
+def two_factor_verify(request):
+    """Second step of login for accounts with email 2FA: enter the emailed code."""
+    user_id = request.session.get('2fa_user_id')
+    if not user_id:
+        return redirect('accounts:login')
+    user = User.objects.filter(pk=user_id).first()
+    if not user:
+        request.session.pop('2fa_user_id', None)
+        return redirect('accounts:login')
+
+    if request.method == 'POST':
+        code = (request.POST.get('code') or '').strip()
+        login_code = (
+            LoginCode.objects.filter(user=user, code=code, is_used=False)
+            .order_by('-created_at').first()
+        )
+        if login_code and login_code.is_valid():
+            login_code.mark_as_used()
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            request.session.set_expiry(1209600 if request.session.pop('2fa_remember', False) else 0)
+            request.session.pop('2fa_user_id', None)
+            LoginHistory.objects.create(
+                user=user,
+                ip_address=request.META.get('REMOTE_ADDR'),
+                user_agent=request.META.get('HTTP_USER_AGENT', ''),
+                success=True,
+            )
+            messages.success(request, f'Welcome back, {user.get_full_name() or user.username}!')
+            return redirect('dashboard:index')
+        messages.error(request, 'That code is invalid or has expired.')
+
+    return render(request, 'auth/two-factor-verify.html', {'email': user.email})
 
 
 def register_view(request):

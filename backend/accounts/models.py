@@ -72,6 +72,10 @@ class User(AbstractUser):
         default=False,
         help_text="Email verification status"
     )
+    two_factor_enabled = models.BooleanField(
+        default=False,
+        help_text="Email two-factor authentication — a code is emailed at each sign-in.",
+    )
 
     # Security
     withdrawal_otp = models.CharField(max_length=6, blank=True, null=True)

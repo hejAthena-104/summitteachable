@@ -129,6 +129,66 @@ class UserAdmin(BaseUserAdmin):
         self.message_user(request, f'{n} user(s) marked Unverified.')
     mark_as_unverified.short_description = 'Mark selected users as Unverified'
 
+    def save_model(self, request, obj, form, change):
+        """Keep the money math sound + auditable.
+
+        When an admin changes Total Profit / Total Bonus / Referral Bonus, the net
+        change is credited (or debited) to the user's Balance, and an approved
+        Transaction is recorded for each change so it shows in the user's account
+        history and the Transactions admin (audit trail). If the admin edits the
+        Balance directly in the same save, that explicit value is respected (no
+        double-adjust) — the change is still logged.
+        """
+        from django.utils import timezone
+        from django.db.models import F
+        from transactions.models import Transaction
+
+        old = User.objects.filter(pk=obj.pk).first() if change else None
+        balance_changed = 'balance' in getattr(form, 'changed_data', [])
+
+        super().save_model(request, obj, form, change)
+
+        if old is None:
+            return
+
+        deltas = [
+            ('profit', (obj.total_profit or 0) - (old.total_profit or 0)),
+            ('bonus', (obj.total_bonus or 0) - (old.total_bonus or 0)),
+            ('referral', (obj.referral_bonus or 0) - (old.referral_bonus or 0)),
+        ]
+        net = 0
+        for ttype, d in deltas:
+            if d:
+                net += d
+                Transaction.objects.create(
+                    user=obj, type=ttype, amount=d, status='approved',
+                    processed_at=timezone.now(),
+                    description=f'Admin {ttype} adjustment ({d:+})',
+                    admin_note=f'Auto-recorded from a User admin edit by {request.user}.',
+                )
+
+        if net and not balance_changed:
+            # Apply the net change to the balance (the transactions above are the ledger).
+            User.objects.filter(pk=obj.pk).update(balance=F('balance') + net)
+            obj.refresh_from_db()
+            self.message_user(
+                request,
+                f'Balance adjusted by {net:+} to ${obj.balance} from profit/bonus/referral changes.'
+            )
+        elif net and balance_changed:
+            self.message_user(
+                request,
+                f'Logged a {net:+} profit/bonus/referral change. Balance left at the value you set (${obj.balance}).'
+            )
+
+        # Keep the trading account's monetary figures in sync with the wallet balance.
+        from trading.models import TradingAccount
+        ta, _ = TradingAccount.objects.get_or_create(user=obj)
+        if ta.trading_balance != obj.balance or ta.equity != obj.balance:
+            ta.trading_balance = obj.balance
+            ta.equity = obj.balance
+            ta.save(update_fields=['trading_balance', 'equity'])
+
 
 # EmailVerificationToken and PasswordResetToken are transient internal plumbing
 # (auto-created and consumed during signup / password reset). They are intentionally

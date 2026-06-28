@@ -49,6 +49,7 @@ urlpatterns = [
     # Settings
     path('account-settings/', views.account_settings, name='account_settings'),
     path('manage-account-security/', views.manage_account_security, name='manage_account_security'),
+    path('two-factor/toggle/', views.toggle_two_factor, name='toggle_two_factor'),
     path('set-pin/', views.set_transaction_pin, name='set_transaction_pin'),
 
     # Support

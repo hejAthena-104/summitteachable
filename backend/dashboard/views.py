@@ -593,6 +593,19 @@ def manage_account_security(request):
 
 
 @login_required
+@require_POST
+def toggle_two_factor(request):
+    """Enable/disable email two-factor authentication for the user."""
+    request.user.two_factor_enabled = not request.user.two_factor_enabled
+    request.user.save(update_fields=['two_factor_enabled'])
+    if request.user.two_factor_enabled:
+        messages.success(request, 'Two-factor authentication is now enabled. We will email a code at each sign-in.')
+    else:
+        messages.info(request, 'Two-factor authentication has been disabled.')
+    return redirect('dashboard:manage_account_security')
+
+
+@login_required
 def support(request):
     """Support/Help page"""
     if request.method == 'POST':

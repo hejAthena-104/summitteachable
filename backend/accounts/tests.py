@@ -316,3 +316,101 @@ class TradesPageTests(TestCase):
         r = self.client.get(self.url, {'q': 'BTC'})
         self.assertContains(r, 'BTC/USD')
         self.assertNotContains(r, 'XAU/USD')
+
+
+@_TEST_STATIC
+class AdminFinancialMathTests(TestCase):
+    """Admin profit/bonus/referral edits adjust balance, log a transaction, sync trading account."""
+    def setUp(self):
+        from decimal import Decimal
+        self.Decimal = Decimal
+        self.admin = User.objects.create_superuser('fa', 'fa@e.com', 'pw')
+        self.user = User.objects.create_user('fu', 'fu@e.com', 'pw')
+        self.user.balance = Decimal('1000.00'); self.user.total_profit = Decimal('0.00')
+        self.user.save()
+
+    def _save_via_admin(self, changed_data=None):
+        from django.contrib import admin as dj_admin
+        from django.test import RequestFactory
+        from django.contrib.messages.storage.fallback import FallbackStorage
+        ma = dj_admin.site._registry[User]
+        req = RequestFactory().post('/admin/accounts/user/x/change/')
+        req.user = self.admin
+        setattr(req, 'session', {}); setattr(req, '_messages', FallbackStorage(req))
+        class _Form:
+            pass
+        f = _Form(); f.changed_data = changed_data or []
+        ma.save_model(req, self.user, f, change=True)
+
+    def test_profit_increase_bumps_balance_and_logs(self):
+        from transactions.models import Transaction
+        from trading.models import TradingAccount
+        self.user.total_profit = self.Decimal('500.00')   # +500 vs DB (0)
+        self._save_via_admin(changed_data=['total_profit'])
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.balance, self.Decimal('1500.00'))   # 1000 + 500
+        txn = Transaction.objects.filter(user=self.user, type='profit').first()
+        self.assertIsNotNone(txn)
+        self.assertEqual(txn.amount, self.Decimal('500.00'))
+        self.assertEqual(txn.status, 'approved')
+        ta = TradingAccount.objects.get(user=self.user)
+        self.assertEqual(ta.trading_balance, self.Decimal('1500.00'))  # synced
+        self.assertEqual(ta.equity, self.Decimal('1500.00'))
+
+    def test_direct_balance_edit_not_double_counted(self):
+        self.user.balance = self.Decimal('2000.00')
+        self.user.total_bonus = self.Decimal('100.00')   # also changed bonus
+        self._save_via_admin(changed_data=['balance', 'total_bonus'])
+        self.user.refresh_from_db()
+        # balance respected as typed (not 2000+100)
+        self.assertEqual(self.user.balance, self.Decimal('2000.00'))
+
+    def test_profit_decrease_debits_balance(self):
+        self.user.total_profit = self.Decimal('300.00'); self.user.save()
+        self.user.total_profit = self.Decimal('100.00')  # -200
+        self._save_via_admin(changed_data=['total_profit'])
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.balance, self.Decimal('800.00'))   # 1000 - 200
+
+
+@_TEST_STATIC
+class TwoFactorTests(TestCase):
+    def setUp(self):
+        from unittest import mock
+        p = mock.patch('accounts.email_utils.EmailService.send_email', return_value=True)
+        p.start(); self.addCleanup(p.stop)
+        self.user = User.objects.create_user('tfa', 'tfa@example.com', 'Secret123!')
+
+    def test_toggle_enables_and_disables(self):
+        self.client.force_login(self.user)
+        self.client.post(reverse('dashboard:toggle_two_factor'))
+        self.user.refresh_from_db(); self.assertTrue(self.user.two_factor_enabled)
+        self.client.post(reverse('dashboard:toggle_two_factor'))
+        self.user.refresh_from_db(); self.assertFalse(self.user.two_factor_enabled)
+
+    def test_login_without_2fa_logs_in_directly(self):
+        r = self.client.post(reverse('accounts:login'), {'username': 'tfa', 'password': 'Secret123!'})
+        self.assertEqual(r.status_code, 302)
+        self.assertIn('_auth_user_id', self.client.session)
+
+    def test_login_with_2fa_requires_code(self):
+        from accounts.models import LoginCode
+        self.user.two_factor_enabled = True; self.user.save()
+        r = self.client.post(reverse('accounts:login'), {'username': 'tfa', 'password': 'Secret123!'})
+        self.assertEqual(r.status_code, 302)
+        self.assertIn(reverse('accounts:two_factor_verify'), r.url)
+        self.assertNotIn('_auth_user_id', self.client.session)   # NOT logged in yet
+        self.assertEqual(self.client.session.get('2fa_user_id'), self.user.id)
+        code = LoginCode.objects.filter(user=self.user).latest('created_at').code
+        # wrong code rejected
+        self.client.post(reverse('accounts:two_factor_verify'), {'code': '000000'})
+        self.assertNotIn('_auth_user_id', self.client.session)
+        # correct code logs in
+        r2 = self.client.post(reverse('accounts:two_factor_verify'), {'code': code})
+        self.assertEqual(r2.status_code, 302)
+        self.assertIn('_auth_user_id', self.client.session)
+
+    def test_2fa_verify_without_pending_session_redirects(self):
+        r = self.client.get(reverse('accounts:two_factor_verify'))
+        self.assertEqual(r.status_code, 302)
+        self.assertIn(reverse('accounts:login'), r.url)

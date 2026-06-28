@@ -14,6 +14,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import posixpath
+
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
@@ -28,11 +30,15 @@ _PRIVATE_MEDIA_PREFIXES = ('kyc/', 'deposits/', 'course_purchases/')
 def protected_media(request, path):
     """Serve uploaded media in production. Sensitive uploads (KYC documents,
     payment proofs) are restricted to staff; the rest (icons, QR codes, avatars)
-    are public."""
-    if path.startswith(_PRIVATE_MEDIA_PREFIXES):
+    are public.
+
+    The prefix check runs on the NORMALISED path so it can't be bypassed with
+    traversal tricks like ``/media/x/../kyc/...`` or a leading slash."""
+    normalized = posixpath.normpath('/' + path).lstrip('/')
+    if normalized.startswith(_PRIVATE_MEDIA_PREFIXES):
         if not (request.user.is_authenticated and request.user.is_staff):
             return HttpResponseForbidden("You do not have permission to view this file.")
-    return _serve_media(request, path, document_root=settings.MEDIA_ROOT)
+    return _serve_media(request, normalized, document_root=settings.MEDIA_ROOT)
 
 
 urlpatterns = [
