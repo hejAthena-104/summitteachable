@@ -15,9 +15,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import HttpResponseForbidden
+from django.views.static import serve as _serve_media
+
+# Media paths that contain personal documents / payment proofs — only staff may view.
+_PRIVATE_MEDIA_PREFIXES = ('kyc/', 'deposits/', 'course_purchases/')
+
+
+def protected_media(request, path):
+    """Serve uploaded media in production. Sensitive uploads (KYC documents,
+    payment proofs) are restricted to staff; the rest (icons, QR codes, avatars)
+    are public."""
+    if path.startswith(_PRIVATE_MEDIA_PREFIXES):
+        if not (request.user.is_authenticated and request.user.is_staff):
+            return HttpResponseForbidden("You do not have permission to view this file.")
+    return _serve_media(request, path, document_root=settings.MEDIA_ROOT)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,7 +54,11 @@ urlpatterns = [
     path('buy/', include('store.urls')),
 ]
 
-# Serve media files in development
+# Serve uploaded media. In DEBUG, Django's static helper serves both media + static.
+# In production WhiteNoise serves static, but media must be served explicitly — the
+# protected_media view does this (with staff-only gating for sensitive uploads).
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', protected_media),
+]
