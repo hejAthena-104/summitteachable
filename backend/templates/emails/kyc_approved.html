@@ -1,0 +1,15 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>Your identity is verified 🎉</h2>
+
+<p>Hi {{ first_name }},</p>
+
+<p>Good news &mdash; your identity has been verified. Deposits and withdrawals are now unlocked on your account.</p>
+
+<div style="text-align:center;">
+    <a href="{{ dashboard_url }}" class="btn" style="display:inline-block;padding:14px 34px;background-color:#8B5CF6;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px;margin:18px 0;">Go to Dashboard</a>
+</div>
+
+<p>Best regards,<br>The Summit Teachable Team</p>
+{% endblock %}

@@ -538,3 +538,74 @@ body { background-color:#F5F3FB; }
   background: rgba(255, 255, 255, .06);
   border-color: rgba(255, 255, 255, .12);
 }
+
+/* ============================================================
+   Icon-rail sidebar + minimal topbar (desktop only).
+   On <992px the dashly navbar collapses to a toggler as usual.
+   ============================================================ */
+@media (min-width: 992px) {
+  /* Narrow the fixed vertical navbar to an icon rail */
+  #mainNavbar.navbar-vertical.navbar-expand-lg {
+    width: 84px !important;
+    max-width: 84px !important;
+    overflow: visible;
+  }
+  #mainNavbar.navbar-vertical.navbar-expand-lg ~ main { margin-left: 84px !important; }
+
+  #mainNavbar .container-fluid { padding-left: 6px; padding-right: 6px; }
+
+  /* Compact, centered brand */
+  #mainNavbar .navbar-brand { justify-content: center; padding: 14px 0 !important; margin: 0 auto; }
+  #mainNavbar .navbar-brand-img { height: 30px !important; max-width: 56px !important; }
+
+  /* Hide section headings in the rail */
+  #mainNavbar .nav-section-heading { display: none !important; }
+
+  /* Centered icon-only links */
+  #mainNavbar .navbar-nav { align-items: stretch; }
+  #mainNavbar .navbar-nav .nav-link {
+    justify-content: center;
+    padding: 11px 0 !important;
+    margin: 3px 12px !important;
+    border-radius: 12px;
+    position: relative;
+  }
+  #mainNavbar .navbar-nav .nav-link .nav-link-icon,
+  #mainNavbar .navbar-nav .nav-link i { margin: 0 !important; }
+  #mainNavbar .navbar-nav .nav-link > span { display: none !important; }
+
+  /* Label flyout tooltip on hover */
+  #mainNavbar .navbar-nav .nav-link:hover > span {
+    display: block !important;
+    position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+    margin-left: 12px;
+    background: #130D22; color: #fff;
+    padding: 6px 11px; border-radius: 8px;
+    white-space: nowrap; font-size: .8rem; font-weight: 600;
+    z-index: 1090; box-shadow: 0 8px 22px rgba(0,0,0,.22); pointer-events: none;
+  }
+}
+
+/* Minimal top strip */
+.st-topbar {
+  height: 64px;
+  border-bottom: 1px solid var(--bs-border-color, #E8E3F6);
+  margin-bottom: 1.25rem;
+  background: transparent;
+}
+.st-balance-chip {
+  background: rgba(139,92,246,.10);
+  color: #7C3AED;
+  font-weight: 600;
+  font-size: .85rem;
+  padding: 7px 14px;
+  border-radius: 999px;
+}
+.st-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg,#7C3AED,#8B5CF6);
+  color: #fff; font-weight: 700; font-size: .85rem;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+[data-theme="dark"] .st-topbar { border-bottom-color: rgba(139,92,246,.18); }
+[data-theme="dark"] .st-balance-chip { background: rgba(139,92,246,.20); color: #C4B5FD; }

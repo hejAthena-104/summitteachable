@@ -1,0 +1,21 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>Action needed: identity verification</h2>
+
+<p>Hi {{ first_name }},</p>
+
+<p>We were unable to verify your identity with the documents you submitted. Please review the note below and submit your verification again.</p>
+
+{% if reason %}
+<div class="info-box" style="background-color:#fff5f5; border-left-color:#fc8181;">
+    <p><strong>Reason:</strong> {{ reason }}</p>
+</div>
+{% endif %}
+
+<div style="text-align:center;">
+    <a href="{{ kyc_url }}" class="btn" style="display:inline-block;padding:14px 34px;background-color:#8B5CF6;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px;margin:18px 0;">Re-submit Verification</a>
+</div>
+
+<p>Best regards,<br>The Summit Teachable Team</p>
+{% endblock %}

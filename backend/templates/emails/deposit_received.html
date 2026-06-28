@@ -1,0 +1,19 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>Deposit received &mdash; under review</h2>
+
+<p>Hi {{ first_name }},</p>
+
+<p>We've received your deposit of <strong>${{ amount }}</strong> via <strong>{{ payment_method }}</strong> and our team is verifying your proof of payment. Your balance will be credited as soon as it's approved.</p>
+
+<div class="info-box" style="background-color:#F3F0FE; border-left-color:#8B5CF6;">
+    <p><strong>Amount:</strong> ${{ amount }}</p>
+    <p style="margin-top:8px;"><strong>Method:</strong> {{ payment_method }}</p>
+    <p style="margin-top:8px;"><strong>Status:</strong> Pending review</p>
+</div>
+
+<p>If you have any questions, just reply to this email or contact our support team.</p>
+
+<p>Best regards,<br>The Summit Teachable Team</p>
+{% endblock %}

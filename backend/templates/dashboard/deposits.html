@@ -37,73 +37,97 @@
     {% include "includes/sidebar.html" %}
 
     <main>
-        <header class="container-fluid d-flex align-items-center py-6 mb-4">
-            <div class="d-flex align-items-center ms-auto">
-                <a href="{% url 'dashboard:index' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-grid-1x2 me-1"></i>Dashboard</a>
-            </div>
-        </header>
+        {% include 'includes/topbar.html' %}
 
         <div class="container-fluid mb-5">
-            <h1 class="h2 mb-1">Top up balance</h1>
-            <p class="text-muted">Choose an amount to add to your account balance.</p>
+            <h1 class="h2 mb-1">Deposit funds</h1>
+            <p class="text-muted">Pay to a wallet below and upload your proof — your balance updates once approved.</p>
 
+            {% if not kyc_verified %}
+            <div class="card mt-4 border-0" style="background:rgba(139,92,246,.06);">
+                <div class="card-body d-flex flex-column flex-md-row align-items-md-center gap-3">
+                    <i class="bi bi-shield-lock-fill text-primary fs-1"></i>
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1">Verify your identity to deposit</h5>
+                        <p class="text-muted mb-0">For your security, please complete identity verification (KYC) before adding funds.</p>
+                    </div>
+                    <a href="{% url 'dashboard:kyc' %}" class="btn btn-primary"><i class="bi bi-patch-check me-2"></i>Complete your KYC</a>
+                </div>
+            </div>
+            {% else %}
             <div class="row mt-4 g-4">
-                <div class="col-lg-7">
-                    <div class="card">
+                <!-- LEFT: pay to a platform crypto wallet -->
+                <div class="col-lg-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="mb-1">1 &middot; Pay with crypto</h5>
+                            <p class="text-muted small">Send your deposit to one of the wallets below, then upload your proof on the right.</p>
+                            <div id="coinChips" class="d-flex flex-wrap gap-2 mb-3"></div>
+                            <div id="payDetail" style="display:none;">
+                                <div class="d-flex gap-3 flex-wrap align-items-start">
+                                    <div id="qrBox" style="background:#fff;border-radius:12px;padding:8px;width:130px;height:130px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(17,12,46,.1);"></div>
+                                    <div class="flex-grow-1" style="min-width:160px;">
+                                        <div class="text-muted small text-uppercase">Send to (<span id="netLabel"></span>)</div>
+                                        <div id="addrText" class="fw-semibold text-break my-2" style="font-size:.85rem;"></div>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" id="copyBtn"><i class="bi bi-clipboard me-1"></i>Copy</button>
+                                    </div>
+                                </div>
+                                <p class="text-muted small mt-2">Send only <span id="coinWarn" class="text-primary fw-semibold"></span> to this address.</p>
+                            </div>
+                            <p id="noPay" class="text-muted small" style="display:none;">Payment options will appear once configured by the admin.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: submit the deposit with proof -->
+                <div class="col-lg-6">
+                    <div class="card h-100">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="mb-0">Choose an amount</h5>
-                                <span class="text-muted small">Current balance: <strong>${{ user.balance|floatformat:2 }}</strong></span>
+                                <h5 class="mb-0">2 &middot; Submit your deposit</h5>
+                                <span class="text-muted small">Balance: <strong>${{ user.balance|floatformat:2 }}</strong></span>
                             </div>
-
-                            <form action="{% url 'dashboard:new_deposit' %}" method="POST" id="topup-form">
+                            <form action="{% url 'dashboard:new_deposit' %}" method="POST" enctype="multipart/form-data" id="deposit-form">
                                 {% csrf_token %}
+                                <input type="hidden" name="payment_method" id="payMethodInput" value="">
                                 <div class="row g-2 mb-3">
                                     {% for amt in preset_amounts %}
                                     <div class="col-6 col-md-3">
-                                        <div class="topup-amount text-center py-3 fw-bold" data-amount="{{ amt }}">
-                                            ${{ amt }}
-                                        </div>
+                                        <div class="topup-amount text-center py-2 fw-bold" data-amount="{{ amt }}">${{ amt }}</div>
                                     </div>
                                     {% endfor %}
                                 </div>
-
-                                <label class="form-label" for="amount">Or enter a custom amount</label>
+                                <label class="form-label" for="amount">Amount (USD)</label>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text">$</span>
                                     <input class="form-control" placeholder="Enter amount"
                                         min="{{ min_amount }}" max="{{ max_amount }}" type="number" step="any"
                                         name="amount" id="amount" required>
                                 </div>
-                                <p class="text-muted small">Min ${{ min_amount|floatformat:0 }} · Max ${{ max_amount|floatformat:0 }}</p>
-
+                                <div class="mb-3">
+                                    <label class="form-label" for="tx_reference">Transaction reference / hash <span class="text-muted">(optional)</span></label>
+                                    <input class="form-control" type="text" name="tx_reference" id="tx_reference" placeholder="Speeds up review">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="proof_image">Proof of payment (screenshot) *</label>
+                                    <input class="form-control" type="file" name="proof_image" id="proof_image" accept="image/*" required>
+                                </div>
                                 <button class="btn btn-primary btn-lg w-100" type="submit">
-                                    <i class="bi bi-lightning-charge-fill me-2"></i>Top up balance
+                                    <i class="bi bi-shield-lock-fill me-2"></i>Submit deposit
                                 </button>
+                                <p class="text-muted small text-center mt-2"><i class="bi bi-shield-lock"></i> We verify every payment manually before crediting your balance.</p>
                             </form>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-5">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="mb-3">How this works</h5>
-                            <ul class="list-unstyled mb-0">
-                                <li class="d-flex mb-3"><i class="bi bi-check-circle-fill trade-win me-2 mt-1"></i><span>Pick a preset or type any amount.</span></li>
-                                <li class="d-flex mb-3"><i class="bi bi-check-circle-fill trade-win me-2 mt-1"></i><span>Your <strong>balance</strong> is updated after submission.</span></li>
-                                <li class="d-flex mb-3"><i class="bi bi-shield-lock-fill text-primary me-2 mt-1"></i><span>Your account activity is recorded in your transaction history.</span></li>
-                                <li class="d-flex"><i class="bi bi-info-circle-fill text-warning me-2 mt-1"></i><span>Contact support if you need help with a balance update.</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
             </div>
+            {{ methods|json_script:"methods-data" }}
+            {% endif %}
 
-            <!-- Top-up history -->
+            <!-- Deposit history -->
             <div class="row mt-4">
                 <div class="col-12">
-                    <h6 class="text-muted text-uppercase small mb-3">Top-up history</h6>
+                    <h6 class="text-muted text-uppercase small mb-3">Deposit history</h6>
                     <div class="card">
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -139,13 +163,65 @@
 
     <script src="{% static 'themes/dashly/assets/js/theme.bundle.js' %}"></script>
     <script>
+        // Preset amount chips
         document.querySelectorAll('.topup-amount').forEach(el => {
             el.addEventListener('click', () => {
                 document.querySelectorAll('.topup-amount').forEach(c => c.classList.remove('selected'));
                 el.classList.add('selected');
-                document.getElementById('amount').value = el.dataset.amount;
+                const amt = document.getElementById('amount');
+                if (amt) amt.value = el.dataset.amount;
             });
         });
+
+        // Crypto wallet picker (mirrors the course checkout)
+        (function () {
+            const dataEl = document.getElementById('methods-data');
+            if (!dataEl) return;
+            const methods = JSON.parse(dataEl.textContent || '[]');
+            const chips = document.getElementById('coinChips');
+            const detail = document.getElementById('payDetail');
+            const noPay = document.getElementById('noPay');
+            const qrBox = document.getElementById('qrBox');
+            const addrText = document.getElementById('addrText');
+            const netLabel = document.getElementById('netLabel');
+            const coinWarn = document.getElementById('coinWarn');
+            const methodInput = document.getElementById('payMethodInput');
+            const copyBtn = document.getElementById('copyBtn');
+            if (!methods.length) { if (noPay) noPay.style.display = 'block'; return; }
+
+            function logo(m) {
+                if (m.logo) return '<img src="' + m.logo + '" alt="" style="width:20px;height:20px;" onerror="this.style.display=\'none\'">';
+                if (m.icon_url) return '<img src="' + m.icon_url + '" alt="" style="width:20px;height:20px;">';
+                return '<i class="bi bi-coin"></i>';
+            }
+            function select(m, el) {
+                Array.prototype.forEach.call(chips.children, c => c.classList.remove('btn-primary'));
+                Array.prototype.forEach.call(chips.children, c => c.classList.add('btn-outline-primary'));
+                if (el) { el.classList.remove('btn-outline-primary'); el.classList.add('btn-primary'); }
+                methodInput.value = m.name;
+                netLabel.textContent = m.network || m.name;
+                coinWarn.textContent = (m.symbol ? m.symbol.toUpperCase() : m.name);
+                addrText.textContent = m.address || 'No address configured — please contact support.';
+                detail.style.display = 'block';
+                qrBox.innerHTML = '';
+                if (m.qr) { const img = document.createElement('img'); img.src = m.qr; img.alt = 'Payment QR'; img.style.maxWidth = '114px'; img.style.maxHeight = '114px'; qrBox.appendChild(img); }
+                else { qrBox.innerHTML = '<span style="color:#777;font-size:.72rem;text-align:center;">QR unavailable</span>'; }
+            }
+            methods.forEach((m, i) => {
+                const el = document.createElement('button');
+                el.type = 'button';
+                el.className = 'btn btn-sm btn-outline-primary d-flex align-items-center gap-2';
+                el.innerHTML = logo(m) + '<span>' + m.name + '</span>';
+                el.addEventListener('click', () => select(m, el));
+                chips.appendChild(el);
+                if (i === 0) select(m, el);
+            });
+            copyBtn && copyBtn.addEventListener('click', () => {
+                navigator.clipboard && navigator.clipboard.writeText(addrText.textContent || '');
+                copyBtn.innerHTML = '<i class="bi bi-check2 me-1"></i>Copied';
+                setTimeout(() => { copyBtn.innerHTML = '<i class="bi bi-clipboard me-1"></i>Copy'; }, 1500);
+            });
+        })();
     </script>
 </body>
 </html>

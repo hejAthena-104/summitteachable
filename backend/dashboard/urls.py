@@ -7,6 +7,9 @@ urlpatterns = [
     # Main dashboard
     path('', views.dashboard_index, name='index'),
 
+    # KYC / identity verification
+    path('kyc/', views.kyc, name='kyc'),
+
     # Deposits
     path('deposits/', views.deposits, name='deposits'),
     path('newdeposit/', views.new_deposit, name='new_deposit'),

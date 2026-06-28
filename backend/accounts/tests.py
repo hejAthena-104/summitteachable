@@ -182,3 +182,94 @@ class LoginCodeAdminTests(TestCase):
         self.assertEqual(resp.status_code, 302)
         self.assertIn('_auth_user_id', guest.session)
 
+
+
+from io import BytesIO
+from accounts.models import KYCVerification
+
+
+def _png_bytes():
+    from PIL import Image
+    buf = BytesIO()
+    Image.new('RGB', (4, 4), (120, 90, 200)).save(buf, 'PNG')
+    return buf.getvalue()
+
+
+@_TEST_STATIC
+class KYCAndDepositTests(TestCase):
+    def setUp(self):
+        from unittest import mock
+        p = mock.patch('accounts.email_utils.EmailService.send_email', return_value=True)
+        p.start()
+        self.addCleanup(p.stop)
+        self.user = User.objects.create_user(
+            username='kuser', email='kuser@example.com', password='pw', is_staff=False,
+        )
+
+    def _submit_kyc(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        doc = SimpleUploadedFile('id.png', _png_bytes(), content_type='image/png')
+        selfie = SimpleUploadedFile('selfie.png', _png_bytes(), content_type='image/png')
+        return self.client.post(reverse('dashboard:kyc'), {
+            'first_name': 'Jane', 'last_name': 'Doe', 'gender': 'female',
+            'country': 'Nigeria', 'city': 'Lagos', 'postal_code': '100001',
+            'address_line_1': '1 Main St', 'document_type': 'passport',
+            'document_image': doc, 'selfie_image': selfie,
+            'info_correct': 'on', 'is_individual': 'on',
+        })
+
+    def test_user_not_verified_by_default(self):
+        self.assertFalse(self.user.is_kyc_verified)
+        self.assertIsNone(self.user.kyc_status)
+
+    def test_deposit_blocked_until_verified(self):
+        self.client.force_login(self.user)
+        r = self.client.post(reverse('dashboard:new_deposit'), {'amount': '500'})
+        self.assertEqual(r.status_code, 302)
+        self.assertIn(reverse('dashboard:kyc'), r.url)
+
+    def test_withdraw_blocked_until_verified(self):
+        self.client.force_login(self.user)
+        r = self.client.get(reverse('dashboard:withdraw_funds'))
+        self.assertEqual(r.status_code, 302)
+        self.assertIn(reverse('dashboard:kyc'), r.url)
+
+    def test_kyc_submit_creates_pending(self):
+        self.client.force_login(self.user)
+        r = self._submit_kyc()
+        self.assertEqual(r.status_code, 302)
+        kyc = KYCVerification.objects.get(user=self.user)
+        self.assertEqual(kyc.status, 'pending')
+        self.assertEqual(kyc.first_name, 'Jane')
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, 'Jane')  # synced to user
+        self.assertFalse(self.user.is_kyc_verified)
+
+    def test_admin_approve_unlocks_and_deposit_creates_pending(self):
+        admin = User.objects.create_superuser('root2', 'root2@example.com', 'pw')
+        self.client.force_login(self.user)
+        self._submit_kyc()
+        kyc = KYCVerification.objects.get(user=self.user)
+        kyc.approve(by_user=admin)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.is_kyc_verified)
+
+        # Now a deposit is allowed and creates a PENDING transaction (no balance credit)
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        before = self.user.balance
+        proof = SimpleUploadedFile('p.png', _png_bytes(), content_type='image/png')
+        r = self.client.post(reverse('dashboard:new_deposit'), {
+            'amount': '500', 'payment_method': 'USDT', 'proof_image': proof,
+        })
+        self.assertEqual(r.status_code, 302)
+        from transactions.models import Transaction
+        txn = Transaction.objects.filter(user=self.user, type='deposit').first()
+        self.assertIsNotNone(txn)
+        self.assertEqual(txn.status, 'pending')
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.balance, before)  # not credited until admin approves
+
+    def test_dashboard_and_kyc_pages_render(self):
+        self.client.force_login(self.user)
+        for path in [reverse('dashboard:index'), reverse('dashboard:kyc'), reverse('dashboard:deposits')]:
+            self.assertEqual(self.client.get(path).status_code, 200)

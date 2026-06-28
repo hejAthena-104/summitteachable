@@ -211,3 +211,58 @@ class EmailService:
             template_name='course_purchase_approved',
             context=context,
         )
+
+    @staticmethod
+    def send_deposit_received_email(user, amount, payment_method):
+        """Confirm a deposit was submitted and is pending review."""
+        context = {
+            'first_name': user.first_name or user.username,
+            'amount': amount,
+            'payment_method': payment_method or 'crypto',
+        }
+        return EmailService.send_email(
+            to_email=user.email,
+            subject='Deposit received — pending review | Summit Teachable',
+            template_name='deposit_received',
+            context=context,
+        )
+
+    @staticmethod
+    def send_kyc_submitted_email(user):
+        """Confirm a KYC submission was received."""
+        context = {'first_name': user.first_name or user.username}
+        return EmailService.send_email(
+            to_email=user.email,
+            subject='Identity verification received | Summit Teachable',
+            template_name='kyc_submitted',
+            context=context,
+        )
+
+    @staticmethod
+    def send_kyc_approved_email(user):
+        """Notify the user their identity is verified."""
+        context = {
+            'first_name': user.first_name or user.username,
+            'dashboard_url': f"{config('SITE_URL')}/dashboard/",
+        }
+        return EmailService.send_email(
+            to_email=user.email,
+            subject='Your identity is verified | Summit Teachable',
+            template_name='kyc_approved',
+            context=context,
+        )
+
+    @staticmethod
+    def send_kyc_rejected_email(user, reason=''):
+        """Notify the user their KYC needs to be resubmitted."""
+        context = {
+            'first_name': user.first_name or user.username,
+            'reason': reason,
+            'kyc_url': f"{config('SITE_URL')}/dashboard/kyc/",
+        }
+        return EmailService.send_email(
+            to_email=user.email,
+            subject='Action needed: identity verification | Summit Teachable',
+            template_name='kyc_rejected',
+            context=context,
+        )

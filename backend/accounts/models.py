@@ -109,6 +109,16 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    @property
+    def is_kyc_verified(self):
+        """True only when the user has an approved KYC submission."""
+        return hasattr(self, 'kyc') and self.kyc.status == KYCVerification.STATUS_APPROVED
+
+    @property
+    def kyc_status(self):
+        """'pending' | 'approved' | 'rejected' | None (never submitted)."""
+        return self.kyc.status if hasattr(self, 'kyc') else None
+
     def save(self, *args, **kwargs):
         # Generate referral code if not exists
         if not self.referral_code:
@@ -368,3 +378,91 @@ class Notification(models.Model):
         """Mark notification as read"""
         self.is_read = True
         self.save()
+
+
+class KYCVerification(models.Model):
+    """Identity (KYC) submission for a user.
+
+    Users sign up with only email + password, so this collects the personal
+    details, address and identity documents an admin needs to verify the
+    account. Deposits and withdrawals are blocked until status is approved."""
+
+    STATUS_PENDING = 'pending'
+    STATUS_APPROVED = 'approved'
+    STATUS_REJECTED = 'rejected'
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_APPROVED, 'Approved'),
+        (STATUS_REJECTED, 'Rejected'),
+    ]
+
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+    ]
+
+    DOCUMENT_CHOICES = [
+        ('passport', 'Passport'),
+        ('national_id', 'National ID Card'),
+        ('drivers_license', "Driver's License"),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='kyc')
+
+    # Personal details
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    phone = models.CharField(max_length=30, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+    telegram_username = models.CharField(max_length=100, blank=True)
+
+    # Address
+    country = models.CharField(max_length=100)
+    state = models.CharField(max_length=100, blank=True)
+    city = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=30)
+    address_line_1 = models.CharField(max_length=255)
+    address_line_2 = models.CharField(max_length=255, blank=True)
+
+    # Documents
+    document_type = models.CharField(max_length=20, choices=DOCUMENT_CHOICES)
+    document_image = models.ImageField(upload_to='kyc/documents/')
+    selfie_image = models.ImageField(upload_to='kyc/selfies/')
+
+    # Workflow
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    rejection_reason = models.CharField(max_length=255, blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='reviewed_kyc_submissions',
+    )
+
+    class Meta:
+        verbose_name = 'KYC Verification'
+        verbose_name_plural = 'KYC Verifications'
+        ordering = ['-submitted_at']
+
+    def __str__(self):
+        return f"KYC for {self.user.username} ({self.status})"
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}".strip()
+
+    def approve(self, by_user=None):
+        self.status = self.STATUS_APPROVED
+        self.rejection_reason = ''
+        self.reviewed_at = timezone.now()
+        self.reviewed_by = by_user
+        self.save(update_fields=['status', 'rejection_reason', 'reviewed_at', 'reviewed_by'])
+
+    def reject(self, reason='', by_user=None):
+        self.status = self.STATUS_REJECTED
+        self.rejection_reason = reason
+        self.reviewed_at = timezone.now()
+        self.reviewed_by = by_user
+        self.save(update_fields=['status', 'rejection_reason', 'reviewed_at', 'reviewed_by'])

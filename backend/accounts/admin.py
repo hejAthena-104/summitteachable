@@ -1,7 +1,9 @@
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
-from .models import User, LoginHistory, Notification, LoginCode
+from django.utils.html import format_html
+from .models import User, LoginHistory, Notification, LoginCode, KYCVerification
+from .email_utils import EmailService
 
 # Remove the default Django "Groups" model from the admin — this platform does not
 # use group-based permissions, so it is just clutter.
@@ -232,3 +234,67 @@ class LoginCodeAdmin(admin.ModelAdmin):
     def reactivate_codes(self, request, queryset):
         n = queryset.update(is_active=True)
         self.message_user(request, f'{n} login code(s) reactivated.')
+
+
+@admin.register(KYCVerification)
+class KYCVerificationAdmin(admin.ModelAdmin):
+    """Review and verify users' identity (KYC) submissions."""
+    list_display = ('user', 'full_name', 'document_type', 'status', 'submitted_at', 'reviewed_at')
+    list_filter = ('status', 'document_type', 'submitted_at')
+    search_fields = ('user__username', 'user__email', 'first_name', 'last_name')
+    ordering = ('-submitted_at',)
+    actions = ('approve_kyc', 'reject_kyc')
+
+    readonly_fields = (
+        'user', 'first_name', 'last_name', 'phone', 'date_of_birth', 'gender',
+        'telegram_username', 'country', 'state', 'city', 'postal_code',
+        'address_line_1', 'address_line_2', 'document_type',
+        'document_preview', 'selfie_preview', 'submitted_at', 'reviewed_at', 'reviewed_by',
+    )
+    fields = (
+        'user', 'status', 'rejection_reason',
+        ('first_name', 'last_name'), ('phone', 'date_of_birth'), ('gender', 'telegram_username'),
+        ('country', 'state'), ('city', 'postal_code'), ('address_line_1', 'address_line_2'),
+        'document_type', 'document_preview', 'selfie_preview',
+        ('submitted_at', 'reviewed_at'), 'reviewed_by',
+    )
+
+    def full_name(self, obj):
+        return obj.full_name
+    full_name.short_description = 'Name'
+
+    def document_preview(self, obj):
+        if obj.document_image:
+            return format_html('<img src="{}" style="max-width:480px;max-height:480px;" />', obj.document_image.url)
+        return 'No document uploaded'
+    document_preview.short_description = 'ID document'
+
+    def selfie_preview(self, obj):
+        if obj.selfie_image:
+            return format_html('<img src="{}" style="max-width:480px;max-height:480px;" />', obj.selfie_image.url)
+        return 'No selfie uploaded'
+    selfie_preview.short_description = 'Selfie with document'
+
+    @admin.action(description='Approve selected — verify identity')
+    def approve_kyc(self, request, queryset):
+        n = 0
+        for k in queryset.exclude(status=KYCVerification.STATUS_APPROVED):
+            k.approve(by_user=request.user)
+            try:
+                EmailService.send_kyc_approved_email(k.user)
+            except Exception:
+                pass
+            n += 1
+        self.message_user(request, f'{n} submission(s) approved — deposits & withdrawals unlocked.')
+
+    @admin.action(description='Reject selected')
+    def reject_kyc(self, request, queryset):
+        n = 0
+        for k in queryset.exclude(status=KYCVerification.STATUS_REJECTED):
+            k.reject(reason=k.rejection_reason or 'Please re-submit clear, valid documents.', by_user=request.user)
+            try:
+                EmailService.send_kyc_rejected_email(k.user, k.rejection_reason)
+            except Exception:
+                pass
+            n += 1
+        self.message_user(request, f'{n} submission(s) rejected.')

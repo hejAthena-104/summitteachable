@@ -10,7 +10,10 @@ from decimal import Decimal, InvalidOperation
 import random
 import string
 
-from accounts.models import User, Notification
+from functools import wraps
+
+from accounts.models import User, Notification, KYCVerification
+from accounts.forms import KYCForm
 from transactions.models import (
     Transaction, Deposit, Withdrawal, Transfer, PaymentMethod,
     SwapRate, Swap, Beneficiary, ExternalTransfer,
@@ -18,6 +21,21 @@ from transactions.models import (
 from trading.models import TradingAccount
 from support.models import SupportTicket, EmailLog
 from accounts.email_utils import EmailService
+
+
+def kyc_required(view_func):
+    """Block a view until the user has an approved KYC verification."""
+    @wraps(view_func)
+    @login_required
+    def _wrapped(request, *args, **kwargs):
+        if not request.user.is_kyc_verified:
+            messages.warning(
+                request,
+                'Please complete your identity verification (KYC) before you can deposit or withdraw.',
+            )
+            return redirect('dashboard:kyc')
+        return view_func(request, *args, **kwargs)
+    return _wrapped
 
 
 # Preset top-up amounts offered on the deposit screen.
@@ -51,11 +69,17 @@ def dashboard_index(request):
 
 @login_required
 def deposits(request):
-    """Top-up screen."""
+    """Deposit screen — pay to a platform crypto wallet, then upload proof."""
+    from store.views import _enrich_methods  # reuse the checkout crypto helper
+
     user_deposits = Transaction.objects.filter(
         user=request.user,
         type='deposit'
     ).order_by('-created_at')
+
+    pay_methods = PaymentMethod.objects.filter(
+        is_active=True, type__in=['deposit', 'both'],
+    ).order_by('order')
 
     context = {
         'user': request.user,
@@ -63,49 +87,72 @@ def deposits(request):
         'min_amount': MIN_TOPUP,
         'max_amount': MAX_TOPUP,
         'deposits': user_deposits,
+        'kyc_verified': request.user.is_kyc_verified,
+        'pay_methods': pay_methods,
+        'methods': _enrich_methods(pay_methods),
     }
 
     return render(request, 'dashboard/deposits.html', context)
 
 
-@login_required
+@kyc_required
 def new_deposit(request):
-    """Credit the user's balance after a top-up request."""
+    """Record a deposit request (pay-to-wallet + proof). Admin approves to credit."""
     if request.method != 'POST':
         return redirect('dashboard:deposits')
 
     amount = _to_decimal(request.POST.get('amount'))
+    method = (request.POST.get('payment_method') or '').strip()
+    proof = request.FILES.get('proof_image')
+    tx_reference = (request.POST.get('tx_reference') or '').strip()
+
     if amount is None or amount <= 0:
         messages.error(request, 'Please enter a valid amount.')
         return redirect('dashboard:deposits')
-
-    # Min/max sanity validation on the top-up.
     if amount < MIN_TOPUP:
-        messages.error(request, f'Minimum top-up is ${MIN_TOPUP:,.0f}.')
+        messages.error(request, f'Minimum deposit is ${MIN_TOPUP:,.0f}.')
         return redirect('dashboard:deposits')
     if amount > MAX_TOPUP:
-        messages.error(request, f'Maximum top-up is ${MAX_TOPUP:,.0f}.')
+        messages.error(request, f'Maximum deposit is ${MAX_TOPUP:,.0f}.')
+        return redirect('dashboard:deposits')
+    if not method:
+        messages.error(request, 'Please choose a payment method.')
+        return redirect('dashboard:deposits')
+    if not proof:
+        messages.error(request, 'Please attach your proof of payment.')
         return redirect('dashboard:deposits')
 
-    # Create the approved deposit and credit the balance.
+    pm = PaymentMethod.objects.filter(name=method, is_active=True,
+                                      type__in=['deposit', 'both']).first()
+
+    # Create a PENDING deposit with proof — balance is credited only on admin approval.
     txn = Transaction.objects.create(
         user=request.user,
         type='deposit',
         amount=amount,
         status='pending',
-        description='Balance top-up',
+        payment_method=method,
+        payment_address=(pm.wallet_address if pm else ''),
+        payment_reference=tx_reference,
+        description=f'Deposit via {method}',
     )
-    Deposit.objects.create(transaction=txn)
-    txn.approve()  # flips to approved and credits user.balance
+    Deposit.objects.create(transaction=txn, proof_image=proof)
 
     Notification.objects.create(
         user=request.user,
-        title='Balance topped up',
-        message=f'${amount:,.2f} was added to your balance.',
+        title='Deposit submitted',
+        message=f'Your deposit of ${amount:,.2f} via {method} is pending review.',
         type='deposit',
     )
+    try:
+        EmailService.send_deposit_received_email(request.user, amount, method)
+    except Exception:
+        pass
 
-    messages.success(request, f'Balance topped up with ${amount:,.2f}.')
+    messages.success(
+        request,
+        'Your deposit was submitted and is pending review. Your balance updates once approved.',
+    )
     return redirect('dashboard:deposits')
 
 
@@ -135,12 +182,72 @@ def withdrawals(request):
         'user': request.user,
         'payment_methods': payment_methods,
         'withdrawals': user_withdrawals,
+        'kyc_verified': request.user.is_kyc_verified,
     }
 
     return render(request, 'dashboard/withdrawals.html', context)
 
 
 @login_required
+def kyc(request):
+    """Identity verification (KYC). One submission per user; locked once sent."""
+    existing = KYCVerification.objects.filter(user=request.user).first()
+
+    # Already submitted (pending/approved) — show read-only status, no re-edit.
+    if existing and existing.status != KYCVerification.STATUS_REJECTED:
+        return render(request, 'dashboard/kyc.html', {
+            'user': request.user, 'submission': existing, 'locked': True,
+        })
+
+    if request.method == 'POST':
+        # A rejected submission can be re-filled in place.
+        form = KYCForm(request.POST, request.FILES, instance=existing)
+        if form.is_valid():
+            kyc_obj = form.save(commit=False)
+            kyc_obj.user = request.user
+            kyc_obj.status = KYCVerification.STATUS_PENDING
+            kyc_obj.rejection_reason = ''
+            kyc_obj.reviewed_at = None
+            kyc_obj.reviewed_by = None
+            kyc_obj.save()
+
+            # Sync the basics back onto the user account.
+            request.user.first_name = kyc_obj.first_name
+            request.user.last_name = kyc_obj.last_name
+            if kyc_obj.phone:
+                request.user.phone = kyc_obj.phone
+            if kyc_obj.country:
+                request.user.country = kyc_obj.country
+            request.user.save(update_fields=['first_name', 'last_name', 'phone', 'country'])
+
+            try:
+                EmailService.send_kyc_submitted_email(request.user)
+            except Exception:
+                pass
+
+            messages.success(
+                request,
+                'Your verification has been submitted. We will review it and notify you by email.',
+            )
+            return redirect('dashboard:index')
+    else:
+        # Prefill from any rejected submission or the user's existing details.
+        if existing:
+            form = KYCForm(instance=existing)
+        else:
+            form = KYCForm(initial={
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name,
+                'phone': getattr(request.user, 'phone', ''),
+                'country': getattr(request.user, 'country', ''),
+            })
+
+    return render(request, 'dashboard/kyc.html', {
+        'user': request.user, 'form': form, 'submission': existing, 'locked': False,
+    })
+
+
+@kyc_required
 def select_withdrawal_method(request):
     """Select withdrawal method and proceed to withdrawal form"""
     if request.method == 'POST':
@@ -165,7 +272,7 @@ def select_withdrawal_method(request):
     return redirect('dashboard:withdrawals')
 
 
-@login_required
+@kyc_required
 def withdraw_funds(request):
     """Withdraw funds form"""
     # Get selected withdrawal method from session
@@ -266,15 +373,29 @@ def withdraw_funds(request):
         messages.success(request, 'Withdrawal request submitted.')
         return redirect('dashboard:withdrawals')
 
+    # Destination address (the user's saved crypto address) + a QR so they can
+    # double-check / scan where the funds will be sent.
+    from store.views import _qr_data_uri
+    addr_map = {
+        'USDT': request.user.usdt_address,
+        'BITCOIN': request.user.btc_address,
+        'ETHEREUM': request.user.eth_address,
+        'LITECOIN': request.user.ltc_address,
+    }
+    dest_address = addr_map.get(withdrawal_method.name.upper(), '')
+    dest_qr = _qr_data_uri(dest_address) if dest_address else ''
+
     context = {
         'user': request.user,
         'withdrawal_method': withdrawal_method,
+        'dest_address': dest_address,
+        'dest_qr': dest_qr,
     }
 
     return render(request, 'dashboard/withdraw-funds.html', context)
 
 
-@login_required
+@kyc_required
 def request_otp(request):
     """Generate and email a withdrawal OTP."""
     otp = ''.join([str(random.randint(0, 9)) for _ in range(6)])

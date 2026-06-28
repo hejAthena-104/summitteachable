@@ -108,39 +108,7 @@
     <main>
         <div class="h-screen overflow-y-lg-auto">
             <!-- HEADER -->
-            <header class="container-fluid d-flex py-6 mb-4">
-                <!-- Top buttons -->
-                <div class="d-flex align-items-center ms-auto me-n1 me-lg-n2">
-                    <!-- User Dropdown -->
-                    <div class="dropdown">
-                        <a href="javascript: void(0);" class="dropdown-toggle no-arrow d-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm mx-1 mx-lg-2 w-40px h-40px link-secondary"
-                        role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" title="Account">
-                        <i class="bi bi-person-fill" style="font-size: 20px;"></i>
-                    </a>
-
-                        <div class="dropdown-menu">
-                            <div class="dropdown-item-text">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-grow-1 ms-3">
-                                        <h4 class="mb-0">{{ user.get_full_name }}</h4>
-                                        <p class="card-text">{{ user.email }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr class="dropdown-divider">
-                            <a class="dropdown-item" href="{% url 'dashboard:index' %}">Dashboard</a>
-                            <a class="dropdown-item" href="{% url 'dashboard:account_settings' %}">Profile & account</a>
-                            <hr class="dropdown-divider">
-                            <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"
-                                onclick="event.preventDefault();
-                        document.getElementById('logout-form').submit();">Sign out</a>
-                            <form id="logout-form" action="{% url 'accounts:logout' %}" method="POST" style="display: none;">
-                                {% csrf_token %}
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            {% include 'includes/topbar.html' %}
 
             <!-- Content -->
             <div class="container-fluid">

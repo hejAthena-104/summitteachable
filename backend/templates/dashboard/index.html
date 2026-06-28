@@ -1,465 +1,178 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light" data-sidebar-behaviour="fixed" data-navigation-color="default" data-is-fluid="true">
 
-<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-
 <head>
     {% load static %}
-
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta content="Summit Teachable" name="author">
 
-    <!-- Theme CSS -->
     <link rel="stylesheet" href="{% static 'themes/dashly/assets/css/theme.bundle.css' %}" id="stylesheetLTR">
     <link rel="stylesheet" href="{% static 'themes/dashly/assets/css/theme.rtl.bundle.css' %}" id="stylesheetRTL">
-    <link rel="stylesheet" href="{% static 'css/summit-theme.css' %}?v=3">
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap">
-    <link rel="stylesheet" media="print" onload="this.onload=null;this.removeAttribute('media');"
-        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap">
+    <link rel="stylesheet" href="{% static 'css/summit-theme.css' %}?v=4">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-    <noscript>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap">
-    </noscript>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.10/dist/sweetalert2.all.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.10/dist/sweetalert2.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
-
     <script>
-        // Theme switcher - Light theme is default
-        const getPreferredTheme = () => {
-            if (localStorage.getItem('theme') != null) {
-                return localStorage.getItem('theme');
-            }
-            return 'light';
-        };
-        const setTheme = function(theme) {
-            if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.dataset.theme = 'dark';
-            } else if (theme === 'auto') {
-                document.documentElement.dataset.theme = 'light';
-            } else {
-                document.documentElement.dataset.theme = theme;
-            }
-            localStorage.setItem('theme', theme);
-        };
-        setTheme(getPreferredTheme());
+        const getPreferredTheme = () => localStorage.getItem('theme') || 'dark';
+        document.documentElement.dataset.theme = getPreferredTheme();
     </script>
 
-    <!-- Favicon -->
     <link rel="icon" href="{% static 'images/favicon.png' %}?v=3" type="image/png">
-    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}?v=3" type="image/png">
-
-    <script>
-        var isRTL = localStorage.getItem('isRTL') === 'true',
-            linkLTR = document.getElementById('stylesheetLTR'),
-            linkRTL = document.getElementById('stylesheetRTL'),
-            html = document.documentElement;
-        if (isRTL) {
-            linkLTR.setAttribute('disabled', ''); linkRTL.removeAttribute('disabled'); html.setAttribute('dir', 'rtl');
-        } else {
-            linkRTL.setAttribute('disabled', ''); linkLTR.removeAttribute('disabled'); html.removeAttribute('dir');
-        }
-    </script>
-
-    <title>Trading Dashboard | Summit Teachable</title>
+    <title>Dashboard | Summit Teachable</title>
 
     <style>
-        .welcome-banner {
-            background: linear-gradient(120deg, #130D22 0%, #0f2236 60%, #10312a 100%);
-            border-radius: 16px; padding: 2rem; color: white; position: relative; overflow: hidden;
-        }
-        .welcome-banner::before {
-            content: ''; position: absolute; top: -50%; right: -20%; width: 60%; height: 200%;
-            background: radial-gradient(circle, rgba(139, 92, 246,0.18) 0%, transparent 70%);
-        }
-        .section-title {
-            font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem;
-        }
-        .progress { height: 8px; border-radius: 4px; }
-        .chart-panel { border-radius: 14px; border: 1px solid var(--bs-border-color); overflow: hidden; }
-        .coming-soon-note {
-            display: inline-flex; align-items: center; gap: .4rem; font-size: .78rem; font-weight: 600;
-            color: #F59E0B; background: rgba(245,158,11,.12); border-radius: 8px; padding: .25rem .6rem;
-        }
+        .stat-tile { border: 1px solid var(--bs-border-color); border-radius: 16px; }
+        .stat-tile .ic { width: 46px; height: 46px; border-radius: 12px; display:flex; align-items:center; justify-content:center; font-size: 1.3rem; }
+        .balance-card { background: linear-gradient(135deg,#18122B 0%,#7C3AED 100%); color:#fff; border-radius:18px; }
+        .welcome-card { border-radius:18px; }
     </style>
 </head>
 
 <body>
     {% include 'includes/messages.html' %}
-
-    <script>
-        let themeAttrs = document.documentElement.dataset;
-        for (let attr in themeAttrs) {
-            if (localStorage.getItem(attr) != null) {
-                document.documentElement.dataset[attr] = localStorage.getItem(attr);
-            }
-        }
-    </script>
-
     {% include "includes/sidebar.html" %}
 
     <main>
-        <!-- HEADER -->
-        <header class="container-fluid d-flex align-items-center py-6 mb-4">
-            <div class="d-flex align-items-center ms-auto me-n1 me-lg-n2">
-                <!-- Theme Switcher -->
-                <div class="dropdown" id="themeSwitcher">
-                    <a href="javascript: void(0);"
-                        class="dropdown-toggle no-arrow d-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm mx-1 mx-lg-2 w-40px h-40px link-secondary"
-                        role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="bi bi-circle-half" style="font-size:18px;"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><button type="button" class="dropdown-item" data-theme-value="light"><i class="bi bi-sun me-2"></i>Light mode</button></li>
-                        <li><button type="button" class="dropdown-item" data-theme-value="dark"><i class="bi bi-moon me-2"></i>Dark mode</button></li>
-                        <li><button type="button" class="dropdown-item" data-theme-value="auto"><i class="bi bi-circle-half me-2"></i>Auto</button></li>
-                    </ul>
-                </div>
-
-                <div class="vr bg-gray-700 mx-2 mx-lg-3"></div>
-
-                <!-- Notifications -->
-                <a class="d-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm mx-1 mx-lg-2 w-40px h-40px position-relative link-secondary"
-                    data-bs-toggle="offcanvas" href="#offcanvasNotifications" role="button" title="Notifications">
-                    <i class="bi bi-bell" style="font-size:18px;"></i>
-                </a>
-
-                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNotifications">
-                    <div class="offcanvas-header px-5">
-                        <h3 class="offcanvas-title">Notifications</h3>
-                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                    </div>
-                    <div class="offcanvas-body p-0">
-                        <div class="list-group list-group-flush">
-                            <div class="text-center py-5 mt-5">
-                                <i class="bi bi-bell-slash fs-1 text-secondary"></i>
-                                <p class="text-secondary">No new notifications</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="vr bg-gray-700 mx-2 mx-lg-3"></div>
-
-                <!-- User Dropdown -->
-                <div class="dropdown">
-                    <a href="javascript: void(0);" class="dropdown-toggle no-arrow d-flex align-items-center justify-content-center bg-white rounded-circle shadow-sm mx-1 mx-lg-2 w-40px h-40px link-secondary"
-                        role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" title="Account">
-                        <i class="bi bi-person-fill" style="font-size: 20px;"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <div class="dropdown-item-text">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1 ms-3">
-                                    <h4 class="mb-0">{{ user.get_full_name }}</h4>
-                                    <p class="card-text">{{ user.email }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <hr class="dropdown-divider">
-                        <a class="dropdown-item" href="{% url 'dashboard:account_settings' %}">Profile &amp; Account</a>
-                        <a class="dropdown-item" href="{% url 'dashboard:deposits' %}">Top up balance</a>
-                        <a class="dropdown-item" href="{% url 'dashboard:transfers' %}">Transfers</a>
-                        <hr class="dropdown-divider">
-                        <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Sign out</a>
-                        <form id="logout-form" action="{% url 'accounts:logout' %}" method="POST" style="display: none;">{% csrf_token %}</form>
-                    </div>
-                </div>
-            </div>
-        </header>
+        {% include 'includes/topbar.html' %}
 
         <div class="container-fluid mb-5">
-            <!-- Welcome Banner -->
-            <div class="welcome-banner mb-4">
-                <div class="row align-items-center">
-                    <div class="col-lg-8">
-                        <h1 class="h2 mb-2 text-white">Welcome back, {{ user.first_name|default:user.username }}!
-                            {% if user.is_verified %}
-                            <span class="badge bg-success-subtle text-success align-middle ms-2" style="font-size:.5em;vertical-align:middle;"><i class="bi bi-patch-check-fill me-1"></i>Verified</span>
-                            {% else %}
-                            <a href="{% url 'accounts:verify_email_sent' %}" class="badge bg-warning-subtle text-warning align-middle ms-2 text-decoration-none" style="font-size:.5em;vertical-align:middle;"><i class="bi bi-exclamation-circle me-1"></i>Verify email</a>
-                            {% endif %}
-                        </h1>
-                        <p class="mb-0 opacity-75">
-                            Your account balance is <strong>${{ user.balance|floatformat:2 }}</strong>.
-                            Track your activity, review market data, and continue your learning from one place.
-                        </p>
-                    </div>
-                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                        <a href="{% url 'dashboard:deposits' %}" class="btn btn-primary btn-lg">
-                            <i class="bi bi-plus-circle me-2"></i>Top up balance
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TradingView ticker tape -->
-            <div class="card chart-panel mb-4">
-                <div class="card-body p-0">
-                    <div class="tradingview-widget-container">
-                        <div class="tradingview-widget-container__widget"></div>
-                        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-                        {
-                            "symbols": [
-                                {"proName": "FX_IDC:EURUSD", "title": "EUR/USD"},
-                                {"proName": "BITSTAMP:BTCUSD", "title": "BTC/USD"},
-                                {"proName": "BITSTAMP:ETHUSD", "title": "ETH/USD"},
-                                {"proName": "FOREXCOM:XAUUSD", "title": "Gold"},
-                                {"proName": "NASDAQ:AAPL", "title": "Apple"},
-                                {"proName": "NASDAQ:TSLA", "title": "Tesla"}
-                            ],
-                            "showSymbolLogo": true,
-                            "isTransparent": true,
-                            "displayMode": "adaptive",
-                            "colorTheme": "dark",
-                            "locale": "en"
-                        }
-                        </script>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Trading Stats -->
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <h6 class="section-title text-muted mb-0">Trading Performance</h6>
-            </div>
-            <div class="row g-3 mb-4">
-                <!-- Trading Balance -->
-                <div class="col-sm-6 col-lg-4">
-                    <div class="card trade-stat-card h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3"><i class="bi bi-wallet-fill"></i></div>
-                            <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Trading Balance</p>
-                                <h3 class="mb-0">${{ trading_account.trading_balance|default:user.balance|floatformat:2 }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Total Trades -->
-                <div class="col-sm-6 col-lg-4">
-                    <div class="card trade-stat-card h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3"><i class="bi bi-bar-chart-line-fill"></i></div>
-                            <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Total Trades</p>
-                                <h3 class="mb-0">{{ trading_account.total_trades }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Win Rate -->
-                <div class="col-sm-6 col-lg-4">
-                    <div class="card trade-stat-card h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3"><i class="bi bi-trophy-fill"></i></div>
-                            <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Win Rate</p>
-                                <h3 class="mb-0">{{ trading_account.win_rate }}%</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Trades Won -->
-                <div class="col-sm-6 col-lg-4">
-                    <div class="card trade-stat-card h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="stat-icon bg-trade-win trade-win me-3"><i class="bi bi-check-circle-fill"></i></div>
-                            <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Trades Won</p>
-                                <h3 class="mb-0 trade-win">{{ trading_account.trades_won }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Trades Drawn -->
-                <div class="col-sm-6 col-lg-4">
-                    <div class="card trade-stat-card h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="stat-icon bg-trade-draw trade-draw me-3"><i class="bi bi-dash-circle-fill"></i></div>
-                            <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Trades Drawn</p>
-                                <h3 class="mb-0 trade-draw">{{ trading_account.trades_drawn }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Trades Lost -->
-                <div class="col-sm-6 col-lg-4">
-                    <div class="card trade-stat-card h-100">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="stat-icon bg-trade-loss trade-loss me-3"><i class="bi bi-x-circle-fill"></i></div>
-                            <div class="flex-grow-1">
-                                <p class="text-muted small mb-1">Trades Lost</p>
-                                <h3 class="mb-0 trade-loss">{{ trading_account.trades_lost }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Advanced Chart + Market Overview -->
-            <div class="row g-3 mb-4">
+            <div class="row g-4">
+                <!-- Welcome -->
                 <div class="col-lg-8">
-                    <div class="card chart-panel h-100">
-                        <div class="card-header bg-transparent d-flex align-items-center justify-content-between">
-                            <h6 class="section-title text-muted mb-0">Market Chart</h6>
-                        </div>
-                        <div class="card-body p-0" style="height:480px;">
-                            <div class="tradingview-widget-container" style="height:100%;width:100%;">
-                                <div class="tradingview-widget-container__widget" style="height:100%;width:100%;"></div>
-                                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-                                {
-                                    "autosize": true,
-                                    "symbol": "BITSTAMP:BTCUSD",
-                                    "interval": "60",
-                                    "timezone": "Etc/UTC",
-                                    "theme": "dark",
-                                    "style": "1",
-                                    "locale": "en",
-                                    "allow_symbol_change": true,
-                                    "hide_side_toolbar": false,
-                                    "support_host": "https://www.tradingview.com"
-                                }
-                                </script>
+                    <div class="card welcome-card h-100">
+                        <div class="card-body d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
+                            <div>
+                                <h3 class="mb-1">Welcome 🎉 {{ user.first_name|default:user.username }}</h3>
+                                <p class="text-muted mb-3">Your account balance</p>
+                                <div class="h2 text-primary mb-3">${{ user.balance|floatformat:2 }}</div>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="{% url 'dashboard:deposits' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>Deposit</a>
+                                    <a href="{% url 'education:catalog' %}" class="btn btn-outline-primary">Start Learning</a>
+                                </div>
                             </div>
+                            <i class="bi bi-trophy-fill text-warning d-none d-sm-block" style="font-size:4rem;opacity:.85;"></i>
                         </div>
                     </div>
                 </div>
+
+                <!-- Balance card -->
                 <div class="col-lg-4">
-                    <div class="card chart-panel h-100">
-                        <div class="card-header bg-transparent">
-                            <h6 class="section-title text-muted mb-0">Market Overview</h6>
-                        </div>
-                        <div class="card-body p-0" style="height:480px;">
-                            <div class="tradingview-widget-container" style="height:100%;width:100%;">
-                                <div class="tradingview-widget-container__widget" style="height:100%;width:100%;"></div>
-                                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-                                {
-                                    "colorTheme": "dark",
-                                    "dateRange": "12M",
-                                    "showChart": true,
-                                    "locale": "en",
-                                    "isTransparent": true,
-                                    "showSymbolLogo": true,
-                                    "width": "100%",
-                                    "height": "100%",
-                                    "tabs": [
-                                        {"title": "Crypto", "symbols": [
-                                            {"s": "BITSTAMP:BTCUSD"}, {"s": "BITSTAMP:ETHUSD"}, {"s": "BINANCE:SOLUSDT"}
-                                        ]},
-                                        {"title": "Forex", "symbols": [
-                                            {"s": "FX:EURUSD"}, {"s": "FX:GBPUSD"}, {"s": "FX:USDJPY"}
-                                        ]}
-                                    ]
-                                }
-                                </script>
+                    <div class="card balance-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <span class="text-white-50">Balance</span>
+                                <i class="bi bi-wallet2 fs-3"></i>
+                            </div>
+                            <div class="h2 my-3 text-white">${{ user.balance|floatformat:2 }}</div>
+                            <div class="d-flex justify-content-between small text-white-50">
+                                <div><div class="text-uppercase" style="font-size:.65rem;">Card holder</div>{{ user.get_full_name|default:user.username }}</div>
+                                <div class="text-end"><div class="text-uppercase" style="font-size:.65rem;">BTC</div>{{ user.btc_balance|floatformat:4 }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Transactions -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="section-title text-muted mb-0">Recent Activity</h6>
-                        <a href="{% url 'dashboard:account_history' %}" class="btn btn-sm btn-outline-primary">View All</a>
-                    </div>
-                    <div class="card">
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th class="border-0">Date</th>
-                                            <th class="border-0">Type</th>
-                                            <th class="border-0">Amount</th>
-                                            <th class="border-0">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% if recent_transactions %}
-                                            {% for transaction in recent_transactions %}
-                                            <tr>
-                                                <td>{{ transaction.created_at|date:"M d, Y" }}</td>
-                                                <td>
-                                                    <span class="badge {% if transaction.type == 'deposit' %}bg-success{% elif transaction.type == 'withdrawal' %}bg-danger{% else %}bg-info{% endif %} bg-opacity-10 {% if transaction.type == 'deposit' %}text-success{% elif transaction.type == 'withdrawal' %}text-danger{% else %}text-info{% endif %}">
-                                                        {{ transaction.get_type_display }}
-                                                    </span>
-                                                </td>
-                                                <td class="fw-semibold">${{ transaction.amount|floatformat:2 }}</td>
-                                                <td>
-                                                    <span class="badge {% if transaction.status == 'approved' %}bg-success{% elif transaction.status == 'pending' %}bg-warning{% elif transaction.status == 'rejected' %}bg-danger{% else %}bg-secondary{% endif %}">
-                                                        {{ transaction.get_status_display }}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        {% else %}
-                                            <tr>
-                                                <td colspan="4" class="text-center py-4 text-muted">
-                                                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                                                    No activity yet
-                                                </td>
-                                            </tr>
-                                        {% endif %}
-                                    </tbody>
-                                </table>
-                            </div>
+            <!-- Trade stats -->
+            <div class="row g-4 mt-1">
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-tile h-100"><div class="card-body text-center">
+                        <div class="ic mx-auto mb-2" style="background:rgba(139,92,246,.12);color:#7C3AED;"><i class="bi bi-bar-chart-fill"></i></div>
+                        <div class="h3 mb-0">{{ trading_account.total_trades }}</div>
+                        <div class="text-muted small">Total Trades</div>
+                    </div></div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-tile h-100"><div class="card-body text-center">
+                        <div class="ic mx-auto mb-2" style="background:rgba(16,185,129,.12);color:#10B981;"><i class="bi bi-graph-up-arrow"></i></div>
+                        <div class="h3 mb-0">{{ trading_account.trades_won }}</div>
+                        <div class="text-muted small">Trades Won</div>
+                    </div></div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-tile h-100"><div class="card-body text-center">
+                        <div class="ic mx-auto mb-2" style="background:rgba(245,158,11,.12);color:#F59E0B;"><i class="bi bi-dash-circle"></i></div>
+                        <div class="h3 mb-0">{{ trading_account.trades_drawn }}</div>
+                        <div class="text-muted small">Trades Drawn</div>
+                    </div></div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="card stat-tile h-100"><div class="card-body text-center">
+                        <div class="ic mx-auto mb-2" style="background:rgba(239,68,68,.12);color:#EF4444;"><i class="bi bi-graph-down-arrow"></i></div>
+                        <div class="h3 mb-0">{{ trading_account.trades_lost }}</div>
+                        <div class="text-muted small">Trades Lost</div>
+                    </div></div>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-1">
+                <!-- KYC card -->
+                <div class="col-lg-6">
+                    <div class="card h-100"><div class="card-body text-center py-5">
+                        {% if user.is_kyc_verified %}
+                            <i class="bi bi-patch-check-fill text-success" style="font-size:2.6rem;"></i>
+                            <h5 class="mt-3 mb-1">Identity verified</h5>
+                            <p class="text-muted mb-0">Your account is fully verified — deposits &amp; withdrawals are unlocked.</p>
+                        {% elif user.kyc_status == 'pending' %}
+                            <i class="bi bi-hourglass-split text-warning" style="font-size:2.6rem;"></i>
+                            <h5 class="mt-3 mb-1">Verification under review</h5>
+                            <p class="text-muted mb-0">We're reviewing your documents. You'll be notified by email.</p>
+                        {% else %}
+                            <i class="bi bi-shield-exclamation text-primary" style="font-size:2.6rem;"></i>
+                            <h5 class="mt-3 mb-1">Verify your identity</h5>
+                            <p class="text-muted mb-3">Complete KYC to unlock deposits and withdrawals on your account.</p>
+                            <a href="{% url 'dashboard:kyc' %}" class="btn btn-primary">Click here to complete your KYC</a>
+                        {% endif %}
+                    </div></div>
+                </div>
+
+                <!-- Recent activity -->
+                <div class="col-lg-6">
+                    <div class="card h-100"><div class="card-body">
+                        <h5 class="mb-3">Recent Activity</h5>
+                        {% if recent_transactions %}
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover mb-0">
+                                <tbody>
+                                    {% for t in recent_transactions %}
+                                    <tr>
+                                        <td>{{ t.created_at|date:"M d" }}</td>
+                                        <td class="text-capitalize">{{ t.type }}</td>
+                                        <td class="fw-semibold">${{ t.amount|floatformat:2 }}</td>
+                                        <td><span class="badge {% if t.status == 'approved' %}bg-success{% elif t.status == 'pending' %}bg-warning{% else %}bg-secondary{% endif %}">{{ t.get_status_display }}</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
+                        {% else %}
+                        <p class="text-muted text-center py-4 mb-0"><i class="bi bi-inbox fs-3 d-block mb-2"></i>No activity yet</p>
+                        {% endif %}
+                    </div></div>
+                </div>
+            </div>
+
+            <!-- Refer & Earn -->
+            <div class="row g-4 mt-1">
+                <div class="col-12">
+                    <div class="card"><div class="card-body text-center py-4">
+                        <i class="bi bi-gift text-warning" style="font-size:2.2rem;"></i>
+                        <h5 class="mt-2 mb-1">Refer &amp; Earn</h5>
+                        <p class="text-muted mb-3">Refer your friends &amp; earn 5% of every deposit they make on the platform.</p>
+                        <a href="{% url 'dashboard:refer_user' %}" class="btn btn-primary">Invite</a>
+                    </div></div>
                 </div>
             </div>
         </div>
 
-        <!-- Footer -->
         <footer class="mt-auto">
             <div class="container-fluid mt-4 mb-6 text-muted">
-                <div class="row justify-content-between">
-                    <div class="col">
-                        &copy; {{ "now"|date:"Y" }} Summit Teachable. All Rights Reserved.
-                    </div>
-                    <div class="col-auto">
-                        <div id="google_translate_element"></div>
-                    </div>
-                </div>
+                <div class="row"><div class="col">&copy; {{ "now"|date:"Y" }} Summit Teachable. All Rights Reserved.</div></div>
             </div>
         </footer>
     </main>
 
-    <!-- Theme JS -->
     <script src="{% static 'themes/dashly/assets/js/theme.bundle.js' %}"></script>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-
-    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
-        }
-    </script>
-
-    <script>
-        // Theme switcher buttons
-        document.querySelectorAll('[data-theme-value]').forEach(element => {
-            element.addEventListener('click', () => {
-                const theme = element.getAttribute('data-theme-value');
-                localStorage.setItem('theme', theme);
-                if (theme === 'auto') {
-                    document.documentElement.dataset.theme = 'light';
-                } else {
-                    document.documentElement.dataset.theme = theme;
-                }
-            });
-        });
-    </script>
 </body>
 </html>

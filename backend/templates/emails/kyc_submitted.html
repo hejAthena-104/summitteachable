@@ -1,0 +1,15 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2>Identity verification received</h2>
+
+<p>Hi {{ first_name }},</p>
+
+<p>Thanks &mdash; we've received your identity verification (KYC) documents. Our team will review them shortly, and we'll email you as soon as your account is verified.</p>
+
+<div class="info-box" style="background-color:#F3F0FE; border-left-color:#8B5CF6;">
+    <p>Once verified, you'll be able to deposit and withdraw on your account.</p>
+</div>
+
+<p>Best regards,<br>The Summit Teachable Team</p>
+{% endblock %}
