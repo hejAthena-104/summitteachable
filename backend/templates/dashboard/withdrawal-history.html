@@ -4,7 +4,7 @@
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 
 <head>
-    {% load static %}
+    {% load static humanize %}
     
     <meta charset="utf-8">
     <meta name="csrf-token" content="TuDsCdKJ03MPusFP2GKqzoWGwF8PuVfDi0T5H9qW">
@@ -318,8 +318,8 @@
                             <tbody>
                                 {% for withdrawal in withdrawals %}
                                     <tr>
-                                        <td>${{ withdrawal.amount }}</td>
-                                        <td>${{ withdrawal.amount }}</td>
+                                        <td>${{ withdrawal.amount|intcomma }}</td>
+                                        <td>${{ withdrawal.amount|intcomma }}</td>
                                         <td>{{ withdrawal.payment_method|default:"N/A" }}</td>
                                         <td>
                                             <span class="badge

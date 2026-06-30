@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light" data-sidebar-behaviour="fixed" data-navigation-color="default" data-is-fluid="true">
 
 <head>
-    {% load static %}
+    {% load static humanize %}
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -67,7 +67,7 @@
                                     <td class="fw-semibold">{{ t.master.name }}</td>
                                     <td>{{ t.crypto_currency }}</td>
                                     <td>{{ t.crypto_symbol }}</td>
-                                    <td class="fw-semibold">${{ t.amount|floatformat:2 }}</td>
+                                    <td class="fw-semibold">${{ t.amount|floatformat:2|intcomma }}</td>
                                     <td>
                                         {% if t.direction == 'rise' %}
                                             <span class="text-success"><i class="bi bi-arrow-up-right"></i> Rise</span>

@@ -1,4 +1,5 @@
 {% extends 'emails/base_email.html' %}
+{% load humanize %}
 
 {% block content %}
 <h2>Balance Topped Up</h2>
@@ -10,7 +11,7 @@
 <div class="info-box">
     <p><strong>Top-up Details:</strong></p>
     <ul style="margin-top: 10px; margin-left: 20px; color: #4a5568;">
-        <li><strong>Amount:</strong> ${{ amount }}</li>
+        <li><strong>Amount:</strong> ${{ amount|intcomma }}</li>
         <li><strong>Source:</strong> {{ payment_method }}</li>
         <li><strong>Status:</strong> <span style="color: #8B5CF6;">Credited</span></li>
         <li><strong>Reference:</strong> {{ reference }}</li>

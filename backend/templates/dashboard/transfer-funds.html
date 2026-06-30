@@ -4,7 +4,7 @@
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 
 <head>
-    {% load static %}
+    {% load static humanize %}
     
     <meta charset="utf-8">
     <meta name="csrf-token" content="TuDsCdKJ03MPusFP2GKqzoWGwF8PuVfDi0T5H9qW">
@@ -238,7 +238,7 @@
                                     <input type="number" min="1" step="0.01" name="amount"
                                         placeholder="Enter amount to transfer"
                                         class="form-control mt-2" required>
-                                    <small class="text-muted">Your current balance: ${{ user.balance }}</small>
+                                    <small class="text-muted">Your current balance: ${{ user.balance|intcomma }}</small>
                                 </div>
                                 <div class="mb-3">
                                     <label>Description (Optional)</label>
@@ -288,8 +288,8 @@
                                 {% for transfer in sent_transfers %}
                                     <tr>
                                         <td>{{ transfer.recipient.username }}</td>
-                                        <td>${{ transfer.amount }}</td>
-                                        <td>${{ transfer.fee_amount }}</td>
+                                        <td>${{ transfer.amount|intcomma }}</td>
+                                        <td>${{ transfer.fee_amount|intcomma }}</td>
                                         <td>
                                             <span class="badge
                                                 {% if transfer.status == 'completed' %}bg-success
@@ -338,7 +338,7 @@
                                 {% for transfer in received_transfers %}
                                     <tr>
                                         <td>{{ transfer.sender.username }}</td>
-                                        <td>${{ transfer.amount }}</td>
+                                        <td>${{ transfer.amount|intcomma }}</td>
                                         <td>
                                             <span class="badge
                                                 {% if transfer.status == 'completed' %}bg-success

@@ -4,7 +4,7 @@
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 
 <head>
-    {% load static %}
+    {% load static humanize %}
 
     <meta charset="utf-8">
     <meta name="csrf-token" content="TuDsCdKJ03MPusFP2GKqzoWGwF8PuVfDi0T5H9qW">
@@ -215,7 +215,7 @@
                                 <span class="text-muted">USD Balance</span>
                                 <i class="bi bi-currency-dollar fs-3 text-primary"></i>
                             </div>
-                            <h2 class="mt-2 mb-0">${{ usd_balance }}</h2>
+                            <h2 class="mt-2 mb-0">${{ usd_balance|intcomma }}</h2>
                         </div>
                     </div>
                 </div>
@@ -237,7 +237,7 @@
                                 <span>Current rate</span>
                                 <i class="bi bi-arrow-left-right fs-3"></i>
                             </div>
-                            <h3 class="mt-2 mb-0">1 BTC = ${{ btc_usd_price }}</h3>
+                            <h3 class="mt-2 mb-0">1 BTC = ${{ btc_usd_price|intcomma }}</h3>
                         </div>
                     </div>
                 </div>
@@ -320,7 +320,7 @@
                                             </td>
                                             <td>
                                                 {% if swap.direction == 'usd_to_btc' %}
-                                                    ${{ swap.from_amount }}
+                                                    ${{ swap.from_amount|intcomma }}
                                                 {% else %}
                                                     {{ swap.from_amount }} BTC
                                                 {% endif %}
@@ -329,10 +329,10 @@
                                                 {% if swap.direction == 'usd_to_btc' %}
                                                     {{ swap.to_amount }} BTC
                                                 {% else %}
-                                                    ${{ swap.to_amount }}
+                                                    ${{ swap.to_amount|intcomma }}
                                                 {% endif %}
                                             </td>
-                                            <td>${{ swap.rate_used }}</td>
+                                            <td>${{ swap.rate_used|intcomma }}</td>
                                         </tr>
                                         {% empty %}
                                         <tr>

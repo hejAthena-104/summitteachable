@@ -4,7 +4,7 @@
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 
 <head>
-    {% load static %}
+    {% load static humanize %}
     
     <meta charset="utf-8">
     <meta name="csrf-token" content="TuDsCdKJ03MPusFP2GKqzoWGwF8PuVfDi0T5H9qW">
@@ -318,7 +318,7 @@
                                 {% for txn in transactions %}
                                     {% if txn.type == 'deposit' %}
                                     <tr>
-                                        <td>${{ txn.amount }}</td>
+                                        <td>${{ txn.amount|intcomma }}</td>
                                         <td>{{ txn.payment_method|default:"N/A" }}</td>
                                         <td>
                                             <span class="badge

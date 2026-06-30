@@ -4,7 +4,7 @@
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 
 <head>
-    {% load static %}
+    {% load static humanize %}
 
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token }}">
@@ -85,7 +85,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="mb-0">2 &middot; Submit your deposit</h5>
-                                <span class="text-muted small">Balance: <strong>${{ user.balance|floatformat:2 }}</strong></span>
+                                <span class="text-muted small">Balance: <strong>${{ user.balance|floatformat:2|intcomma }}</strong></span>
                             </div>
                             <form action="{% url 'dashboard:new_deposit' %}" method="POST" enctype="multipart/form-data" id="deposit-form">
                                 {% csrf_token %}
@@ -93,7 +93,7 @@
                                 <div class="row g-2 mb-3">
                                     {% for amt in preset_amounts %}
                                     <div class="col-6 col-md-3">
-                                        <div class="topup-amount text-center py-2 fw-bold" data-amount="{{ amt }}">${{ amt }}</div>
+                                        <div class="topup-amount text-center py-2 fw-bold" data-amount="{{ amt }}">${{ amt|intcomma }}</div>
                                     </div>
                                     {% endfor %}
                                 </div>
@@ -139,7 +139,7 @@
                                         {% for d in deposits %}
                                         <tr>
                                             <td>{{ d.created_at|date:"M d, Y H:i" }}</td>
-                                            <td class="fw-semibold">${{ d.amount|floatformat:2 }}</td>
+                                            <td class="fw-semibold">${{ d.amount|floatformat:2|intcomma }}</td>
                                             <td><span class="badge {% if d.status == 'approved' %}bg-success{% else %}bg-warning{% endif %}">{{ d.get_status_display }}</span></td>
                                         </tr>
                                         {% empty %}

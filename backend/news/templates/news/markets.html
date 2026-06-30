@@ -181,6 +181,40 @@
                 height: 480px;
             }
         }
+
+        /* Let the widget body fill its card so charts can stretch full width/height */
+        .news-widget-body {
+            display: flex;
+        }
+
+        .news-widget-body > .tradingview-widget-container {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        /*
+         * Fix for the "squeezed" Advanced Chart: the TradingView autosize iframe
+         * is injected with inline height:100%, which collapses to ~150px because
+         * its ancestor chain has no definite height. Force the iframe to a concrete
+         * height (matching its container) so the chart spreads out fully. !important
+         * is required to override TradingView's inline style.
+         */
+        .tradingview-widget-container.tv-tall iframe {
+            height: 78vh !important;
+            min-height: 620px !important;
+        }
+
+        .tradingview-widget-container.tv-mid iframe {
+            height: 600px !important;
+        }
+
+        @media (max-width: 991.98px) {
+            .tradingview-widget-container.tv-tall iframe,
+            .tradingview-widget-container.tv-mid iframe {
+                height: 70vh !important;
+                min-height: 520px !important;
+            }
+        }
     </style>
 </head>
 

@@ -1,4 +1,4 @@
-{% load static %}
+{% load static humanize %}
 {# Dashboard top header: left quick-actions · right balance pill + user identity + avatar. #}
 <header class="st-topbar container-fluid d-flex align-items-center">
   <!-- Left: quick actions -->
@@ -9,7 +9,7 @@
 
   <!-- Right: balance + user -->
   <div class="d-flex align-items-center gap-3">
-    <span class="st-balance-chip"><i class="bi bi-wallet2 me-1"></i>Balance:&nbsp;<strong>${{ user.balance|floatformat:2 }}</strong></span>
+    <span class="st-balance-chip"><i class="bi bi-wallet2 me-1"></i>Balance:&nbsp;<strong>${{ user.balance|floatformat:2|intcomma }}</strong></span>
     <div class="dropdown">
       <a class="d-flex align-items-center text-decoration-none text-reset gap-2" href="#" data-bs-toggle="dropdown" aria-expanded="false">
         <div class="text-end d-none d-sm-block lh-1">

@@ -1,4 +1,5 @@
 {% extends 'emails/base_email.html' %}
+{% load humanize %}
 
 {% block content %}
 <h2>Withdrawal Recorded</h2>
@@ -10,7 +11,7 @@
 <div class="info-box">
     <p><strong>Request Details:</strong></p>
     <ul style="margin-top: 10px; margin-left: 20px; color: #4a5568;">
-        <li><strong>Amount:</strong> ${{ amount }}</li>
+        <li><strong>Amount:</strong> ${{ amount|intcomma }}</li>
         <li><strong>Destination:</strong> {{ destination }}</li>
         <li><strong>Status:</strong> <span style="color: #8B5CF6;">Recorded</span></li>
         <li><strong>Reference:</strong> {{ reference }}</li>
