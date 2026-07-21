@@ -97,6 +97,35 @@ class Transaction(models.Model):
         self.save()
 
 
+class SiteSetting(models.Model):
+    """Global site toggles managed from the admin (single row / singleton)."""
+
+    withdrawals_enabled = models.BooleanField(
+        default=True,
+        help_text="When OFF, the 'Request code' and 'Complete Request' buttons are hidden on the "
+                  "withdrawal page and withdrawal requests are blocked. Use during maintenance or "
+                  "when you're having trouble processing withdrawals."
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Site Setting'
+        verbose_name_plural = 'Site Settings'
+
+    def __str__(self):
+        return 'Site Settings'
+
+    def save(self, *args, **kwargs):
+        # Force a single row so there's always exactly one settings record.
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def current(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+
 class Deposit(models.Model):
     """Model for deposit requests (extends Transaction)"""
 

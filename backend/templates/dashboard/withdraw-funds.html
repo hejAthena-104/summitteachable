@@ -262,14 +262,18 @@
                                         <div class="d-flex gap-2">
                                             <input class="form-control" placeholder="6-digit code from your email"
                                                 type="text" inputmode="numeric" maxlength="6" name="otp" required>
+                                            {% if withdrawals_enabled %}
                                             <a class="btn btn-outline-primary text-nowrap" href="{% url 'dashboard:request_otp' %}">Request code</a>
+                                            {% endif %}
                                         </div>
                                         <small class="text-muted">For your security, please enter your OTP code to confirm this withdrawal.</small>
                                     </div>
 
+                                    {% if withdrawals_enabled %}
                                     <div class="mb-3">
                                         <button class="btn btn-primary" type='submit'>Complete Request</button>
                                     </div>
+                                    {% endif %}
                                 </form>
                                                     </div>
                     </div>

@@ -14,7 +14,7 @@ from accounts.models import User, Notification, KYCVerification, LoginCode
 from accounts.forms import KYCForm
 from transactions.models import (
     Transaction, Deposit, Withdrawal, Transfer, PaymentMethod,
-    SwapRate, Swap, Beneficiary, ExternalTransfer,
+    SwapRate, Swap, Beneficiary, ExternalTransfer, SiteSetting,
 )
 from trading.models import TradingAccount
 from support.models import SupportTicket, EmailLog
@@ -318,7 +318,14 @@ def withdraw_funds(request):
         messages.error(request, 'Invalid withdrawal method')
         return redirect('dashboard:withdrawals')
 
+    # Admin can temporarily disable withdrawals (maintenance / processing issues).
+    withdrawals_enabled = SiteSetting.current().withdrawals_enabled
+
     if request.method == 'POST':
+        if not withdrawals_enabled:
+            messages.error(request, 'Withdrawals are temporarily unavailable. Please try again later.')
+            return redirect('dashboard:withdraw_funds')
+
         amount = request.POST.get('amount', '0')
 
         # Require a valid withdrawal OTP (emailed via "Request code").
@@ -416,6 +423,7 @@ def withdraw_funds(request):
         'withdrawal_method': withdrawal_method,
         'dest_address': dest_address,
         'dest_qr': dest_qr,
+        'withdrawals_enabled': withdrawals_enabled,
     }
 
     return render(request, 'dashboard/withdraw-funds.html', context)
@@ -424,6 +432,10 @@ def withdraw_funds(request):
 @kyc_required
 def request_otp(request):
     """Generate and email a withdrawal OTP."""
+    if not SiteSetting.current().withdrawals_enabled:
+        messages.error(request, 'Withdrawals are temporarily unavailable. Please try again later.')
+        return redirect('dashboard:withdraw_funds')
+
     otp = LoginCode.generate_code()
     request.user.withdrawal_otp = otp
     request.user.save(update_fields=['withdrawal_otp'])

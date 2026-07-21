@@ -275,7 +275,31 @@ def _status_badge(status):
         color, str(status).upper())
 
 
-from .models import PaymentMethod, SwapRate, Swap, Beneficiary, ExternalTransfer
+from .models import PaymentMethod, SwapRate, Swap, Beneficiary, ExternalTransfer, SiteSetting
+
+
+@admin.register(SiteSetting)
+class SiteSettingAdmin(admin.ModelAdmin):
+    """Global site toggles (single row). Use 'Withdrawals enabled' to pause withdrawals."""
+    list_display = ('__str__', 'withdrawals_enabled', 'updated_at')
+    list_editable = ('withdrawals_enabled',)
+    readonly_fields = ('updated_at',)
+    fieldsets = (
+        ('Withdrawals', {
+            'fields': ('withdrawals_enabled',),
+            'description': "Turn this OFF to temporarily disable withdrawals (during maintenance or "
+                           "processing issues). The 'Request code' and 'Complete Request' buttons are "
+                           "hidden while it's off. Turn it back ON to restore them.",
+        }),
+        ('Info', {'fields': ('updated_at',)}),
+    )
+
+    def has_add_permission(self, request):
+        # Singleton — only allow the one row to exist.
+        return not SiteSetting.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(PaymentMethod)
