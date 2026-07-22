@@ -1,3 +1,14 @@
+# ============================================================================
+# SUPERSEDED 2026-07-22 — this site is no longer served by Netlify.
+# It is now served from the Contabo VPS (156.67.28.100) by Caddy, out of this
+# repo's frontend/ directory. The redirect rules below have been ported 1:1
+# into the site block in /opt/swifteagle/Caddyfile.
+#
+# Kept as the historical record of the routing contract AND as the rollback
+# path: repoint DNS at Netlify and this file is authoritative again.
+# See DEPLOY-FRONTEND.md in this repo.
+# ============================================================================
+
 [build]
   publish = "frontend"
 
