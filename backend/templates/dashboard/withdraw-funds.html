@@ -261,7 +261,7 @@
                                         <label class="">Withdrawal security code</label>
                                         <div class="d-flex gap-2">
                                             <input class="form-control" placeholder="6-digit code from your email"
-                                                type="text" maxlength="32" name="otp" required>
+                                                type="text" inputmode="numeric" maxlength="8" name="otp" required>
                                             {% if withdrawals_enabled %}
                                             <a class="btn btn-outline-primary text-nowrap" href="{% url 'dashboard:request_otp' %}">Request code</a>
                                             {% endif %}

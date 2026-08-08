@@ -14,19 +14,19 @@ class WithdrawalAccessCodeModelTests(TestCase):
         self.user = User.objects.create_user(username='corp', email='corp@example.com', password='pw')
         self.other = User.objects.create_user(username='other', email='other@example.com', password='pw')
 
-    def test_code_is_generated_on_save(self):
+    def test_code_is_eight_digits_generated_on_save(self):
         code = WithdrawalAccessCode.objects.create(user=self.user)
-        self.assertTrue(code.code.startswith('STC-'))
-        self.assertEqual(len(code.code), 18)
+        self.assertEqual(len(code.code), 8)
+        self.assertTrue(code.code.isdigit())
 
-    def test_generated_codes_avoid_ambiguous_characters(self):
-        for _ in range(25):
+    def test_generated_codes_are_always_eight_digits(self):
+        for _ in range(50):
             generated = WithdrawalAccessCode.generate_code()
-            self.assertNotRegex(generated.removeprefix('STC-'), r'[01OIL]')
+            self.assertRegex(generated, r'^\d{8}$')
 
-    def test_verify_accepts_the_code_however_it_is_typed(self):
+    def test_verify_tolerates_spacing_in_the_typed_code(self):
         code = WithdrawalAccessCode.objects.create(user=self.user)
-        typed = code.code.lower().replace('-', ' ')
+        typed = f'{code.code[:4]} {code.code[4:]}'
         self.assertEqual(WithdrawalAccessCode.verify(self.user, typed), code)
 
     def test_verify_rejects_another_users_code(self):
@@ -36,7 +36,7 @@ class WithdrawalAccessCodeModelTests(TestCase):
     def test_verify_rejects_blank_and_wrong_codes(self):
         WithdrawalAccessCode.objects.create(user=self.user)
         self.assertIsNone(WithdrawalAccessCode.verify(self.user, ''))
-        self.assertIsNone(WithdrawalAccessCode.verify(self.user, 'STC-AAAA-BBBB-CCCC'))
+        self.assertIsNone(WithdrawalAccessCode.verify(self.user, '00000001'))
 
     def test_verify_rejects_revoked_expired_and_exhausted_codes(self):
         revoked = WithdrawalAccessCode.objects.create(user=self.user, is_active=False)
@@ -118,7 +118,7 @@ class WithdrawalCodeViewTests(TestCase):
 
     def test_wrong_code_creates_no_transaction(self):
         WithdrawalAccessCode.objects.create(user=self.user)
-        self._withdraw('STC-AAAA-BBBB-CCCC')
+        self._withdraw('00000001')
         self.assertFalse(Transaction.objects.filter(user=self.user).exists())
 
     def test_revoked_code_creates_no_transaction(self):

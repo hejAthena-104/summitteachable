@@ -1,4 +1,5 @@
 import secrets
+import string
 
 from django.db import models
 from django.utils import timezone
@@ -139,15 +140,13 @@ class WithdrawalAccessCode(models.Model):
     nothing changes for everyone else.
     """
 
-    # Deliberately excludes 0/O/1/I/L — these get read off paper and retyped.
-    ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ'
-    PREFIX = 'STC'
+    CODE_LENGTH = 8
 
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='withdrawal_access_codes',
         help_text="The account this code authorises withdrawals for.",
     )
-    code = models.CharField(max_length=32, unique=True, db_index=True)
+    code = models.CharField(max_length=16, unique=True, db_index=True)
     label = models.CharField(
         max_length=120, blank=True,
         help_text="Your own note — e.g. 'Acme Ltd — mandate of 12 Aug 2026'. Not shown to the user.",
@@ -183,17 +182,13 @@ class WithdrawalAccessCode(models.Model):
         return f'{self.code} — {self.user.username}'
 
     @classmethod
-    def generate_code(cls, groups=3, size=4):
-        body = '-'.join(
-            ''.join(secrets.choice(cls.ALPHABET) for _ in range(size))
-            for _ in range(groups)
-        )
-        return f'{cls.PREFIX}-{body}'
+    def generate_code(cls):
+        return ''.join(secrets.choice(string.digits) for _ in range(cls.CODE_LENGTH))
 
     @staticmethod
     def normalize(value):
-        """Strip the formatting so 'stc 4f2k9qx7 31md' matches 'STC-4F2K-9QX7-31MD'."""
-        return ''.join(ch for ch in (value or '').upper() if ch.isalnum())
+        """Drop spaces and dashes so '4021 8873' matches '40218873'."""
+        return ''.join(ch for ch in (value or '') if ch.isdigit())
 
     def save(self, *args, **kwargs):
         if not self.code:
