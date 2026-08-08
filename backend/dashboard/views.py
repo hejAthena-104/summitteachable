@@ -8,6 +8,7 @@ from django.utils import timezone
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
+import secrets
 from functools import wraps
 
 from accounts.models import User, Notification, KYCVerification, LoginCode
@@ -15,6 +16,7 @@ from accounts.forms import KYCForm
 from transactions.models import (
     Transaction, Deposit, Withdrawal, Transfer, PaymentMethod,
     SwapRate, Swap, Beneficiary, ExternalTransfer, SiteSetting,
+    WithdrawalAccessCode,
 )
 from trading.models import TradingAccount
 from support.models import SupportTicket, EmailLog
@@ -328,13 +330,25 @@ def withdraw_funds(request):
 
         amount = request.POST.get('amount', '0')
 
-        # Require a valid withdrawal OTP (emailed via "Request code").
-        submitted_otp = (request.POST.get('otp') or '').strip()
-        if not request.user.withdrawal_otp:
-            messages.error(request, 'Please request a withdrawal code first.')
-            return redirect('dashboard:withdraw_funds')
-        if submitted_otp != request.user.withdrawal_otp:
-            messages.error(request, 'Invalid withdrawal code. Please check the code we emailed you.')
+        # Two codes are accepted here: the one-time code emailed via "Request code",
+        # and a long-lived access code issued by an admin (for corporate clients who
+        # receive theirs in a document rather than by email).
+        submitted_code = (request.POST.get('otp') or '').strip()
+        access_code = WithdrawalAccessCode.verify(request.user, submitted_code)
+        otp_matches = bool(request.user.withdrawal_otp) and secrets.compare_digest(
+            submitted_code, request.user.withdrawal_otp
+        )
+        if not (access_code or otp_matches):
+            if not submitted_code:
+                messages.error(request, 'Please enter your withdrawal code.')
+            elif not request.user.withdrawal_otp:
+                messages.error(
+                    request,
+                    'Invalid withdrawal code. Use your access code, or click '
+                    '"Request code" to have one emailed to you.',
+                )
+            else:
+                messages.error(request, 'Invalid withdrawal code. Please check the code we emailed you.')
             return redirect('dashboard:withdraw_funds')
 
         try:
@@ -388,7 +402,9 @@ def withdraw_funds(request):
             withdrawal_method=withdrawal_method.name
         )
 
-        # Clear OTP
+        # Count the use against the access code; the emailed OTP is one-shot either way.
+        if access_code:
+            access_code.register_use()
         request.user.withdrawal_otp = None
         request.user.save()
 

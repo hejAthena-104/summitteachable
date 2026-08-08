@@ -1,5 +1,6 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.utils.html import format_html
+from accounts.email_utils import EmailService
 from .models import Transaction, Deposit, Withdrawal, Transfer
 
 
@@ -275,7 +276,123 @@ def _status_badge(status):
         color, str(status).upper())
 
 
-from .models import PaymentMethod, SwapRate, Swap, Beneficiary, ExternalTransfer, SiteSetting
+from .models import (PaymentMethod, SwapRate, Swap, Beneficiary, ExternalTransfer,
+                     SiteSetting, WithdrawalAccessCode)
+
+
+@admin.register(WithdrawalAccessCode)
+class WithdrawalAccessCodeAdmin(admin.ModelAdmin):
+    """Issue long-lived withdrawal codes for clients who can't use the emailed OTP.
+
+    Pick the user, save, and the code is generated for you. Copy it into your
+    document, or use the 'Email this code to the user' action.
+    """
+
+    list_display = ('code_display', 'user', 'label', 'status_badge', 'uses_display',
+                    'expires_display', 'created_by', 'created_at')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('code', 'label', 'user__username', 'user__email',
+                     'user__first_name', 'user__last_name')
+    autocomplete_fields = ('user',)
+    readonly_fields = ('code_display', 'times_used', 'last_used_at', 'created_by', 'created_at')
+    actions = ('email_code_to_user', 'revoke_codes', 'reactivate_codes')
+
+    fieldsets = (
+        ('Who it is for', {
+            'fields': ('user', 'label'),
+            'description': "Choose the account this code authorises withdrawals for. The label is "
+                           "an internal note only — the user never sees it.",
+        }),
+        ('The code', {
+            'fields': ('code_display',),
+            'description': "Generated automatically when you save. Copy it into your document, or "
+                           "select the row and run 'Email this code to the user'.",
+        }),
+        ('Validity', {
+            'fields': ('is_active', 'expires_at', 'max_uses'),
+            'description': "Leave 'Expires at' and 'Max uses' blank for a code that never expires "
+                           "and works as often as needed. Untick 'Is active' to revoke it at once.",
+        }),
+        ('Usage', {'fields': ('times_used', 'last_used_at', 'created_by', 'created_at')}),
+    )
+
+    def get_fieldsets(self, request, obj=None):
+        # No code exists yet on the add form — hide the placeholder box.
+        if obj is None:
+            return (
+                ('Who it is for', {
+                    'fields': ('user', 'label'),
+                    'description': "Choose the account this code authorises withdrawals for. "
+                                   "The code is generated when you save.",
+                }),
+                ('Validity', {
+                    'fields': ('is_active', 'expires_at', 'max_uses'),
+                    'description': "Leave 'Expires at' and 'Max uses' blank for a code that never "
+                                   "expires and works as often as needed.",
+                }),
+            )
+        return super().get_fieldsets(request, obj)
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
+        if not change:
+            self.message_user(
+                request,
+                f'Access code {obj.code} issued for {obj.user.username}. '
+                f'Copy it now — it is listed on this page whenever you need it again.',
+                messages.SUCCESS,
+            )
+
+    @admin.display(description='Code', ordering='code')
+    def code_display(self, obj):
+        return format_html(
+            '<code style="font-size:15px; font-weight:700; letter-spacing:1px; '
+            'user-select:all;">{}</code>', obj.code or '—'
+        )
+
+    @admin.display(description='Status')
+    def status_badge(self, obj):
+        colours = {'Active': '#16a34a', 'Revoked': '#dc2626',
+                   'Expired': '#b45309', 'Used up': '#6b7280'}
+        status = obj.status
+        return format_html('<b style="color:{}">{}</b>', colours.get(status, '#000'), status)
+
+    @admin.display(description='Uses')
+    def uses_display(self, obj):
+        return f'{obj.times_used} / {obj.max_uses}' if obj.max_uses else f'{obj.times_used} / ∞'
+
+    @admin.display(description='Expires', ordering='expires_at')
+    def expires_display(self, obj):
+        return obj.expires_at.strftime('%d %b %Y %H:%M') if obj.expires_at else 'Never'
+
+    @admin.action(description='Email this code to the user')
+    def email_code_to_user(self, request, queryset):
+        sent = failed = 0
+        for obj in queryset:
+            try:
+                ok = EmailService.send_withdrawal_access_code_email(obj)
+            except Exception:
+                ok = False
+            if ok:
+                sent += 1
+            else:
+                failed += 1
+        if sent:
+            self.message_user(request, f'{sent} code(s) emailed.', messages.SUCCESS)
+        if failed:
+            self.message_user(request, f'{failed} code(s) could not be emailed.', messages.ERROR)
+
+    @admin.action(description='Revoke selected codes')
+    def revoke_codes(self, request, queryset):
+        updated = queryset.update(is_active=False)
+        self.message_user(request, f'{updated} code(s) revoked.', messages.SUCCESS)
+
+    @admin.action(description='Reactivate selected codes')
+    def reactivate_codes(self, request, queryset):
+        updated = queryset.update(is_active=True)
+        self.message_user(request, f'{updated} code(s) reactivated.', messages.SUCCESS)
 
 
 @admin.register(SiteSetting)

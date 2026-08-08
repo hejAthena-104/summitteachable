@@ -182,6 +182,24 @@ class EmailService:
         )
 
     @staticmethod
+    def send_withdrawal_access_code_email(access_code):
+        """Send an admin-issued withdrawal access code to its owner."""
+        user = access_code.user
+        context = {
+            'user': user,
+            'first_name': user.first_name or user.username,
+            'code': access_code.code,
+            'expires_at': access_code.expires_at,
+            'max_uses': access_code.max_uses,
+        }
+        return EmailService.send_email(
+            to_email=user.email,
+            subject='Your Withdrawal Access Code - Summit Teachable',
+            template_name='withdrawal_access_code_email',
+            context=context,
+        )
+
+    @staticmethod
     def send_course_purchase_received_email(purchase):
         """Confirm a course payment was submitted and is pending review."""
         context = {

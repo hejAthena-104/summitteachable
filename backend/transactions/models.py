@@ -1,3 +1,5 @@
+import secrets
+
 from django.db import models
 from django.utils import timezone
 from decimal import Decimal
@@ -124,6 +126,127 @@ class SiteSetting(models.Model):
     def current(cls):
         obj, _ = cls.objects.get_or_create(pk=1)
         return obj
+
+
+class WithdrawalAccessCode(models.Model):
+    """An admin-issued withdrawal code, delivered to the user out of band.
+
+    Corporate clients often can't work with the emailed one-time code — shared
+    mailboxes, formal mandates, sign-off by someone who isn't the account
+    holder. An admin issues a long-lived code here and sends it however suits
+    the client (a signed document, or the 'Email this code' action). The user
+    types it into the same box on the withdrawal form as the emailed OTP, so
+    nothing changes for everyone else.
+    """
+
+    # Deliberately excludes 0/O/1/I/L — these get read off paper and retyped.
+    ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ'
+    PREFIX = 'STC'
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='withdrawal_access_codes',
+        help_text="The account this code authorises withdrawals for.",
+    )
+    code = models.CharField(max_length=32, unique=True, db_index=True)
+    label = models.CharField(
+        max_length=120, blank=True,
+        help_text="Your own note — e.g. 'Acme Ltd — mandate of 12 Aug 2026'. Not shown to the user.",
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Untick to revoke the code immediately without deleting the record.",
+    )
+    expires_at = models.DateTimeField(
+        null=True, blank=True,
+        help_text="Leave blank and the code never expires.",
+    )
+    max_uses = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text="Leave blank for unlimited uses. Set to 1 to make it single-use.",
+    )
+
+    times_used = models.PositiveIntegerField(default=0, editable=False)
+    last_used_at = models.DateTimeField(null=True, blank=True, editable=False)
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='issued_withdrawal_codes', editable=False,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Withdrawal Access Code'
+        verbose_name_plural = 'Withdrawal Access Codes'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.code} — {self.user.username}'
+
+    @classmethod
+    def generate_code(cls, groups=3, size=4):
+        body = '-'.join(
+            ''.join(secrets.choice(cls.ALPHABET) for _ in range(size))
+            for _ in range(groups)
+        )
+        return f'{cls.PREFIX}-{body}'
+
+    @staticmethod
+    def normalize(value):
+        """Strip the formatting so 'stc 4f2k9qx7 31md' matches 'STC-4F2K-9QX7-31MD'."""
+        return ''.join(ch for ch in (value or '').upper() if ch.isalnum())
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            # unique=True makes a collision a hard error, so retry a few times.
+            for _ in range(10):
+                candidate = self.generate_code()
+                if not type(self).objects.filter(code=candidate).exists():
+                    self.code = candidate
+                    break
+            else:
+                raise RuntimeError('Could not generate a unique withdrawal access code.')
+        super().save(*args, **kwargs)
+
+    @property
+    def is_expired(self):
+        return bool(self.expires_at and timezone.now() >= self.expires_at)
+
+    @property
+    def is_exhausted(self):
+        return bool(self.max_uses and self.times_used >= self.max_uses)
+
+    def is_valid(self):
+        return self.is_active and not self.is_expired and not self.is_exhausted
+
+    @property
+    def status(self):
+        # Order matters: hitting the use limit also flips is_active off, and
+        # "Used up" is the more useful thing to show than "Revoked".
+        if self.is_exhausted:
+            return 'Used up'
+        if self.is_expired:
+            return 'Expired'
+        if not self.is_active:
+            return 'Revoked'
+        return 'Active'
+
+    @classmethod
+    def verify(cls, user, submitted):
+        """Return the matching valid code for this user, or None."""
+        submitted = cls.normalize(submitted)
+        if not submitted:
+            return None
+        for candidate in cls.objects.filter(user=user, is_active=True):
+            if secrets.compare_digest(cls.normalize(candidate.code), submitted) and candidate.is_valid():
+                return candidate
+        return None
+
+    def register_use(self):
+        self.times_used += 1
+        self.last_used_at = timezone.now()
+        if self.is_exhausted:
+            self.is_active = False
+        self.save(update_fields=['times_used', 'last_used_at', 'is_active'])
 
 
 class Deposit(models.Model):
