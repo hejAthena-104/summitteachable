@@ -262,7 +262,7 @@
                                         <div class="d-flex gap-2">
                                             <input class="form-control" placeholder="6-digit code from your email"
                                                 type="text" inputmode="numeric" maxlength="8" name="otp" required>
-                                            {% if withdrawals_enabled %}
+                                            {% if withdrawals_enabled and request_code_enabled %}
                                             <a class="btn btn-outline-primary text-nowrap" href="{% url 'dashboard:request_otp' %}">Request code</a>
                                             {% endif %}
                                         </div>

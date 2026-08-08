@@ -398,8 +398,8 @@ class WithdrawalAccessCodeAdmin(admin.ModelAdmin):
 @admin.register(SiteSetting)
 class SiteSettingAdmin(admin.ModelAdmin):
     """Global site toggles (single row). Use 'Withdrawals enabled' to pause withdrawals."""
-    list_display = ('__str__', 'withdrawals_enabled', 'updated_at')
-    list_editable = ('withdrawals_enabled',)
+    list_display = ('__str__', 'withdrawals_enabled', 'request_code_enabled', 'updated_at')
+    list_editable = ('withdrawals_enabled', 'request_code_enabled')
     readonly_fields = ('updated_at',)
     fieldsets = (
         ('Withdrawals', {
@@ -407,6 +407,13 @@ class SiteSettingAdmin(admin.ModelAdmin):
             'description': "Turn this OFF to temporarily disable withdrawals (during maintenance or "
                            "processing issues). The 'Request code' and 'Complete Request' buttons are "
                            "hidden while it's off. Turn it back ON to restore them.",
+        }),
+        ('Security code', {
+            'fields': ('request_code_enabled',),
+            'description': "Controls only the 'Request code' button that emails a user a one-time "
+                           "code. Turn it OFF to force every withdrawal through a Withdrawal Access "
+                           "Code you issued from the admin. Withdrawals themselves stay open — "
+                           "use 'Withdrawals enabled' above to close those.",
         }),
         ('Info', {'fields': ('updated_at',)}),
     )

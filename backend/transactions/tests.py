@@ -6,7 +6,8 @@ from django.urls import reverse
 from django.utils import timezone
 
 from accounts.models import KYCVerification, User
-from transactions.models import PaymentMethod, Transaction, WithdrawalAccessCode
+from transactions.models import (PaymentMethod, SiteSetting, Transaction,
+                                 WithdrawalAccessCode)
 
 
 class WithdrawalAccessCodeModelTests(TestCase):
@@ -125,6 +126,29 @@ class WithdrawalCodeViewTests(TestCase):
         code = WithdrawalAccessCode.objects.create(user=self.user, is_active=False)
         self._withdraw(code.code)
         self.assertFalse(Transaction.objects.filter(user=self.user).exists())
+
+    def test_request_code_button_shows_by_default(self):
+        response = self.client.get(reverse('dashboard:withdraw_funds'))
+        self.assertContains(response, 'Request code')
+
+    def test_request_code_button_hidden_when_the_setting_is_off(self):
+        SiteSetting.objects.update_or_create(pk=1, defaults={'request_code_enabled': False})
+        response = self.client.get(reverse('dashboard:withdraw_funds'))
+        self.assertNotContains(response, 'Request code')
+
+    def test_request_otp_url_is_blocked_when_the_setting_is_off(self):
+        SiteSetting.objects.update_or_create(pk=1, defaults={'request_code_enabled': False})
+        self.client.get(reverse('dashboard:request_otp'), follow=True)
+
+        self.user.refresh_from_db()
+        self.assertIsNone(self.user.withdrawal_otp)
+
+    def test_access_code_still_works_when_request_code_is_off(self):
+        SiteSetting.objects.update_or_create(pk=1, defaults={'request_code_enabled': False})
+        code = WithdrawalAccessCode.objects.create(user=self.user)
+        self._withdraw(code.code)
+
+        self.assertEqual(Transaction.objects.filter(user=self.user, type='withdrawal').count(), 1)
 
     def test_unlimited_access_code_authorises_repeat_withdrawals(self):
         code = WithdrawalAccessCode.objects.create(user=self.user)

@@ -109,6 +109,14 @@ class SiteSetting(models.Model):
                   "withdrawal page and withdrawal requests are blocked. Use during maintenance or "
                   "when you're having trouble processing withdrawals."
     )
+    request_code_enabled = models.BooleanField(
+        default=True,
+        verbose_name='"Request code" button enabled',
+        help_text="When OFF, users can no longer email themselves a one-time code — the "
+                  "'Request code' button disappears and only admin-issued Withdrawal Access "
+                  "Codes are accepted. Leave ON unless you want every withdrawal to go "
+                  "through a code you issued yourself."
+    )
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:

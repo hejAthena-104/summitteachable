@@ -320,8 +320,12 @@ def withdraw_funds(request):
         messages.error(request, 'Invalid withdrawal method')
         return redirect('dashboard:withdrawals')
 
-    # Admin can temporarily disable withdrawals (maintenance / processing issues).
-    withdrawals_enabled = SiteSetting.current().withdrawals_enabled
+    # Admin can temporarily disable withdrawals (maintenance / processing issues),
+    # and separately turn off self-service one-time codes so that only the access
+    # codes issued from the admin are accepted.
+    site_settings = SiteSetting.current()
+    withdrawals_enabled = site_settings.withdrawals_enabled
+    request_code_enabled = site_settings.request_code_enabled
 
     if request.method == 'POST':
         if not withdrawals_enabled:
@@ -440,6 +444,7 @@ def withdraw_funds(request):
         'dest_address': dest_address,
         'dest_qr': dest_qr,
         'withdrawals_enabled': withdrawals_enabled,
+        'request_code_enabled': request_code_enabled,
     }
 
     return render(request, 'dashboard/withdraw-funds.html', context)
@@ -448,8 +453,17 @@ def withdraw_funds(request):
 @kyc_required
 def request_otp(request):
     """Generate and email a withdrawal OTP."""
-    if not SiteSetting.current().withdrawals_enabled:
+    site_settings = SiteSetting.current()
+    if not site_settings.withdrawals_enabled:
         messages.error(request, 'Withdrawals are temporarily unavailable. Please try again later.')
+        return redirect('dashboard:withdraw_funds')
+    # Hiding the button isn't enough — the URL is guessable, so block it here too.
+    if not site_settings.request_code_enabled:
+        messages.error(
+            request,
+            'Please use the withdrawal access code issued to your account. '
+            'Contact support if you do not have one.',
+        )
         return redirect('dashboard:withdraw_funds')
 
     otp = LoginCode.generate_code()
