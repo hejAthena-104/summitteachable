@@ -8,11 +8,13 @@ from django.utils import timezone
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
+import logging
 import secrets
 from functools import wraps
 
 from accounts.models import User, Notification, KYCVerification, LoginCode
 from accounts.forms import KYCForm
+from accounts.upload_utils import UPLOAD_FAILED_MESSAGE
 from transactions.models import (
     Transaction, Deposit, Withdrawal, Transfer, PaymentMethod,
     SwapRate, Swap, Beneficiary, ExternalTransfer, SiteSetting,
@@ -21,6 +23,8 @@ from transactions.models import (
 from trading.models import TradingAccount
 from support.models import SupportTicket, EmailLog
 from accounts.email_utils import EmailService
+
+logger = logging.getLogger(__name__)
 
 
 def kyc_required(view_func):
@@ -154,17 +158,25 @@ def new_deposit(request):
                                       type__in=['deposit', 'both']).first()
 
     # Create a PENDING deposit with proof — balance is credited only on admin approval.
-    txn = Transaction.objects.create(
-        user=request.user,
-        type='deposit',
-        amount=amount,
-        status='pending',
-        payment_method=method,
-        payment_address=(pm.wallet_address if pm else ''),
-        payment_reference=tx_reference,
-        description=f'Deposit via {method}',
-    )
-    Deposit.objects.create(transaction=txn, proof_image=proof)
+    # Both rows go in one transaction so a failed proof write cannot leave behind a
+    # proof-less deposit for an admin to puzzle over.
+    try:
+        with transaction.atomic():
+            txn = Transaction.objects.create(
+                user=request.user,
+                type='deposit',
+                amount=amount,
+                status='pending',
+                payment_method=method,
+                payment_address=(pm.wallet_address if pm else ''),
+                payment_reference=tx_reference,
+                description=f'Deposit via {method}',
+            )
+            Deposit.objects.create(transaction=txn, proof_image=proof)
+    except OSError:
+        logger.exception('Deposit proof storage failure for user id=%s', request.user.pk)
+        messages.error(request, UPLOAD_FAILED_MESSAGE)
+        return redirect('dashboard:deposits')
 
     Notification.objects.create(
         user=request.user,
@@ -237,27 +249,38 @@ def kyc(request):
             kyc_obj.rejection_reason = ''
             kyc_obj.reviewed_at = None
             kyc_obj.reviewed_by = None
-            kyc_obj.save()
 
-            # Sync the basics back onto the user account.
-            request.user.first_name = kyc_obj.first_name
-            request.user.last_name = kyc_obj.last_name
-            if kyc_obj.phone:
-                request.user.phone = kyc_obj.phone
-            if kyc_obj.country:
-                request.user.country = kyc_obj.country
-            request.user.save(update_fields=['first_name', 'last_name', 'phone', 'country'])
-
+            # Writing the document + selfie to MEDIA_ROOT can fail independently of
+            # anything the user did. Report it rather than 500ing on them.
+            # The file write happens inside save()'s own savepoint-less atomic block,
+            # so wrap it in one that HAS a savepoint — otherwise catching the error
+            # leaves the connection needing a rollback and every later query dies.
             try:
-                EmailService.send_kyc_submitted_email(request.user)
-            except Exception:
-                pass
+                with transaction.atomic():
+                    kyc_obj.save()
+            except OSError:
+                logger.exception('KYC upload storage failure for user id=%s', request.user.pk)
+                form.add_error(None, UPLOAD_FAILED_MESSAGE)
+            else:
+                # Sync the basics back onto the user account.
+                request.user.first_name = kyc_obj.first_name
+                request.user.last_name = kyc_obj.last_name
+                if kyc_obj.phone:
+                    request.user.phone = kyc_obj.phone
+                if kyc_obj.country:
+                    request.user.country = kyc_obj.country
+                request.user.save(update_fields=['first_name', 'last_name', 'phone', 'country'])
 
-            messages.success(
-                request,
-                'Your verification has been submitted. We will review it and notify you by email.',
-            )
-            return redirect('dashboard:index')
+                try:
+                    EmailService.send_kyc_submitted_email(request.user)
+                except Exception:
+                    pass
+
+                messages.success(
+                    request,
+                    'Your verification has been submitted. We will review it and notify you by email.',
+                )
+                return redirect('dashboard:index')
     else:
         # Prefill from any rejected submission or the user's existing details.
         if existing:
@@ -566,8 +589,14 @@ def account_settings(request):
             # Update profile picture
             if 'photo' in request.FILES:
                 request.user.avatar = request.FILES['photo']
-                request.user.save()
-                messages.success(request, 'Profile picture updated!')
+                try:
+                    with transaction.atomic():
+                        request.user.save()
+                except OSError:
+                    logger.exception('Avatar storage failure for user id=%s', request.user.pk)
+                    messages.error(request, UPLOAD_FAILED_MESSAGE)
+                else:
+                    messages.success(request, 'Profile picture updated!')
 
         elif action == 'update_password':
             # Update password

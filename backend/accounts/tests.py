@@ -1,6 +1,9 @@
 """End-to-end tests for the passwordless login-code system, with a focus on the
 admin-generated fallback code flow (generate → user logs in → admin deactivate)."""
 
+import os
+import shutil
+import tempfile
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
@@ -185,6 +188,9 @@ class LoginCodeAdminTests(TestCase):
 
 
 from io import BytesIO
+
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 from accounts.models import KYCVerification
 
 
@@ -195,8 +201,29 @@ def _png_bytes():
     return buf.getvalue()
 
 
+class TempMediaMixin:
+    """Point MEDIA_ROOT at a throwaway dir for the whole test class.
+
+    Without this, upload tests write straight into the repo's ``backend/media/``
+    and leave stray ``id_*.png`` / ``selfie_*.png`` files behind on every run.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._media_dir = tempfile.mkdtemp(prefix='summit-test-media-')
+        cls._media_override = override_settings(MEDIA_ROOT=cls._media_dir)
+        cls._media_override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._media_override.disable()
+        shutil.rmtree(cls._media_dir, ignore_errors=True)
+        super().tearDownClass()
+
+
 @_TEST_STATIC
-class KYCAndDepositTests(TestCase):
+class KYCAndDepositTests(TempMediaMixin, TestCase):
     def setUp(self):
         from unittest import mock
         p = mock.patch('accounts.email_utils.EmailService.send_email', return_value=True)
@@ -273,6 +300,158 @@ class KYCAndDepositTests(TestCase):
         self.client.force_login(self.user)
         for path in [reverse('dashboard:index'), reverse('dashboard:kyc'), reverse('dashboard:deposits')]:
             self.assertEqual(self.client.get(path).status_code, 200)
+
+    def test_kyc_files_land_in_media_root(self):
+        """The uploaded document + selfie must actually exist on disk afterwards."""
+        self.client.force_login(self.user)
+        self._submit_kyc()
+        kyc = KYCVerification.objects.get(user=self.user)
+        for f in (kyc.document_image, kyc.selfie_image):
+            self.assertTrue(f.name, 'file field was left empty')
+            self.assertTrue(
+                os.path.exists(os.path.join(self._media_dir, f.name)),
+                f'{f.name} was not written to MEDIA_ROOT',
+            )
+        self.assertTrue(kyc.document_image.name.startswith('kyc/documents/'))
+        self.assertTrue(kyc.selfie_image.name.startswith('kyc/selfies/'))
+
+
+@_TEST_STATIC
+class KYCAdminReviewTests(TempMediaMixin, TestCase):
+    """The whole point of collecting documents is that staff can look at them."""
+
+    def setUp(self):
+        from unittest import mock
+        p = mock.patch('accounts.email_utils.EmailService.send_email', return_value=True)
+        p.start()
+        self.addCleanup(p.stop)
+        self.user = User.objects.create_user(
+            username='auser', email='auser@example.com', password='pw',
+        )
+        self.staff = User.objects.create_superuser('astaff', 'astaff@example.com', 'pw')
+        self.client.force_login(self.user)
+        self.client.post(reverse('dashboard:kyc'), {
+            'first_name': 'Jane', 'last_name': 'Doe', 'gender': 'female',
+            'country': 'Nigeria', 'city': 'Lagos', 'postal_code': '100001',
+            'address_line_1': '1 Main St', 'document_type': 'passport',
+            'document_image': SimpleUploadedFile('id.png', _png_bytes(), 'image/png'),
+            'selfie_image': SimpleUploadedFile('selfie.png', _png_bytes(), 'image/png'),
+            'info_correct': 'on', 'is_individual': 'on',
+        })
+        self.kyc = KYCVerification.objects.get(user=self.user)
+
+    def test_admin_previews_link_to_the_uploaded_files(self):
+        from django.contrib.admin.sites import site
+        model_admin = site._registry[KYCVerification]
+        for html, url in (
+            (model_admin.document_preview(self.kyc), self.kyc.document_image.url),
+            (model_admin.selfie_preview(self.kyc), self.kyc.selfie_image.url),
+        ):
+            self.assertIn(url, html)
+            self.assertIn('<img', html)
+            self.assertIn('target="_blank"', html)
+
+    def test_admin_preview_flags_a_file_missing_from_storage(self):
+        os.remove(os.path.join(self._media_dir, self.kyc.document_image.name))
+        from django.contrib.admin.sites import site
+        html = site._registry[KYCVerification].document_preview(self.kyc)
+        self.assertIn('File missing from storage', html)
+        self.assertNotIn('<img', html)
+
+    def test_admin_change_page_renders_the_submission(self):
+        self.client.force_login(self.staff)
+        r = self.client.get(
+            reverse('admin:accounts_kycverification_change', args=[self.kyc.pk])
+        )
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, self.kyc.document_image.url)
+        self.assertContains(r, self.kyc.selfie_image.url)
+
+    def test_kyc_media_is_staff_only(self):
+        url = self.kyc.document_image.url
+
+        self.client.force_login(self.staff)
+        self.assertEqual(self.client.get(url).status_code, 200)
+
+        self.client.force_login(self.user)  # the owner, but not staff
+        self.assertEqual(self.client.get(url).status_code, 403)
+
+        self.client.logout()
+        self.assertEqual(self.client.get(url).status_code, 403)
+
+
+@_TEST_STATIC
+class UnwritableMediaTests(TestCase):
+    """Regression tests for the production outage where MEDIA_ROOT was not writable.
+
+    The container ran as uid 999 while the bind-mounted media dir was owned by uid
+    1000, so every upload raised ``PermissionError`` out of ``.save()`` and the user
+    got a bare 500 page. Storage failures must surface as a handled error instead.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls._media_dir = tempfile.mkdtemp(prefix='summit-readonly-media-')
+        os.chmod(cls._media_dir, 0o555)  # readable + traversable, not writable
+        cls._media_override = override_settings(MEDIA_ROOT=cls._media_dir)
+        cls._media_override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._media_override.disable()
+        os.chmod(cls._media_dir, 0o755)
+        shutil.rmtree(cls._media_dir, ignore_errors=True)
+        super().tearDownClass()
+
+    def setUp(self):
+        from unittest import mock
+        p = mock.patch('accounts.email_utils.EmailService.send_email', return_value=True)
+        p.start()
+        self.addCleanup(p.stop)
+        self.user = User.objects.create_user(
+            username='rouser', email='rouser@example.com', password='pw',
+        )
+        if os.getuid() == 0:
+            self.skipTest('running as root — a read-only dir would still be writable')
+
+    def _upload(self, name):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        return SimpleUploadedFile(name, _png_bytes(), content_type='image/png')
+
+    def test_kyc_submit_reports_error_instead_of_500(self):
+        self.client.force_login(self.user)
+        r = self.client.post(reverse('dashboard:kyc'), {
+            'first_name': 'Jane', 'last_name': 'Doe', 'gender': 'female',
+            'country': 'Nigeria', 'city': 'Lagos', 'postal_code': '100001',
+            'address_line_1': '1 Main St', 'document_type': 'passport',
+            'document_image': self._upload('id.png'),
+            'selfie_image': self._upload('selfie.png'),
+            'info_correct': 'on', 'is_individual': 'on',
+        })
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, 'could not save your upload')
+        # Nothing half-written: no submission row, and the user is still unverified.
+        self.assertFalse(KYCVerification.objects.filter(user=self.user).exists())
+
+    def test_deposit_proof_reports_error_instead_of_500(self):
+        from transactions.models import Transaction
+        admin = User.objects.create_superuser('root3', 'root3@example.com', 'pw')
+        KYCVerification.objects.create(
+            user=self.user, first_name='J', last_name='D', gender='female',
+            country='NG', city='Lagos', postal_code='1', address_line_1='1 St',
+            document_type='passport', status=KYCVerification.STATUS_APPROVED,
+            reviewed_by=admin,
+        )
+        self.client.force_login(self.user)
+        r = self.client.post(reverse('dashboard:new_deposit'), {
+            'amount': '500', 'payment_method': 'USDT',
+            'proof_image': self._upload('p.png'),
+        }, follow=True)
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, 'could not save your upload')
+        # The deposit must not be left behind as a proof-less pending transaction.
+        self.assertFalse(Transaction.objects.filter(user=self.user, type='deposit').exists())
 
 
 @_TEST_STATIC

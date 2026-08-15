@@ -1,7 +1,7 @@
 from django.contrib import admin
-from django.utils.html import format_html
 
 from accounts.email_utils import EmailService
+from accounts.upload_utils import admin_image_preview
 
 from .models import CoursePurchase
 
@@ -22,9 +22,7 @@ class CoursePurchaseAdmin(admin.ModelAdmin):
     has_proof.short_description = 'Proof'
 
     def proof_preview(self, obj):
-        if obj.proof_image:
-            return format_html('<img src="{}" style="max-width:480px;max-height:480px;" />', obj.proof_image.url)
-        return 'No proof uploaded'
+        return admin_image_preview(obj.proof_image, 'No proof uploaded')
     proof_preview.short_description = 'Payment proof'
 
     def approve_purchases(self, request, queryset):

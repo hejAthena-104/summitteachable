@@ -2,17 +2,22 @@
 from decimal import Decimal, InvalidOperation
 import base64
 import io
+import logging
 import random
 
 from django.contrib import messages
+from django.db import transaction
 from django.shortcuts import get_object_or_404, render
 
 from accounts.models import User, EmailVerificationToken, LoginCode
 from accounts.email_utils import EmailService
+from accounts.upload_utils import UPLOAD_FAILED_MESSAGE
 from education.models import Course
 from transactions.models import PaymentMethod
 
 from .models import CoursePurchase
+
+logger = logging.getLogger(__name__)
 
 
 def _unique_username(email):
@@ -133,12 +138,18 @@ def checkout(request, slug):
             user.country = country
         user.save()
 
-        purchase = CoursePurchase.objects.create(
-            user=user, course=course,
-            buyer_email=email, buyer_name=name, buyer_phone=phone, buyer_country=country,
-            amount=amount, payment_method=method, tx_reference=tx_reference, proof_image=proof,
-            status='pending',
-        )
+        try:
+            with transaction.atomic():
+                purchase = CoursePurchase.objects.create(
+                    user=user, course=course,
+                    buyer_email=email, buyer_name=name, buyer_phone=phone, buyer_country=country,
+                    amount=amount, payment_method=method, tx_reference=tx_reference, proof_image=proof,
+                    status='pending',
+                )
+        except OSError:
+            logger.exception('Course purchase proof storage failure for user id=%s', user.pk)
+            messages.error(request, UPLOAD_FAILED_MESSAGE)
+            return render(request, 'store/checkout.html', _ctx(course, pay_methods, request))
 
         # Verify their email using the EXISTING verification flow.
         if not user.is_verified:

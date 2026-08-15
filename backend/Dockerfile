@@ -38,12 +38,16 @@ ENV DJANGO_SETTINGS_MODULE=config.settings \
     DEBUG=False
 RUN python manage.py collectstatic --no-input --clear
 
-# Drop root for the runtime user. Static files are already in place under
+# Create the runtime user. Static files are already in place under
 # /app/staticfiles owned by root; chown them so WhiteNoise can read after
 # the user switch.
+#
+# NOTE: there is deliberately no `USER app` here. The container starts as root so
+# docker-entrypoint.sh can chown the bind-mounted media volume (whose ownership
+# comes from the host and overrides the chown below), then it immediately drops
+# to `app` via setpriv. Migrations, seeds and gunicorn all run unprivileged.
 RUN groupadd -r app && useradd -r -g app -d /app -s /sbin/nologin app \
   && chown -R app:app /app
-USER app
 
 # TCP healthcheck — Django may 404 on /, so just probe the listener.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \

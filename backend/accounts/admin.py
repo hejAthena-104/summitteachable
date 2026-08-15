@@ -1,9 +1,9 @@
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
-from django.utils.html import format_html
 from .models import User, LoginHistory, Notification, LoginCode, KYCVerification
 from .email_utils import EmailService
+from .upload_utils import admin_image_preview
 
 # Remove the default Django "Groups" model from the admin — this platform does not
 # use group-based permissions, so it is just clutter.
@@ -324,15 +324,11 @@ class KYCVerificationAdmin(admin.ModelAdmin):
     full_name.short_description = 'Name'
 
     def document_preview(self, obj):
-        if obj.document_image:
-            return format_html('<img src="{}" style="max-width:480px;max-height:480px;" />', obj.document_image.url)
-        return 'No document uploaded'
+        return admin_image_preview(obj.document_image, 'No document uploaded')
     document_preview.short_description = 'ID document'
 
     def selfie_preview(self, obj):
-        if obj.selfie_image:
-            return format_html('<img src="{}" style="max-width:480px;max-height:480px;" />', obj.selfie_image.url)
-        return 'No selfie uploaded'
+        return admin_image_preview(obj.selfie_image, 'No selfie uploaded')
     selfie_preview.short_description = 'Selfie with document'
 
     @admin.action(description='Approve selected — verify identity')

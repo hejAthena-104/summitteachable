@@ -1,6 +1,7 @@
 from django.contrib import admin, messages
 from django.utils.html import format_html
 from accounts.email_utils import EmailService
+from accounts.upload_utils import admin_image_preview
 from .models import Transaction, Deposit, Withdrawal, Transfer
 
 
@@ -118,13 +119,8 @@ class DepositAdmin(admin.ModelAdmin):
     actions = ['approve_deposits', 'reject_deposits']
 
     def proof_preview(self, obj):
-        """Display proof image preview"""
-        if obj.proof_image:
-            return format_html(
-                '<img src="{}" style="max-width: 500px; max-height: 500px;" />',
-                obj.proof_image.url
-            )
-        return 'No proof uploaded'
+        """Display proof image preview (click through for the full-size original)"""
+        return admin_image_preview(obj.proof_image, 'No proof uploaded')
     proof_preview.short_description = 'Payment Proof Preview'
 
     def has_proof(self, obj):
