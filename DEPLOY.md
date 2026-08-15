@@ -59,3 +59,23 @@ cd /opt/swifteagle && docker compose restart summitteachable   # quick restart (
   `/opt/swifteagle/Caddyfile` (`dashboard.summitteachable.com → summitteachable:8000`).
 - `.env.prod` (secrets) lives at `/opt/summitteachable/repo/backend/.env.prod` — it is **git-ignored**,
   so it stays on the VPS and is never pushed.
+
+## Uploaded files (KYC documents, deposit proofs, avatars, payment QR codes)
+
+They live on the host at **`/opt/summitteachable/media`**, bind-mounted to `/app/media` in the
+container, so they survive a rebuild. Do not delete that directory — it is the only copy.
+
+The container serves requests as the unprivileged `app` user (uid 999), but a bind mount keeps the
+*host's* ownership, which does not have to match. When it did not, every upload died with
+`PermissionError: [Errno 13] Permission denied: '/app/media/…'` and users got a 500 on KYC,
+deposits and admin QR uploads. `docker-entrypoint.sh` now fixes this on every start: it begins as
+root, creates the upload directories, `chown`s them to `app`, then drops privileges via `setpriv`.
+So a restored or recopied media directory heals itself — just restart the container.
+
+To check it by hand:
+```bash
+docker exec summitteachable-backend ls -ld /app/media          # expect owner `app`
+docker exec -u app summitteachable-backend touch /app/media/.w && echo writable
+docker logs summitteachable-backend | head -4                  # entrypoint prints the uid it drops to
+```
+The startup log warns loudly if the directory is still not writable.
