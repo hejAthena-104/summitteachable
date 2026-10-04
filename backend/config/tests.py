@@ -87,6 +87,13 @@ class AuthThrottleTests(TestCase):
         resp = self.client.post(reverse('accounts:register'), {}, REMOTE_ADDR='203.0.113.9')
         self.assertEqual(resp.status_code, 429)
 
+    def test_ipv6_addresses_in_one_64_share_a_budget(self):
+        limit = security.THROTTLE_RULES['login'][0][0]
+        for i in range(limit):
+            self._post_login(ip='2001:db8:1:2::%x' % (i + 1))
+        self.assertEqual(self._post_login(ip='2001:db8:1:2:ffff::1').status_code, 429)
+        self.assertEqual(self._post_login(ip='2001:db8:1:3::1').status_code, 200)
+
     def test_get_requests_are_never_throttled(self):
         for _ in range(security.THROTTLE_RULES['login'][0][0] + 5):
             resp = self.client.get(reverse('accounts:login'), REMOTE_ADDR='203.0.113.9')

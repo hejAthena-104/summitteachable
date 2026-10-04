@@ -7,10 +7,14 @@ was slowed down or attributable to an address — everything the app logged was
 Caddy's internal IP.
 """
 
+import contextlib
+import fcntl
 import ipaddress
 import json
 import logging
+import os
 import re
+import tempfile
 import time
 import urllib.parse
 import urllib.request
@@ -75,17 +79,44 @@ def _throttle_patterns():
     ]
 
 
+def _bucket(ip):
+    """The key a client is counted under. An IPv6 customer is handed a whole
+    /64, so counting single addresses would let one machine rotate through
+    billions of them; the /64 is the smallest unit that maps to one visitor."""
+    try:
+        addr = ipaddress.ip_address(ip)
+    except ValueError:
+        return ip
+    if addr.version == 6:
+        return str(ipaddress.ip_network('%s/64' % addr, strict=False).network_address) + '/64'
+    return str(addr)
+
+
+_LOCK_PATH = os.path.join(tempfile.gettempdir(), 'summit-throttle.lock')
+
+
+@contextlib.contextmanager
+def _counter_lock():
+    """Serialise counter updates across gunicorn workers. The file cache's
+    incr() is a separate read and write, so parallel requests landing on
+    different workers could all read the same value and be counted once —
+    a burst would get through several times over the limit."""
+    with open(_LOCK_PATH, 'a') as handle:
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
+
+
 def _hit(scope, ident, limit, window):
     """Count one event in the current fixed window; return seconds to wait if
     this event is over the limit, else 0."""
     now = int(time.time())
     key = 'throttle:%s:%s:%d:%d' % (scope, ident, window, now // window)
-    cache.add(key, 0, timeout=window)
-    try:
-        count = cache.incr(key)
-    except ValueError:  # expired between add() and incr()
-        cache.set(key, 1, timeout=window)
-        count = 1
+    with _counter_lock():
+        count = (cache.get(key) or 0) + 1
+        cache.set(key, count, timeout=window)
     return (window - now % window) if count > limit else 0
 
 
@@ -111,8 +142,9 @@ class AuthThrottleMiddleware:
             for scope, pattern in self.patterns:
                 if pattern.match(request.path):
                     ip = client_ip(request) or 'unknown'
-                    wait = max(_hit(scope, ip, limit, window)
-                               for limit, window in THROTTLE_RULES[scope])
+                    # A list, not a generator: every window must be counted.
+                    wait = max([_hit(scope, _bucket(ip), limit, window)
+                                for limit, window in THROTTLE_RULES[scope]])
                     if wait:
                         logger.warning('Throttled %s POST %s from %s', scope, request.path, ip)
                         response = HttpResponse(_TOO_MANY, status=429)
