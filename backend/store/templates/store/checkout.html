@@ -178,7 +178,8 @@
         <div class="field"><label>Transaction reference / hash</label>
           <input type="text" name="tx_reference" value="{{ form.tx_reference|default:'' }}" placeholder="Optional — speeds up review"></div>
         <div class="field"><label>Proof of payment (screenshot) *</label>
-          <input type="file" name="proof_image" accept="image/*" required></div>
+          <input type="file" name="proof_image" accept="image/jpeg,image/png,image/webp" required></div>
+        {% include 'includes/turnstile.html' %}
         <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem;padding:13px;">
           <i class="bi bi-lock-fill"></i> Submit &amp; unlock course</button>
         <p class="muted" style="font-size:.74rem;text-align:center;margin-top:9px;"><i class="bi bi-shield-lock"></i> We verify every payment manually before granting access.</p>

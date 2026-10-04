@@ -14,12 +14,56 @@ The permission problem itself is prevented at the container level; see the
 root-only preamble in ``docker-entrypoint.sh``.
 """
 
+import uuid
+import warnings
+
 from django.utils.html import format_html
+from PIL import Image
 
 UPLOAD_FAILED_MESSAGE = (
     'We could not save your upload just now. Please try again in a moment — '
     'if it keeps happening, contact support.'
 )
+
+MAX_IMAGE_UPLOAD_BYTES = 8 * 1024 * 1024
+INVALID_IMAGE_MESSAGE = 'Please upload a JPG, PNG or WebP image (a screenshot or photo), up to 8 MB.'
+
+# Pillow format name -> the extension the file is stored under.
+_IMAGE_EXTENSIONS = {'JPEG': '.jpg', 'PNG': '.png', 'WEBP': '.webp'}
+
+
+def clean_image_upload(upload):
+    """Check that an upload really is an image. Returns an error message for the
+    user, or ``None`` when the file is fine.
+
+    Views that read ``request.FILES`` directly bypass the checks a form's
+    ``ImageField`` would do, so anything at all could be stored: the checkout's
+    proof-of-payment field accepted ``shell.php`` from a visitor who was not
+    even logged in. The format is taken from the file's CONTENT (decoded by
+    Pillow), never from its name or the browser's content type, and the file is
+    renamed to a random name with the matching extension — so nothing an
+    uploader types ends up in a path, and a stored file can never carry an
+    extension like ``.php`` or ``.html``.
+    """
+    if upload.size > MAX_IMAGE_UPLOAD_BYTES:
+        return INVALID_IMAGE_MESSAGE
+    try:
+        with warnings.catch_warnings():
+            # A decompression bomb is a warning by default; treat it as an error.
+            warnings.simplefilter('error', Image.DecompressionBombWarning)
+            upload.seek(0)
+            image = Image.open(upload)
+            fmt = image.format
+            image.verify()
+    except Exception:
+        return INVALID_IMAGE_MESSAGE
+    finally:
+        upload.seek(0)
+    extension = _IMAGE_EXTENSIONS.get(fmt)
+    if not extension:
+        return INVALID_IMAGE_MESSAGE
+    upload.name = uuid.uuid4().hex + extension
+    return None
 
 
 def admin_image_preview(file_field, empty_text='Nothing uploaded'):

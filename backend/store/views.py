@@ -11,7 +11,8 @@ from django.shortcuts import get_object_or_404, render
 
 from accounts.models import User, EmailVerificationToken, LoginCode
 from accounts.email_utils import EmailService
-from accounts.upload_utils import UPLOAD_FAILED_MESSAGE
+from accounts.upload_utils import UPLOAD_FAILED_MESSAGE, clean_image_upload
+from config.security import turnstile_ok, TURNSTILE_FAILED_MESSAGE
 from education.models import Course
 from transactions.models import PaymentMethod
 
@@ -119,6 +120,15 @@ def checkout(request, slug):
             return render(request, 'store/checkout.html', _ctx(course, pay_methods, request))
         if not proof:
             messages.error(request, 'Please attach your proof of payment.')
+            return render(request, 'store/checkout.html', _ctx(course, pay_methods, request))
+        # Everything below creates an account and stores a file for an anonymous
+        # visitor, so the human check and the image check both come first.
+        if not turnstile_ok(request):
+            messages.error(request, TURNSTILE_FAILED_MESSAGE)
+            return render(request, 'store/checkout.html', _ctx(course, pay_methods, request))
+        proof_error = clean_image_upload(proof)
+        if proof_error:
+            messages.error(request, proof_error)
             return render(request, 'store/checkout.html', _ctx(course, pay_methods, request))
 
         # Create or fetch the buyer's account (passwordless — they log in by code).

@@ -14,7 +14,7 @@ from functools import wraps
 
 from accounts.models import User, Notification, KYCVerification, LoginCode
 from accounts.forms import KYCForm
-from accounts.upload_utils import UPLOAD_FAILED_MESSAGE
+from accounts.upload_utils import UPLOAD_FAILED_MESSAGE, clean_image_upload
 from transactions.models import (
     Transaction, Deposit, Withdrawal, Transfer, PaymentMethod,
     SwapRate, Swap, Beneficiary, ExternalTransfer, SiteSetting,
@@ -152,6 +152,10 @@ def new_deposit(request):
         return redirect('dashboard:deposits')
     if not proof:
         messages.error(request, 'Please attach your proof of payment.')
+        return redirect('dashboard:deposits')
+    proof_error = clean_image_upload(proof)
+    if proof_error:
+        messages.error(request, proof_error)
         return redirect('dashboard:deposits')
 
     pm = PaymentMethod.objects.filter(name=method, is_active=True,
@@ -587,8 +591,12 @@ def account_settings(request):
 
         elif action == 'update_avatar':
             # Update profile picture
-            if 'photo' in request.FILES:
-                request.user.avatar = request.FILES['photo']
+            photo = request.FILES.get('photo')
+            photo_error = clean_image_upload(photo) if photo else None
+            if photo_error:
+                messages.error(request, photo_error)
+            elif photo:
+                request.user.avatar = photo
                 try:
                     with transaction.atomic():
                         request.user.save()

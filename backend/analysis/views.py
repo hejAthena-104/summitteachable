@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
+from accounts.upload_utils import clean_image_upload
+
 from .models import AnalysisPost
 
 
@@ -26,11 +28,15 @@ def submit(request):
 
         valid_markets = dict(AnalysisPost.MARKET_CHOICES)
         valid_bias = dict(AnalysisPost.BIAS_CHOICES)
+        chart_image = request.FILES.get('chart_image')
+        chart_error = clean_image_upload(chart_image) if chart_image else None
 
         if not title or not symbol or not timeframe or not body:
             messages.error(request, 'Please fill in the title, symbol, timeframe and analysis body.')
         elif market not in valid_markets or bias not in valid_bias:
             messages.error(request, 'Please choose a valid market and bias.')
+        elif chart_error:
+            messages.error(request, chart_error)
         else:
             AnalysisPost.objects.create(
                 author=request.user,
@@ -41,7 +47,7 @@ def submit(request):
                 timeframe=timeframe,
                 tv_symbol=tv_symbol,
                 body=body,
-                chart_image=request.FILES.get('chart_image'),
+                chart_image=chart_image,
                 status='pending',
                 is_house=False,
             )

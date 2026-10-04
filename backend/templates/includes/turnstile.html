@@ -1,0 +1,4 @@
+{% if TURNSTILE_SITEKEY %}
+<div class="cf-turnstile" data-sitekey="{{ TURNSTILE_SITEKEY }}" data-action="turnstile-spin-v2" style="margin-bottom:1rem;"></div>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{% endif %}

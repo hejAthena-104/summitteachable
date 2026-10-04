@@ -42,7 +42,7 @@ def protected_media(request, path):
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(settings.ADMIN_PATH, admin.site.urls),
 
     # Authentication URLs
     path('auth/', include('accounts.urls')),

@@ -46,7 +46,8 @@ cd /opt/swifteagle && docker compose restart summitteachable   # quick restart (
 - **GitHub push:** the `git` remote is SSH (`git@github.com:hejAthena-104/summitteachable.git`).
 - **VPS:** `ssh root@156.67.28.100` (SSH key).
 - **Netlify:** the site is linked to the GitHub repo — pushes auto-deploy, nothing to run.
-- **Admin:** https://dashboard.summitteachable.com/admin/  (`admin` / change the seeded password).
+- **Admin:** NOT at `/admin/`. The path is the `ADMIN_URL` value in `.env.prod` on the VPS
+  (`grep ADMIN_URL /opt/summitteachable/repo/backend/.env.prod`) — it is kept out of this repo on purpose.
 
 ## Rollback
 - **Netlify:** dashboard → Deploys → pick a previous deploy → "Publish deploy".
@@ -79,3 +80,23 @@ docker exec -u app summitteachable-backend touch /app/media/.w && echo writable
 docker logs summitteachable-backend | head -4                  # entrypoint prints the uid it drops to
 ```
 The startup log warns loudly if the directory is still not writable.
+
+## Abuse protection (added after the 2026-10-03 attack)
+
+An automated tool made 232 admin password guesses, created ~40 accounts through the register and
+checkout forms, and uploaded `.php` files as "proof of payment". Nothing was breached, but nothing
+slowed it down either. What now stands in the way (`backend/config/security.py`):
+
+- **Admin path** — set by `ADMIN_URL` in `.env.prod`; `/admin/` is a 404.
+- **Throttling** — per-IP caps on POSTs to login (incl. admin), login/2FA code entry, the
+  email-sending endpoints, register and checkout. Over the cap returns HTTP 429. Limits are
+  `THROTTLE_RULES` in `config/security.py`; `AUTH_THROTTLE_ENABLED=False` in `.env.prod` switches it
+  off in an emergency. Counters live in a file cache inside the container, so a rebuild resets them.
+- **Uploads** — proof of payment, avatars and analysis charts must decode as a real JPG/PNG/WebP
+  (max 8 MB) and are stored under a random name (`accounts/upload_utils.py: clean_image_upload`).
+- **Turnstile** — the human check on register / login / checkout switches on only when BOTH
+  `TURNSTILE_SITEKEY` and `TURNSTILE_SECRET` are in `.env.prod`. Without them the forms work as before.
+- **Real visitor IPs** — gunicorn's access log and the Login History table now record the
+  visitor's address (from Caddy's `X-Forwarded-For`), not Caddy's internal `172.18.x.x`.
+
+To see who is being throttled: `docker logs summitteachable-backend 2>&1 | grep Throttled`.

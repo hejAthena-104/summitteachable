@@ -9,6 +9,7 @@ from django.conf import settings
 from .forms import UserRegistrationForm, UserLoginForm
 from .models import User, EmailVerificationToken, PasswordResetToken, LoginHistory, LoginCode
 from .email_utils import EmailService
+from config.security import client_ip, turnstile_ok, TURNSTILE_FAILED_MESSAGE
 
 
 def login_view(request):
@@ -18,6 +19,10 @@ def login_view(request):
         return redirect('dashboard:index')  # We'll create this later
 
     if request.method == 'POST':
+        if not turnstile_ok(request):
+            messages.error(request, TURNSTILE_FAILED_MESSAGE)
+            return render(request, 'auth/login.html', {'form': UserLoginForm()})
+
         form = UserLoginForm(request, data=request.POST)
 
         if form.is_valid():
@@ -50,7 +55,7 @@ def login_view(request):
                     request.session.set_expiry(1209600)  # 2 weeks
 
                 # Log login history
-                ip_address = request.META.get('REMOTE_ADDR')
+                ip_address = client_ip(request)
                 user_agent = request.META.get('HTTP_USER_AGENT', '')
                 LoginHistory.objects.create(
                     user=user,
@@ -129,7 +134,7 @@ def login_code_verify(request):
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             LoginHistory.objects.create(
                 user=user,
-                ip_address=request.META.get('REMOTE_ADDR'),
+                ip_address=client_ip(request),
                 user_agent=request.META.get('HTTP_USER_AGENT', ''),
                 success=True,
             )
@@ -164,7 +169,7 @@ def two_factor_verify(request):
             request.session.pop('2fa_user_id', None)
             LoginHistory.objects.create(
                 user=user,
-                ip_address=request.META.get('REMOTE_ADDR'),
+                ip_address=client_ip(request),
                 user_agent=request.META.get('HTTP_USER_AGENT', ''),
                 success=True,
             )
@@ -184,7 +189,9 @@ def register_view(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
 
-        if form.is_valid():
+        if not turnstile_ok(request):
+            messages.error(request, TURNSTILE_FAILED_MESSAGE)
+        elif form.is_valid():
             # Create user
             user = form.save()
 

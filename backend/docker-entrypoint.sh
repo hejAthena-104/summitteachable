@@ -56,4 +56,5 @@ exec gunicorn config.wsgi:application \
   --workers "${GUNICORN_WORKERS:-3}" \
   --timeout "${GUNICORN_TIMEOUT:-60}" \
   --access-logfile - \
+  --access-logformat '%({x-forwarded-for}i)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"' \
   --error-logfile -

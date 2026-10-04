@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 from decouple import config
 import dj_database_url
 
@@ -29,6 +30,27 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-this-in-produc
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+
+
+def _admin_path(raw):
+    """Resolve the admin mount point.
+
+    decouple returns '' for a var that is set but empty, so a bare `ADMIN_URL=`
+    in an env file would otherwise mount the whole admin at the site root — far
+    worse than the /admin/ this is meant to avoid. Empty, '/' and whitespace all
+    fall back to the local default, and the value is normalised to `something/`.
+    """
+    raw = (raw or '').strip().strip('/')
+    if not raw:
+        raw = 'admin-local-only'
+    return raw + '/'
+
+
+# The admin holds every customer's KYC documents and balances and this host is
+# public, so it is not served at /admin/ (which took 232 password guesses in one
+# afternoon). The real path comes from ADMIN_URL in .env.prod and is deliberately
+# NOT in this repo — the default is only for local development.
+ADMIN_PATH = _admin_path(config('ADMIN_URL', default=''))
 
 # Detect Render environment
 if 'RENDER' in os.environ:
@@ -68,6 +90,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',  # For static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'config.security.AuthThrottleMiddleware',  # per-IP caps on login/register/checkout POSTs
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -223,6 +246,30 @@ if not DEBUG:
     # can echo it back in the X-CSRFToken header — leave CSRF_COOKIE_HTTPONLY
     # at its default (False).
 
+# Abuse protection (see config/security.py) --------------------------------
+# Throttle counters must be shared by every gunicorn worker, so production uses
+# a file cache inside the container rather than the per-process default.
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
+if TESTING:
+    CACHES = {'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': config('CACHE_DIR', default='/tmp/summit-cache'),
+            'OPTIONS': {'MAX_ENTRIES': 20000},
+        }
+    }
+
+# Off under test so the suite's many logins from one address are not cut off;
+# the throttle's own tests switch it back on.
+AUTH_THROTTLE_ENABLED = config('AUTH_THROTTLE_ENABLED', default=not TESTING, cast=bool)
+
+# Cloudflare Turnstile on register / login / checkout. Both keys must be set
+# for it to switch on; with either missing the forms work without the check.
+TURNSTILE_SITEKEY = '' if TESTING else config('TURNSTILE_SITEKEY', default='')
+TURNSTILE_SECRET = '' if TESTING else config('TURNSTILE_SECRET', default='')
+
 # Logging configuration
 LOGGING = {
     'version': 1,
@@ -245,6 +292,11 @@ LOGGING = {
         'accounts': {
             'handlers': ['console'],
             'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        'config.security': {
+            'handlers': ['console'],
+            'level': 'INFO',
             'propagate': False,
         },
     },
