@@ -92,7 +92,9 @@ def _bucket(ip):
     return str(addr)
 
 
-_LOCK_PATH = os.path.join(tempfile.gettempdir(), 'summit-throttle.lock')
+# Per-uid name: a root `manage.py shell` once created this file as root and the
+# app user (uid 999) could no longer open it, so every login POST returned 500.
+_LOCK_PATH = os.path.join(tempfile.gettempdir(), f'summit-throttle-{os.getuid()}.lock')
 
 
 @contextlib.contextmanager
