@@ -275,9 +275,16 @@
                         {% csrf_token %}
                         <div class="form-group">
                             <input type="hidden" value="{{ method.name }}" name="method">
+                            {% if request.user.withdrawals_activated %}
                             <button class="btn btn-lg btn-primary w-100" type="submit">
                                 Select this method
                             </button>
+                            {% else %}
+                            <button class="btn btn-lg btn-secondary w-100" type="button" disabled>
+                                Select this method
+                            </button>
+                            <a href="{% url 'dashboard:activate' %}" class="d-block text-center mt-2 small">Activate your account to withdraw</a>
+                            {% endif %}
                         </div>
                     </form>
                 </div>

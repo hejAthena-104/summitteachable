@@ -77,6 +77,14 @@ class User(AbstractUser):
         help_text="Email two-factor authentication — a code is emailed at each sign-in.",
     )
 
+    # Withdrawal activation: user requests once, admin issues a code, user enters it.
+    activation_requested_at = models.DateTimeField(null=True, blank=True)
+    activation_code = models.CharField(
+        max_length=12, blank=True,
+        help_text="Issued by admin (action 'Generate activation code'). Give it to the user.",
+    )
+    withdrawals_activated = models.BooleanField(default=False)
+
     # Security
     withdrawal_otp = models.CharField(max_length=6, blank=True, null=True)
     transaction_pin = models.CharField(

@@ -42,6 +42,38 @@ def kyc_required(view_func):
     return _wrapped
 
 
+def activation_required(view_func):
+    """Block withdrawals until the user has entered their admin-issued activation code."""
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if not request.user.withdrawals_activated:
+            messages.warning(request, 'Please activate your account before withdrawing.')
+            return redirect('dashboard:activate')
+        return view_func(request, *args, **kwargs)
+    return _wrapped
+
+
+@login_required
+def activate(request):
+    user = request.user
+    if request.method == 'POST' and not user.withdrawals_activated:
+        if request.POST.get('action') == 'request':
+            if not user.activation_requested_at:
+                user.activation_requested_at = timezone.now()
+                user.save(update_fields=['activation_requested_at'])
+                messages.success(request, 'Activation requested. An admin will send you your code.')
+        else:
+            code = ''.join(ch for ch in request.POST.get('code', '') if ch.isdigit())
+            if user.activation_code and code and secrets.compare_digest(code, user.activation_code):
+                user.withdrawals_activated = True
+                user.save(update_fields=['withdrawals_activated'])
+                messages.success(request, 'Your account is activated. Withdrawals are now enabled.')
+                return redirect('dashboard:withdrawals')
+            messages.error(request, 'Invalid activation code.')
+        return redirect('dashboard:activate')
+    return render(request, 'dashboard/activate.html', {'user': user})
+
+
 # Preset top-up amounts offered on the deposit screen.
 TOPUP_AMOUNTS = [1000, 5000, 10000, 25000]
 MIN_TOPUP = Decimal('100')
@@ -303,6 +335,7 @@ def kyc(request):
 
 
 @kyc_required
+@activation_required
 def select_withdrawal_method(request):
     """Select withdrawal method and proceed to withdrawal form"""
     if request.method == 'POST':
@@ -328,6 +361,7 @@ def select_withdrawal_method(request):
 
 
 @kyc_required
+@activation_required
 def withdraw_funds(request):
     """Withdraw funds form"""
     # Get selected withdrawal method from session

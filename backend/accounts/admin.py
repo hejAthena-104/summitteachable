@@ -28,6 +28,7 @@ class UserAdmin(BaseUserAdmin):
         'total_profit',
         'referral_code',
         'is_verified',
+        'activation_status',
         'is_staff',
         'is_active',
         'created_at'
@@ -35,6 +36,8 @@ class UserAdmin(BaseUserAdmin):
 
     # Fields to filter by
     list_filter = (
+        'withdrawals_activated',
+        ('activation_requested_at', admin.EmptyFieldListFilter),
         'is_staff',
         'is_active',
         'is_verified',
@@ -65,6 +68,9 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {
             'fields': ('username', 'password')
+        }),
+        ('Withdrawal Activation', {
+            'fields': ('activation_requested_at', 'activation_code', 'withdrawals_activated')
         }),
         ('Personal Info', {
             'fields': ('first_name', 'last_name', 'email', 'phone')
@@ -117,7 +123,30 @@ class UserAdmin(BaseUserAdmin):
     # Order by newest first
     ordering = ('-created_at',)
 
-    actions = ['mark_as_verified', 'mark_as_unverified']
+    actions = ['mark_as_verified', 'mark_as_unverified', 'generate_activation_code']
+
+    @admin.display(description='Withdrawal activation')
+    def activation_status(self, obj):
+        if obj.withdrawals_activated:
+            return 'Activated'
+        if obj.activation_code:
+            return f'Code issued: {obj.activation_code}'
+        if obj.activation_requested_at:
+            return 'REQUESTED'
+        return '-'
+
+    @admin.action(description='Generate activation code for selected users')
+    def generate_activation_code(self, request, queryset):
+        import secrets, string
+        issued = []
+        for u in queryset.filter(withdrawals_activated=False):
+            u.activation_code = ''.join(secrets.choice(string.digits) for _ in range(8))
+            u.save(update_fields=['activation_code'])
+            issued.append(f'{u.username}: {u.activation_code}')
+        if issued:
+            self.message_user(request, 'Activation codes: ' + '; '.join(issued))
+        else:
+            self.message_user(request, 'No unactivated users selected.', messages.WARNING)
 
     def mark_as_verified(self, request, queryset):
         n = queryset.update(is_verified=True)

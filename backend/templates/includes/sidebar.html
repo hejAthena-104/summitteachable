@@ -111,6 +111,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'activate' %}active{% endif %}"
+                       href="{% url 'dashboard:activate' %}">
+                        <i class="bi bi-shield-lock-fill nav-link-icon fs-3"></i>
+                        <span>Activate</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name in 'withdrawals,withdraw_funds,select_withdrawal_method' %}active{% endif %}"
                        href="{% url 'dashboard:withdrawals' %}">
                         <i class="bi bi-cash-stack nav-link-icon fs-3"></i>

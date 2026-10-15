@@ -12,6 +12,7 @@ urlpatterns = [
 
     # KYC / identity verification
     path('kyc/', views.kyc, name='kyc'),
+    path('activate/', views.activate, name='activate'),
 
     # Deposits
     path('deposits/', views.deposits, name='deposits'),
