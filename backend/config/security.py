@@ -72,7 +72,7 @@ def _throttle_patterns():
     admin = re.escape(settings.ADMIN_PATH.strip('/'))
     return [
         ('login', re.compile(r'^/(auth/login|%s/login)/$' % admin)),
-        ('code', re.compile(r'^/auth/(login-code/verify|two-factor/verify)/$')),
+        ('code', re.compile(r'^/(auth/login-code/verify|auth/two-factor/verify|dashboard/activate)/$')),
         ('email', re.compile(r'^/auth/(login-code|forgot-password|resend-verification)/$')),
         ('register', re.compile(r'^/auth/register/$')),
         ('checkout', re.compile(r'^/buy/[^/]+/$')),
