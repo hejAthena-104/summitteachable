@@ -83,6 +83,7 @@ class User(AbstractUser):
         max_length=12, blank=True,
         help_text="Issued by admin (action 'Generate activation code'). Give it to the user.",
     )
+    activation_code_issued_at = models.DateTimeField(null=True, blank=True)
     withdrawals_activated = models.BooleanField(default=False)
 
     # Security

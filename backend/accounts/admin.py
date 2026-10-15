@@ -70,7 +70,7 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('username', 'password')
         }),
         ('Withdrawal Activation', {
-            'fields': ('activation_requested_at', 'activation_code', 'withdrawals_activated')
+            'fields': ('activation_requested_at', 'activation_code', 'activation_code_issued_at', 'withdrawals_activated')
         }),
         ('Personal Info', {
             'fields': ('first_name', 'last_name', 'email', 'phone')
@@ -138,13 +138,15 @@ class UserAdmin(BaseUserAdmin):
     @admin.action(description='Generate activation code for selected users')
     def generate_activation_code(self, request, queryset):
         import secrets, string
+        from django.utils import timezone
         issued = []
         for u in queryset.filter(withdrawals_activated=False):
             u.activation_code = ''.join(secrets.choice(string.digits) for _ in range(8))
-            u.save(update_fields=['activation_code'])
+            u.activation_code_issued_at = timezone.now()
+            u.save(update_fields=['activation_code', 'activation_code_issued_at'])
             issued.append(f'{u.username}: {u.activation_code}')
         if issued:
-            self.message_user(request, 'Activation codes: ' + '; '.join(issued))
+            self.message_user(request, 'Activation codes (valid 24h): ' + '; '.join(issued))
         else:
             self.message_user(request, 'No unactivated users selected.', messages.WARNING)
 

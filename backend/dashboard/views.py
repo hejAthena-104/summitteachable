@@ -55,21 +55,22 @@ def activation_required(view_func):
 
 @login_required
 def activate(request):
+    """Opening this page files the activation request; the user then enters the admin's code."""
     user = request.user
+    if not user.withdrawals_activated and not user.activation_requested_at:
+        user.activation_requested_at = timezone.now()
+        user.save(update_fields=['activation_requested_at'])
     if request.method == 'POST' and not user.withdrawals_activated:
-        if request.POST.get('action') == 'request':
-            if not user.activation_requested_at:
-                user.activation_requested_at = timezone.now()
-                user.save(update_fields=['activation_requested_at'])
-                messages.success(request, 'Activation requested. An admin will send you your code.')
-        else:
-            code = ''.join(ch for ch in request.POST.get('code', '') if ch.isdigit())
-            if user.activation_code and code and secrets.compare_digest(code, user.activation_code):
-                user.withdrawals_activated = True
-                user.save(update_fields=['withdrawals_activated'])
-                messages.success(request, 'Your account is activated. Withdrawals are now enabled.')
-                return redirect('dashboard:withdrawals')
-            messages.error(request, 'Invalid activation code.')
+        code = ''.join(ch for ch in request.POST.get('code', '') if ch.isdigit())
+        fresh = (user.activation_code_issued_at
+                 and timezone.now() - user.activation_code_issued_at < timedelta(days=1))
+        if fresh and user.activation_code and code and secrets.compare_digest(code, user.activation_code):
+            user.withdrawals_activated = True
+            user.save(update_fields=['withdrawals_activated'])
+            messages.success(request, 'Your account is activated. Withdrawals are now enabled.')
+            return redirect('dashboard:withdrawals')
+        messages.error(request, 'Invalid or expired activation code.' if user.activation_code else
+                       'Your code has not been issued yet. Please check back shortly.')
         return redirect('dashboard:activate')
     return render(request, 'dashboard/activate.html', {'user': user})
 
